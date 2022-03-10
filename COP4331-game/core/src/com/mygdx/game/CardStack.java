@@ -42,4 +42,8 @@ public class CardStack {
 			stack[r] = temp;
 		}
 	}
+	
+	public Card getCard(int i) {
+		return stack[i];
+	}
 }
