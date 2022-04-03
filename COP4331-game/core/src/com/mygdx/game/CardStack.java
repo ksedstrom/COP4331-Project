@@ -1,49 +1,48 @@
 package com.mygdx.game;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class CardStack {
-	private int size;
-	private Card[] stack;
+	private ArrayList<Card> stack;
 	
 	public CardStack() {
-		size = 30;
-		stack = new Card[size];
-	}
-	
-	public CardStack(int stackSize) {
-		size = stackSize;
-		stack = new Card[size];
+		// I think this can remain empty
 	}
 	
 	public int getSize() {
-		return size;
+		return stack.size();
 	}
 	
 	public void insert(Card card) {
-		stack[size] = card;
-		size++;
+		stack.add(card);
 	}
 	
-	public Card remove() {
-		size--;
-		return stack[size];
+	public Card remove(int i) {
+		Card removed = stack.get(i);
+		stack.remove(i);
+		return removed;
 	}
 	
 	public void shuffle() {
-		Random random = new Random();
-		int i, r;
+		Random rng = new Random(); // this can be seeded
+		int i, random;
 		Card temp;
-		for(i=size; i>1; i--) {
-			r = random.nextInt(i);
-			if(r == i-1) continue;
-			temp = stack[i];
-			stack[i] = stack[r];
-			stack[r] = temp;
+		// Fisher-Yates shuffle
+		for(i=stack.size(); i>1; i--) {
+			random = rng.nextInt(i);
+			if(random == i-1) continue;
+			temp = stack.get(i);
+			stack.set(i, stack.get(random));
+			stack.set(random, temp);
 		}
 	}
 	
 	public Card getCard(int i) {
-		return stack[i];
+		return stack.get(i);
+	}
+	
+	public void render(int x, int y) {
+		
 	}
 }

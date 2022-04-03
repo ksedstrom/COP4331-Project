@@ -5,42 +5,81 @@ public class Combat {
 	private Player player;
 	private CardStack drawPile;
 	private CardStack discardPile;
-	private CardStack exilePile;
+	private CardStack brokenPile;
 	private CardStack hand;
-	private int turn;
+	private int turn = 1;
+	private final int maxHandSize = 12;
 	
-	public Combat() {
-		// default constructor; might remove later
-	}
-	
-	public Combat(CardStack deck) {
+	public Combat(final RunData data) {
 		// initialize all card stacks
-		int size = deck.getSize();
-		drawPile = new CardStack(size);
-		discardPile = new CardStack(size);
-		exilePile = new CardStack(size);
-		hand = new CardStack(10);
+		drawPile = new CardStack();
+		discardPile = new CardStack();
+		brokenPile = new CardStack();
+		hand = new CardStack();
 		// copy the deck to the draw pile and then shuffle
-		for(int i=0; i<size; i++) {
+		CardStack deck = data.getDeck();
+		for(int i=0; i<deck.getSize(); i++) {
 			drawPile.insert(deck.getCard(i));
 		}
 		drawPile.shuffle();
-		// need code for creating enemy and player
-		
+		// create enemy and player
+		enemy = generateEnemy(data.getLevel(), data.getSeed());
+		player = new Player(data.getMaxHp(), data.getHp());
+		// start combat
+		startCombat();
+	}
+	
+	public void startCombat() {
+		// make calls to startTurn
+		// can divide startTurn into playerTurn and enemyTurn
 	}
 	
 	public void draw(int x) {
+		Card card;
 		for(int i=0; i<x; i++) {
-			if(hand.getSize() == 10) {
+			// if drawPile is empty, shuffle in the discardPile
+			
+			card = drawPile.remove(0);
+			if(hand.getSize() == maxHandSize) {
 				// hand is full; put drawn card into discard pile
-				discardPile.insert(drawPile.remove());
+				discard(card);
 			}
 			else {
 				// put drawn card into hand
-				hand.insert(drawPile.remove());
+				hand.insert(card);
 			}
 		}
 	}
 	
-	// need code for managing turns and more for handling card stacks
+	public void breakCard(Card card) {
+		brokenPile.insert(card);
+	}
+	
+	public void discard(Card card) {
+		discardPile.insert(card);
+	}
+	
+	private Enemy generateEnemy(int level, float seed) {
+		// pseudo-randomly generate id from level and seed
+		
+		// get data from file
+		
+	}
+	
+	private void startTurn() {
+		// upkeep
+		player.updateStatus();
+		enemy.updateStatus();
+		draw(6 + player.getStatus(3) + player.getStatus(12));
+		enemy.determineAction();
+		
+	}
+	
+	public Player getPlayer() {
+		return player;
+	}
+	
+	public Enemy getEnemy() {
+		return enemy;
+	}
 }
