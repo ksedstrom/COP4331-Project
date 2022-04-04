@@ -38,7 +38,12 @@ public class Combat {
 		Card card;
 		for(int i=0; i<x; i++) {
 			// if drawPile is empty, shuffle in the discardPile
-			
+			if(drawPile.getSize() == 0) {
+				while(discardPile.getSize() > 0) {
+					drawPile.insert(discardPile.remove(0));
+				}
+				drawPile.shuffle();
+			}
 			card = drawPile.remove(0);
 			if(hand.getSize() == maxHandSize) {
 				// hand is full; put drawn card into discard pile
@@ -71,7 +76,8 @@ public class Combat {
 		player.updateStatus();
 		enemy.updateStatus();
 		draw(6 + player.getStatus(3) + player.getStatus(12));
-		enemy.determineAction();
+		enemy.determineAction(turn);
+		// card play
 		
 	}
 	
