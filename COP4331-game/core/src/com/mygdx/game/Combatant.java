@@ -11,8 +11,9 @@ abstract class Combatant {
 		for(int i=0; i<14; i++) statusEffects[i] = 0;
 	}
 	
-	public void damage(int damage) {
-		if(statusEffects[0] > 0) damage = (int)(damage * 1.5);
+	public int damage(int damage) {
+		if(statusEffects[6] > 0) return 0; // burrow
+		if(statusEffects[0] > 0) damage = (int)(damage * 1.5); // vulnerable
 		int diff = damage - block;
 		if(diff > 0) {
 			// damage overcame block
@@ -23,6 +24,7 @@ abstract class Combatant {
 			// took no damage
 			block = -diff;
 		}
+		return statusEffects[8]; // spikey
 	}
 	
 	public void heal(int x) {
@@ -40,6 +42,8 @@ abstract class Combatant {
 	
 	public void updateStatus() {
 		int i;
+		block += statusEffects[5]; // block next turn
+		statusEffects[13] += statusEffects[9]; // ritual
 		for(i=0; i<3; i++) statusEffects[i] -= 1; // decaying
 		for(i=3; i<7; i++) statusEffects[i] = 0; // temporary
 	}
@@ -61,8 +65,10 @@ abstract class Combatant {
 	}
 	
 	public int getAccuracy() {
-		return statusEffects[4] + statusEffects[13];
+		return statusEffects[4] + statusEffects[13]; // temp accuracy + accuracy
 	}
 	
-	public abstract void render();
+	public void render(int x, int y) {
+		// display health bar, block, and status effects
+	};
 }

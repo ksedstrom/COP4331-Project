@@ -3,11 +3,8 @@ package com.mygdx.game;
 public class Combat {
 	private Enemy enemy;
 	private Player player;
-	private CardStack drawPile;
-	private CardStack discardPile;
-	private CardStack brokenPile;
-	private CardStack hand;
-	private int turn = 1;
+	private CardStack drawPile, discardPile, brokenPile, hand;
+	private int turn = 1, empower = 0;
 	private final int maxHandSize = 12;
 	
 	public Combat(final RunData data) {
@@ -31,7 +28,7 @@ public class Combat {
 	
 	public void startCombat() {
 		// make calls to startTurn
-		// can divide startTurn into playerTurn and enemyTurn
+		
 	}
 	
 	public void draw(int x) {
@@ -44,7 +41,7 @@ public class Combat {
 				}
 				drawPile.shuffle();
 			}
-			card = drawPile.remove(0);
+			card = drawPile.remove(0); // draw card
 			if(hand.getSize() == maxHandSize) {
 				// hand is full; put drawn card into discard pile
 				discard(card);
@@ -66,19 +63,21 @@ public class Combat {
 	
 	private Enemy generateEnemy(int level, float seed) {
 		// pseudo-randomly generate id from level and seed
-		
-		// get data from file
-		
+		int id = 0;
+		return new Enemy(id);
 	}
 	
-	private void startTurn() {
+	private boolean startTurn() {
 		// upkeep
+		draw(6 + player.getStatus(3) + player.getStatus(12)); // draw next turn and capacity up
 		player.updateStatus();
 		enemy.updateStatus();
-		draw(6 + player.getStatus(3) + player.getStatus(12));
 		enemy.determineAction(turn);
 		// card play
 		
+		// enemy turn
+		
+		return false; // both combatants are alive
 	}
 	
 	public Player getPlayer() {
@@ -87,5 +86,14 @@ public class Combat {
 	
 	public Enemy getEnemy() {
 		return enemy;
+	}
+	
+	public int getEmpower() {
+		return empower;
+	}
+	
+	public boolean combatantDied() {
+		if(enemy.getHealth() <= 0 || player.getHealth() <= 0) return true;
+		return false;
 	}
 }

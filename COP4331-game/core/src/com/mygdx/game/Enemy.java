@@ -67,7 +67,8 @@ public class Enemy extends Combatant{
 	}
 	
 	@Override
-	public void render() {
-		
+	public void render(int x, int y) {
+		// display image
+		super.render(x, y);
 	}
 }
