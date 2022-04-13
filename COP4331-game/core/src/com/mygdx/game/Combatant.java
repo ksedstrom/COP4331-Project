@@ -44,7 +44,7 @@ abstract class Combatant {
 		int i;
 		block += statusEffects[5]; // block next turn
 		statusEffects[13] += statusEffects[9]; // ritual
-		for(i=0; i<3; i++) statusEffects[i] -= 1; // decaying
+		for(i=0; i<3; i++) if(statusEffects[i] > 0) statusEffects[i] -= 1; // decaying
 		for(i=3; i<7; i++) statusEffects[i] = 0; // temporary
 	}
 	
