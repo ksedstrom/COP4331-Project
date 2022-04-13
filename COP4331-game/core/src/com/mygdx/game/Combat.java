@@ -21,7 +21,7 @@ public class Combat {
 		drawPile.shuffle();
 		// create enemy and player
 		enemy = generateEnemy(data.getLevel(), data.getSeed());
-		player = new Player(data.getMaxHp(), data.getHp());
+		player = new Player(data.getMaxHealth(), data.getHealth());
 		// start combat
 		startCombat();
 	}
@@ -63,7 +63,7 @@ public class Combat {
 	
 	private Enemy generateEnemy(int level, float seed) {
 		// pseudo-randomly generate id from level and seed
-		int id = 0;
+		int id = 0; // temporary
 		return new Enemy(id);
 	}
 	
