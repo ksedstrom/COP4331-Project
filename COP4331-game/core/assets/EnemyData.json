@@ -18,5 +18,238 @@
       [30, 4, 1, 3, -1, 0, -1, 0],
       [30, 0, 0, 6, -1, 0, 13, 1],
       [40, 8, 1, 0, -1, 0, -1, 0]]
+  },
+  {
+    "name": "Cactus Monster",
+    "imageName": "CactusMonster.png",
+    "maxHealth": 37,
+    "numActions": 2,
+    "behavior": [
+      [70, 0, 0, 4, -1, 0, 8, 1],
+      [30, 1, 6, 0, -1, 0, -1, 0]
+    ]
+  },
+  {
+    "name": "Desert Raider",
+    "imageName": "DesertRaider.png",
+    "maxHealth": 28,
+    "numActions": 3,
+    "behavior": [
+      [20, 0, 0, 0,  1, 0, 13, 1],
+      [60, 2, 3, 0,  3, 1, -1, 0],
+      [20, 0, 0, 6, -1, 0, -1, 0]
+      ]
+  },
+  {
+    "name": "Blue Slaver",
+    "imageName": "BlueSlaver.png",
+    "maxHealth": 28,
+    "numActions": 2,
+    "behavior": [
+      [50, 12, 1, 0, -1, 0, -1, 0],
+      [50,  7, 1, 0, -1, 0,  2, 1]
+    ]
+  },
+  {
+    "name": "Red Slaver",
+    "imageName": "RedSlaver.png",
+    "maxHealth": 25,
+    "numActions": 2,
+    "behavior": [
+      [0, 0, 0, 0, -1, 0, -1, 0],
+      [0, 0, 0, 0, -1, 0, -1, 0]
+    ]
+  },
+  {
+    "name": "Giant Scorpion",
+    "imageName": "GiantScorpion.png",
+    "maxHealth": 25,
+    "numActions": 3,
+    "behavior": [
+      [40, 3, 1, 6, -1, 0, -1, 0],
+      [30, 10, 1, 0, -1, 0, 0, 1],
+      [30, 6, 1, 0, -1, 0, 2, 1]
+    ]
+  },
+  {
+    "name": "Sand Wyrm",
+    "imageName": "SandWyrm.png",
+    "maxHealth": 100,
+    "numActions": 5,
+    "behavior": [
+      [0, 0, 0, 0, 5, 1, 6, 1],
+      [0, 36, 1, 0, 3, 0, -1, 0],
+      [30, 7, 3, 0, -1, 0, -1, 0],
+      [40, 12, 1, 12, -1, 0, -1, 0],
+      [30, 0, 0, 20, -1, 0, -1, 0]
+    ]
+  },
+  {
+    "name": "Simian Gunslinger",
+    "imageName": "SimianGunslinger.png",
+    "maxHealth": 55,
+    "numActions": 3,
+    "behavior": [
+      [60, 0, 0, 0, -1, 0, 4, 2],
+      [0, 1, 8, 0, 3, 0, -1, 0],
+      [40, 8, 1, 8, -1, 0, -1, 0]
+    ]
+  },
+  {
+    "name": "Simian Cybernetic",
+    "imageName": "SimianCybernetic.png",
+    "maxHealth": 60,
+    "numActions": 3,
+    "behavior": [
+      [50, 0, 0, 20, -1, 0, -1, 0],
+      [10, 25, 1, 0, 3, 0, -1, 0],
+      [40, 12, 1, 0, -1, 0, 2, 1]
+    ]
+  },
+  {
+    "name": "Ancient Temple Cultist",
+    "imageName": "AncientTempleCultist.png",
+    "maxHealth": 52,
+    "numActions": 4,
+    "behavior": [
+      [0, 0, 0, 0, 1, 0, 9, 1],
+      [50, 6, 1, 8, -1, 0, -1, 0],
+      [25, 6, 2, 0, -1, 0, -1, 0],
+      [25, 0, 0, 16, -1, 0, -1, 0]
+    ]
+  },
+  {
+    "name": "Temple Guardian",
+    "imageName": "TempleGuardian.png",
+    "maxHealth": 56,
+    "numActions": 3,
+    "behavior": [
+      [30, 16, 1, 10, -1, 0, -1, 0],
+      [40, 0, 0, 10, -1, 0, 1, 2],
+      [30, 0, 0, 20, -1, 0, -1, 0]
+    ]
+  },
+  {
+    "name": "Man Eater Plant",
+    "imageName": "ManEaterPlant.png",
+    "maxHealth": 58,
+    "numActions": 3,
+    "behavior": [
+      [100, 7, 1, 7, 4, 2, 0, 2],
+      [0, 0, 0, 14, 4, 0, 1, 2],
+      [0, 7, 2, 0, 4, 1, 2, 2]
+    ]
+  },
+  {
+    "name": "Jungle Sharpshooter",
+    "imageName": "JungleSharpshooter.png",
+    "maxHealth": 48,
+    "numActions": 3,
+    "behavior": [
+      [50, 0, 0, 8, -1, 0, 13, 3],
+      [50, 2, 2, 14, -1, 0, -1, 0],
+      [0, 3, 4, 0, 0, 0, 2, 2]
+    ]
+  },
+  {
+    "name": "Temple Berserker",
+    "imageName": "TempleBerserker.png",
+    "maxHealth": 62,
+    "numActions": 4,
+    "behavior": [
+      [0, 0, 0, 25, 2, 0, -1, 0],
+      [40, 6, 3, 0, 3, 0, -1, 0],
+      [30, 12, 1, 8, -1, 0, -1, 0],
+      [30, 18, 1, 0, -1, 0, -1, 0]
+    ]
+  },
+  {
+    "name": "The Silent Hunter",
+    "imageName": "TheSilentHunter.png",
+    "maxHealth": 200,
+    "numActions": 5,
+    "behavior": [
+      [20, 0, 0,  0, 6, 1, 13, 5],
+      [20, 0, 0, 18, 6, 2,  2, 3],
+      [20, 4, 2, 12, 6, 3, -1, 0],
+      [20, 4, 4,  0, 6, 4, -1, 0],
+      [20, 4, 1,  8, 6, 0,  5, 8]
+    ]
+  },
+  {
+    "name": "Wreckage Salvager",
+    "imageName": "WreckageSalvager.png",
+    "maxHealth": 90,
+    "numActions": 3,
+    "behavior": [
+      [25, 16, 1, 0, -1, 0, 3, -1],
+      [25, 12, 1, 12, -1, 0, -1, 0],
+      [50, 24, 1, 0, -1, 0, -1, 0]
+    ]
+  },
+  {
+    "name": "Enforcer Titan",
+    "imageName": "EnforcerTitan.png",
+    "maxHealth": 85,
+    "numActions": 3,
+    "behavior": [
+      [0, 0, 0, 0, 1, 0, 7, 3],
+      [33, 16, 1, 0, -1, 0, -1, 0],
+      [67, 8, 1, 0, -1, 0, 0, 2]
+    ]
+  },
+  {
+    "name": "Security Walker",
+    "imageName": "SecurityWalker.png",
+    "maxHealth": 100,
+    "numActions": 2,
+    "behavior": [
+      [40, 16, 1, 4, -1, 0, 0, 2],
+      [60, 16, 1, 4, -1, 0, 13, 3]
+    ]
+  },
+  {
+    "name": "Hover Droid",
+    "imageName": "HoverDroid.png",
+    "maxHealth": 85,
+    "numActions": 2,
+    "behavior": [
+      [60, 5, 2, 10, -1, 0, 13, 2],
+      [40, 5, 2, 10, -1, 0, 2, 2]
+    ]
+  },
+  {
+    "name": "Cyber Assassin",
+    "imageName": "CyberAssassin.png",
+    "maxHealth": 80,
+    "numActions": 3,
+    "behavior": [
+      [0, 0, 0, 0, 2, 0, 13, 6],
+      [75, 4, 3, 0, -1, 0, -1, 0],
+      [25, 12, 1, 8, 1, 0, 102, 1]
+    ]
+  },
+  {
+    "name": "Galaxy Walker",
+    "imageName": "GalaxyWalker.png",
+    "maxHealth": 110,
+    "numActions": 3,
+    "behavior": [
+      [25, 2, 5, 0, -1, 0, -1, 0],
+      [50, 0, 0, 16, -1, 0, 102, 1],
+      [25, 16, 1, 0, -1, 0, 13, 1]
+    ]
+  },
+  {
+    "name": "Hypercore Beast",
+    "imageName": "HypercoreBeast.png",
+    "maxHealth": 500,
+    "numActions": 4,
+    "behavior": [
+      [25, 20, 1, 20, 5, 1, 102, 2],
+      [25, 30, 1, 0, 5, 2, 3, -2],
+      [25, 4, 5, 0, 5, 3, -1, 0],
+      [25, 0, 0, 50, 5, 0, 8, 2]
+    ]
   }
 ]
