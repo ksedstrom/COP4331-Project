@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+
 public class Combat {
 	private Enemy enemy;
 	private Player player;
@@ -95,5 +96,34 @@ public class Combat {
 	public boolean combatantDied() {
 		if(enemy.getHealth() <= 0 || player.getHealth() <= 0) return true;
 		return false;
+	}
+
+	// used to apply Unique Effects
+	public boolean drawPileEmpty(){
+		if(drawPile.getSize() <= 0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	public void applyOverclockEffect(){
+		for(int i = 0; i < 5; i++){
+			if(!drawPileEmpty()){
+				drawPile.remove(0);
+			}
+		}
+	}
+	public void applyDeconstructEffect(){
+		// does not need to check hand size because playing deconstruct will inherently remove 2 cards from hand
+		Card newCell = new Card(0);
+		hand.insert(newCell);
+		hand.insert(newCell);
+	}
+	public void applyRefreshEffect(){
+		while(discardPile.getSize() > 0) {
+			drawPile.insert(discardPile.remove(0));
+		}
+		drawPile.shuffle();
 	}
 }
