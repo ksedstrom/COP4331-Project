@@ -1,22 +1,41 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
+
+import java.util.Random;
+
 public class Enemy extends Combatant{
-	private String name;
+	private String name, imageName;
 	private int nextAction, prevAction, numActions;
 	private boolean lt5Damage, healthTrigger;
 	private int[][] behavior;
-	
+
 	public Enemy(int id) {
 		super();
 		lt5Damage = false;
 		healthTrigger = false;
-		// get data from file using id
-		// temporary construction:
-		name = "bob";
-		numActions = 5;
+
+		// parse enemyData for given id
+		JsonReader reader = new JsonReader();
+		JsonValue enemyData = reader.parse(Gdx.files.internal("EnemyData.json")).get(id);
+
+		// construct values using json data
+		name = enemyData.getString("name");
+		imageName = enemyData.getString("imageName");
+		health = enemyData.getInt("maxHealth");
+		maxHealth = enemyData.getInt("maxHealth");
+		numActions = enemyData.getInt("numActions");
+
+		// construct behavior array of form [actionID][actionData]
+		// action data contains 8 values in order: %, damage, damageMultiplier, Block, triggerType, triggerValue, statusType, statusValue
 		behavior = new int[numActions][8];
-		for(int i=0; i<numActions; i++) {
-			// fill in action data
+		int j;
+		for(int i=0; i<numActions; i++){
+			for(j=0; j<8; j++){
+				behavior[i][j] = enemyData.get("behavior").get(i).get(j).asInt();
+			}
 		}
 	}
 	
@@ -24,7 +43,15 @@ public class Enemy extends Combatant{
 		nextAction = checkTriggers(turn);
 		if(nextAction == -1) {
 			// no triggers; roll for action
-			
+			Random random = new Random();
+			int randInt = random.nextInt(100);
+			int behaviorChance = 0;
+			for(int i=0; i<numActions; i++){
+				behaviorChance = behaviorChance + behavior[i][0];
+				if(randInt < behaviorChance){
+					nextAction = i;
+				}
+			}
 		}
 	}
 	
@@ -32,7 +59,11 @@ public class Enemy extends Combatant{
 		int trigger = -1;
 		// iterate through triggers
 		for(int i=0; i<numActions; i++) {
+			// behavior[i][4] is the triggerType
+			// behavior[i][5] is the triggerValue
 			switch(behavior[i][4]) {
+			case -1:
+				continue;
 			case 0:
 				if(lt5Damage) trigger = i;
 				break;
