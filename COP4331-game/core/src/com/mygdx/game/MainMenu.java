@@ -1,8 +1,10 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MainMenu implements Screen {
@@ -10,12 +12,24 @@ public class MainMenu implements Screen {
 	final MyGdxGame game;
 
 	OrthographicCamera camera;
+	Texture newGameButton;
+	Texture loadGameButton;
+	Texture logInButton;
+	Texture createAccountButton;
+	Texture menuCursor;
+	int cursorPosition = 0;
 
 	public MainMenu(final MyGdxGame game) {
 		this.game = game;
 
+		newGameButton = new Texture(Gdx.files.internal("newGameButton.png"));
+		loadGameButton = new Texture(Gdx.files.internal("loadGameButton.png"));
+		logInButton = new Texture(Gdx.files.internal("logInButton.png"));
+		createAccountButton = new Texture(Gdx.files.internal("createAccountButton.png"));
+		menuCursor = new Texture(Gdx.files.internal("menuCursor.png"));
+
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, 1280, 720);
 	}
 
 	@Override
@@ -26,13 +40,29 @@ public class MainMenu implements Screen {
 		game.batch.setProjectionMatrix(camera.combined);
 
 		game.batch.begin();
-		game.font.draw(game.batch, "Welcome to Drop!!! ", 100, 150);
-		game.font.draw(game.batch, "Tap anywhere to begin!", 100, 100);
+		game.batch.draw(newGameButton, 100, 550, newGameButton.getWidth(), newGameButton.getHeight());
+		game.batch.draw(loadGameButton, 100, 400, loadGameButton.getWidth(), loadGameButton.getHeight());
+		game.batch.draw(logInButton, 100, 250, logInButton.getWidth(), logInButton.getHeight());
+		game.batch.draw(createAccountButton, 100, 100, createAccountButton.getWidth(), createAccountButton.getHeight());
+		game.batch.draw(menuCursor, 500, 550-(cursorPosition * 150), menuCursor.getWidth(), menuCursor.getHeight());
 		game.batch.end();
 
-		if (Gdx.input.isTouched()) {
-			game.setScreen(new GameScreen(game));
-			dispose();
+		// process user input
+		if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+			if(cursorPosition != 0){
+				cursorPosition--;
+			}
+		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+			if(cursorPosition != 3){
+				cursorPosition++;
+			}
+		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+			if(cursorPosition == 0){
+				game.setScreen(new Combat(game, new RunData()));
+				dispose();
+			}
 		}
 	}
 	
@@ -46,6 +76,11 @@ public class MainMenu implements Screen {
 	
 	@Override
 	public void dispose() {
+		newGameButton.dispose();
+		loadGameButton.dispose();
+		logInButton.dispose();
+		createAccountButton.dispose();
+		menuCursor.dispose();
 	}
 	
 	@Override

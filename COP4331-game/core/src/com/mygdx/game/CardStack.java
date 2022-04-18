@@ -7,7 +7,7 @@ public class CardStack {
 	private ArrayList<Card> stack;
 	
 	public CardStack() {
-		// I think this can remain empty
+		stack = new ArrayList<Card>();
 	}
 	
 	public int getSize() {
@@ -29,7 +29,7 @@ public class CardStack {
 		int i, random;
 		Card temp;
 		// Fisher-Yates shuffle
-		for(i=stack.size(); i>1; i--) {
+		for(i=stack.size()-1; i>1; i--) {
 			random = rng.nextInt(i);
 			if(random == i-1) continue;
 			temp = stack.get(i);
