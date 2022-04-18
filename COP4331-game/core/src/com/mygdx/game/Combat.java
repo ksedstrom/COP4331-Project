@@ -121,7 +121,7 @@ public class Combat implements Screen {
 	
 	private void startTurn() {
 		// upkeep
-		draw(4 + player.getStatus(3) + player.getStatus(12)); // draw next turn and capacity up
+		draw(6 + player.getStatus(3) + player.getStatus(12)); // draw next turn and capacity up
 		player.updateStatus();
 		enemy.updateStatus();
 		enemy.determineAction(turn);
