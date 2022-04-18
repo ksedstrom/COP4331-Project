@@ -3,7 +3,7 @@ package com.mygdx.game;
 abstract class Combatant {
 	protected int health, maxHealth;
 	private int block;
-	private int[] statusEffects;
+	protected int[] statusEffects;
 	
 	public Combatant() {
 		block = 0;

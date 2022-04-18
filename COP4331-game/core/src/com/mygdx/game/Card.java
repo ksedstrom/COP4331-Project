@@ -91,9 +91,10 @@ public class Card {
 		}
 		if(block > 0) player.gainBlock(blockMult * calcValue(block + power, player.getStatus(1)));
 		if(draw > 0) combat.draw(draw);
-		if(status[0] >= 0) player.applyStatus(status[0], status[1]);
-
-
+		if(status[0] >= 0) {
+			if(status[0] >= 3) player.applyStatus(status[0], status[1]);
+			else enemy.applyStatus(status[0], status[1]);
+		}
 	}
 
 	private int calcValue(int base, int minus25) {

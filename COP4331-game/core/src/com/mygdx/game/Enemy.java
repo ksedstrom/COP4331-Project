@@ -92,9 +92,26 @@ public class Enemy extends Combatant{
 	}
 	
 	public void act(Combat combat) {
+		// action reference: 0:%, 1:dmg, 2:dmgMult, 3:blk, 4:trigType, 5:trigVal, 6:statType, 7:statVal
 		prevAction = nextAction;
-		// similar to Card.Play()
-		
+		Player player = combat.getPlayer();
+		if(behavior[nextAction][1] > 0) {
+			int dmg = calcValue(behavior[nextAction][1] + getAccuracy(), statusEffects[2]);
+			for(int i=0; i<behavior[nextAction][2]; i++) {
+				player.damage(dmg); // damage player
+				if(combat.combatantDied()) return; // check if the player died from the damage
+			}
+		}
+		if(behavior[nextAction][3] > 0) player.gainBlock(calcValue(behavior[nextAction][3], statusEffects[1]));
+		if(behavior[nextAction][6] >= 0) {
+			if(behavior[nextAction][6] <= 3) player.applyStatus(behavior[nextAction][5], behavior[nextAction][7]);
+			else applyStatus(behavior[nextAction][5], behavior[nextAction][7]);
+		}
+	}
+	
+	private int calcValue(int base, int minus25) {
+		if(minus25 > 0) base -= (int)(base * 0.25); // corroded or disoriented
+		return base;
 	}
 	
 	@Override
