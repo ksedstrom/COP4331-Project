@@ -28,7 +28,7 @@ public class RunData {
 		deck.insert(rewire);
 		deck.insert(powerCell);
 		deck.insert(powerCell);
-		for(int i = 0; i < 5; i++){
+		for(int i = 0; i < 4; i++){
 			deck.insert(blaster);
 			deck.insert(guard);
 		}

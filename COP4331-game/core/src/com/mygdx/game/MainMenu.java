@@ -60,8 +60,19 @@ public class MainMenu implements Screen {
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
 			if(cursorPosition == 0){
+				// Start a new game
 				game.setScreen(new Combat(game, new RunData()));
 				dispose();
+			}
+			if(cursorPosition == 1){
+				// Load a game from a save, either online or offline
+				// Should also tell user if no save is available
+			}
+			if(cursorPosition == 2){
+				// Prompt user to log in
+			}
+			if(cursorPosition == 3){
+				// Prompt user to create account
 			}
 		}
 	}

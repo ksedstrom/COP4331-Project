@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -21,8 +22,13 @@ public class Combat implements Screen {
 	private int turn = 1, empower = 0;
 	private final int maxHandSize = 12;
 
+	// UI Handling Variables
+	private int cursorPos = 0;
+	private Card selectedCard;
+
 	Texture healthBar;
 	Texture healthBarOutline;
+	Texture combatCursor;
 
 	public Combat(final MyGdxGame game, final RunData data) {
 
@@ -34,6 +40,7 @@ public class Combat implements Screen {
 		// initialize textures
 		healthBar = new Texture(Gdx.files.internal("HealthBar.png"));
 		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
+		combatCursor = new Texture(Gdx.files.internal("combatCursor.png"));
 
 		// initialize all card stacks
 		drawPile = new CardStack();
@@ -52,35 +59,80 @@ public class Combat implements Screen {
 
 		startTurn();
 	}
+
 	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(100, 100, 100, 1);
+
+		int x = 0;
 
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 
 		game.batch.begin();
-		// Render current hand
+		// Render current hand and cursor
 		for(int i = hand.getSize()-1; i >= 0; i--) {
+			x = 0;
 			if (hand.getSize() < 10) {
-				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), 130*i+(576-64*hand.getSize()), 45, cardWidth, cardHeight);
+				x = 130*i+(576-64*hand.getSize());
+				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), x, 45, cardWidth, cardHeight);
+				game.fontMedium.draw(game.batch, hand.getCard(i).getDescription(), x, 120, cardWidth, 1, true);
+				if(cursorPos == i){
+					// height and width are both equal to cardWidth for the cursor
+					game.batch.draw(combatCursor, x, 230, 128, 128);
+				}
 			}
 			if (hand.getSize() == 10) {
-				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), 125*i+10, 45+i*2, cardWidth, cardHeight);
+				x = 125*i+10;
+				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), x, 45+i*2, cardWidth, cardHeight);
+				game.fontMedium.draw(game.batch, hand.getCard(i).getDescription(), x, 120+i*2, cardWidth, 1, true);
+				if(cursorPos == i){
+					// height and width are both equal to cardWidth for the cursor
+					game.batch.draw(combatCursor, x, 230+i*2, 128, 128);
+				}
 			}
 			if(hand.getSize() == 11){
-				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), 114*i+5, 45+i*2, cardWidth, cardHeight);
+				x = 114*i+5;
+				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), x, 45+i*2, cardWidth, cardHeight);
+				game.fontMedium.draw(game.batch, hand.getCard(i).getDescription(), x, 120+i*2, cardWidth, 1, true);
+				if(cursorPos == i){
+					// height and width are both equal to cardWidth for the cursor
+					game.batch.draw(combatCursor, x, 230+i*2, 128, 128);
+				}
 			}
-			if(hand.getSize()== 12){
-				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), 104*i+5, 45+i*2, cardWidth, cardHeight);
+			if(hand.getSize() == 12){
+				x = 104*i+5;
+				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), x, 45+i*2, cardWidth, cardHeight);
+				game.fontMedium.draw(game.batch, hand.getCard(i).getDescription(), x, 120+i*2, cardWidth, 1, true);
+				if(cursorPos == i){
+					// height and width are both equal to cardWidth for the cursor
+					game.batch.draw(combatCursor, x, 230+i*2, 128, 128);
+				}
 			}
 		}
+
 		// Render health bar
 		game.batch.draw(healthBarOutline, 0, 0, 1010,40);
 		game.batch.draw(healthBar, 5, 5, player.getHealth()*10, 30);
 		String hpDisplay = "HP: " + player.getHealth();
-		game.font.draw(game.batch, hpDisplay, 10, 25);
+		game.fontLarge.draw(game.batch, hpDisplay, 10, 25);
 		game.batch.end();
+
+		// Process User Input
+		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
+			if(cursorPos != 0){
+				cursorPos--;
+			}
+		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
+			if(cursorPos != hand.getSize()-1){
+				cursorPos++;
+			}
+		}
+		// Debug Input to draw cards for testing purposes
+		if (Gdx.input.isKeyJustPressed(Input.Keys.D)){
+			draw(1);
+		}
 	}
 
 	public void draw(int x) {
@@ -104,7 +156,7 @@ public class Combat implements Screen {
 			}
 		}
 	}
-	
+
 	public void breakCard(Card card) {
 		brokenPile.insert(card);
 	}
@@ -126,7 +178,7 @@ public class Combat implements Screen {
 		enemy.updateStatus();
 		enemy.determineAction(turn);
 	}
-	
+
 	public Player getPlayer() {
 		return player;
 	}

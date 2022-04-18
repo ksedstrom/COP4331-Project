@@ -103,10 +103,28 @@ public class Card {
 		return base;
 	}
 
-	public void render(int x, int y, Combat combat) {
-		Player player = combat.getPlayer();
-		Enemy enemy = combat.getEnemy();
-		int power = combat.getEmpower();
+	public String getDescription(){
+		String returnDescription = "";
+		if(fragile == true){
+			returnDescription = returnDescription + "Fragile\n";
+		}
+		if(damageMult == 1){
+			returnDescription = returnDescription + "Deal " + damage + " Damage.\n";
+		}
+		if(damageMult > 1){
+			returnDescription = returnDescription + "Deal " + damage + " Damage " + damageMult + " times.\n";
+		}
+		if(blockMult == 1){
+			returnDescription = returnDescription + "Gain " + block + " Block.\n";
+		}
+		if(damageMult > 1){
+			returnDescription = returnDescription + "Gain " + block + " Block " + blockMult + " times.\n";
+		}
+		if(empower > 0){
+			returnDescription = returnDescription + "Empower " + empower + "\n";
+		}
+		returnDescription = returnDescription + description;
 
+		return returnDescription;
 	}
 }
