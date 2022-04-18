@@ -4,7 +4,7 @@ abstract class Combatant {
 	protected int health, maxHealth;
 	private int block;
 	private int[] statusEffects;
-	
+
 	public Combatant() {
 		block = 0;
 		statusEffects = new int[14];

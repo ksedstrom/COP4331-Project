@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import java.util.Random;
+
 public class RunData {
 	private long seed;
 	private int health;
@@ -9,7 +11,27 @@ public class RunData {
 	private CardStack deck;
 	
 	public RunData() {
-		
+		// Assign Default values
+		health = 100;
+		maxHealth = 100;
+		currentLevel = 0;
+
+		// Generate run seed
+		Random rd = new Random();
+		seed = rd.nextLong();
+		// Create Starting Deck
+		deck = new CardStack();
+		Card powerCell = new Card(0);
+		Card blaster = new Card(5);
+		Card guard = new Card(6);
+		Card rewire = new Card(7);
+		deck.insert(rewire);
+		deck.insert(powerCell);
+		deck.insert(powerCell);
+		for(int i = 0; i < 5; i++){
+			deck.insert(blaster);
+			deck.insert(guard);
+		}
 	}
 	
 	public void addCard(Card card) {

@@ -38,7 +38,6 @@ public class Card {
 		fragile = cardData.getBoolean("fragile");
 		status[0] = cardData.getInt("statusId");
 		status[1] = cardData.getInt("statusValue");
-		System.out.println(name);
 	}
 
 	public int getCost() {
@@ -48,6 +47,8 @@ public class Card {
 	public int getEmpower() {
 		return empower;
 	}
+
+	public String getImageName(){return imageName;}
 
 	// order of card effects might need to be rearranged
 	public void play(Combat combat) {
