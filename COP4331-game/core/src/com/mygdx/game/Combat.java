@@ -21,7 +21,8 @@ public class Combat implements Screen {
 	private Enemy enemy;
 	private Player player;
 	private CardStack drawPile, discardPile, brokenPile, hand;
-	private int turn = 1, empower = 0, pitch = 0;
+	// turn starts at 0 but immediately goes to 1 when StartTurn is called for the first time
+	private int turn = 0, empower = 0, pitch = 0;
 	private final int maxHandSize = 12;
 	private boolean canAct = false; // true if player can take actions
 
@@ -86,9 +87,6 @@ public class Combat implements Screen {
 
 		game.batch.begin();
 		// Render current hand and cursor
-		// TODO: End Turn, Discard Pile, and Draw Pile all need to have a display added
-		// TODO: Need to add code to render cursor while selecting end turn, discard, and draw piles
-
 		for(int i = hand.getSize()-1; i >= 0; i--) {
 			int x = 0;
 			int y = 45;
@@ -129,7 +127,11 @@ public class Combat implements Screen {
 		// TODO: need a simple deck icon to make it so this isn't just floating text
 		String drawPileDisplay = "Draw Pile Size: " + drawPile.getSize();
 		game.fontLarge.draw(game.batch, drawPileDisplay, 0, 250);
-		game.fontLarge.draw(game.batch, String.valueOf(discardPile.getSize()), 0, 300);
+		String discardPileDisplay = "Discard Pile Size: " + discardPile.getSize();
+		game.fontLarge.draw(game.batch, discardPileDisplay, 0, 200);
+		//game.fontLarge.draw(game.batch, String.valueOf(discardPile.getSize()), 0, 300);
+
+		// pressing ENTER key will end the turn, but an End Turn button could maybe be added in the future
 
 		// Render selected card
 		if (selectedCard != null){
@@ -142,9 +144,28 @@ public class Combat implements Screen {
 			playCardDelay = 15;
 		}
 
-		// TODO :render enemy
-		// scuffed placeholder
+		// currently, enemyImage is loading tempEnemy.png
 		game.batch.draw(enemyImage, 1000, 380, 252, 252);
+
+		// TODO: pretty this up with some icons like slay the spire
+		// Render enemy's next action.
+		String temp = "";
+		if(enemy.getNextAction()[2] == 1){
+			temp = "Damage: " + enemy.getNextAction()[1] + "\n";
+		}
+		if(enemy.getNextAction()[2] > 1){
+			temp = "Damage: " + enemy.getNextAction()[1] + "x" + enemy.getNextAction()[2] + "\n";
+		}
+		if(enemy.getNextAction()[3] > 0){
+			temp = temp + "Block: " + enemy.getNextAction()[3] + "\n";
+		}
+		if(enemy.getNextAction()[6] != -1){
+			// Can probably be made more specific when adding icons
+			temp = temp + "Status will be applied";
+		}
+		game.fontMedium.draw(game.batch, temp, 800, 500);
+
+		// TODO: health bar for player and enemy should also have a segment showing how much block each one has
 
 		// Render player health bar
 		game.batch.draw(healthBarOutline, 0, 0, 1010,40);
@@ -172,7 +193,11 @@ public class Combat implements Screen {
 		game.batch.end();
 
 		// Process User Input
-		// TODO: add wrap around for left and right arrow keys, needs Discard, Draw, and End Turn to be selectable options first
+
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && canAct){
+			endTurn();
+		}
+
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && canAct){
 			if(cursorPos != 0){
 				cursorPos--;
@@ -198,6 +223,10 @@ public class Combat implements Screen {
 				pitch = 0;
 				empower = 0;
 				cardReady = false;
+				// End the turn if hand is empty
+				if(hand.getSize() == 0){
+					endTurn();
+				}
 			}
 			// check cursor is pointing to a card
 			else if(cursorPos >= 0 && cursorPos < hand.getSize()){
@@ -278,7 +307,6 @@ public class Combat implements Screen {
 				// put drawn card into hand
 				card.updateDescription(this);
 				hand.insert(card);
-				System.out.println("drawing a card");
 			}
 		}
 	}
@@ -291,6 +319,7 @@ public class Combat implements Screen {
 	
 	private void startTurn() {
 		// upkeep
+		turn++;
 		draw(6 + player.getStatus(3) + player.getStatus(12)); // draw next turn and capacity up
 		player.updateStatus();
 		enemy.updateStatus();
@@ -301,7 +330,7 @@ public class Combat implements Screen {
 	private void endTurn(){
 		canAct = false;
 		while(hand.getSize() != 0){
-			discardPile.insert(hand.getCard(0));
+			discardPile.insert(hand.remove(0));
 		}
 		enemy.act(this);
 		startTurn();
