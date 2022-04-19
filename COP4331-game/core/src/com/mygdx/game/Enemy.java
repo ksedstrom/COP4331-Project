@@ -143,8 +143,8 @@ public class Enemy extends Combatant{
 		}
 		if(behavior[nextAction][3] > 0) gainBlock(calcValue(behavior[nextAction][3], statusEffects[1]));
 		if(behavior[nextAction][6] >= 0) {
-			if(behavior[nextAction][6] <= 3) player.applyStatus(behavior[nextAction][5], behavior[nextAction][7]);
-			else applyStatus(behavior[nextAction][5], behavior[nextAction][7]);
+			if(behavior[nextAction][6] <= 3) player.applyStatus(behavior[nextAction][6], behavior[nextAction][7]);
+			else applyStatus(behavior[nextAction][6], behavior[nextAction][7]);
 		}
 	}
 	
