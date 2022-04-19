@@ -210,7 +210,7 @@
   {
     "name": "Energy Shield",
     "description": "",
-    "imageName": ".png",
+    "imageName": "EnergyShield.png",
     "cost": 2,
     "damage": 0,
     "damageMult": 0,
@@ -434,7 +434,7 @@
   {
     "name": "Refresh",
     "description": "Shuffle your Discard Pile into your Draw Pile, Then Draw 1 card",
-    "imageName": ".png",
+    "imageName": "Refresh.png",
     "cost": 0,
     "damage": 0,
     "damageMult": 0,
