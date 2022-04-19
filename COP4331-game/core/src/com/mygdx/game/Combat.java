@@ -11,12 +11,12 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Combat implements Screen {
 	final MyGdxGame game;
+	private RunData runData;
 	OrthographicCamera camera;
 
 	private Enemy enemy;
 	private Player player;
 	private CardStack drawPile, discardPile, brokenPile, hand;
-	private RunData runData;
 	// turn starts at 0 but immediately goes to 1 when StartTurn is called for the first time
 	private int turn = 0, empower = 0, pitch = 0;
 	private final int maxHandSize = 12;
@@ -33,11 +33,10 @@ public class Combat implements Screen {
 
 	public Combat(final MyGdxGame game, final RunData data) {
 		this.game = game;
+		runData = data;
+
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
-
-		// initialize runData
-		runData = data;
 
 		// initialize textures
 		combatCursor = new Texture(Gdx.files.internal("combatCursor.png"));

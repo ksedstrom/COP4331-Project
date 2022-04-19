@@ -242,7 +242,7 @@
   {
     "name": "Fan The Hammer",
     "description": "",
-    "imageName": "Fan The Hammer.png",
+    "imageName": "FanTheHammer.png",
     "cost": 0,
     "damage": 1,
     "damageMult": 6,
@@ -542,6 +542,37 @@
     "statusId": 0,
     "statusValue": 2,
     "fragile": false
+  },
+  {
+    "name": "Heal",
+    "description": "Restores 10 Health when chosen\n(is not added to deck)",
+    "imageName": "Heal.png",
+    "cost": 0,
+    "damage": 0,
+    "damageMult": 0,
+    "block": 0,
+    "blockMult": 0,
+    "draw": 0,
+    "empower": 0,
+    "uniqueEffect": 0,
+    "statusId": -1,
+    "statusValue": 0,
+    "fragile": false
+  },
+  {
+    "name": "Remove a Card",
+    "description": "Removes a Card from your deck when chosen\n(is not added to deck)",
+    "imageName": "RemoveACard.png",
+    "cost": 0,
+    "damage": 0,
+    "damageMult": 0,
+    "block": 0,
+    "blockMult": 0,
+    "draw": 0,
+    "empower": 0,
+    "uniqueEffect": 0,
+    "statusId": -1,
+    "statusValue": 0,
+    "fragile": false
   }
-
 ]
