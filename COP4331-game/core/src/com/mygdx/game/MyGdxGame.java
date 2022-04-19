@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MyGdxGame extends Game {
 	public SpriteBatch batch;
@@ -16,6 +19,7 @@ public class MyGdxGame extends Game {
 	public void create() {
 		batch = new SpriteBatch();
 		connectSocket();
+		//configSocketEvents();
 		fontSmall = new BitmapFont(Gdx.files.internal("Arial8px.fnt"));
 		fontMedium = new BitmapFont(Gdx.files.internal("Arial12px.fnt"));
 		fontLarge = new BitmapFont(Gdx.files.internal("Arial18px.fnt"));
@@ -44,4 +48,26 @@ public class MyGdxGame extends Game {
 			System.out.println(e);
 		}
 	}
+//	public void configSocketEvents(){
+//		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
+//			@Override
+//			public void call(Object... args){
+//				System.out.println("Connected to server");
+//			}
+//		}).on("create_success", new Emitter.Listener(){
+//			@Override
+//			public void call(Object... args){
+//				JSONObject data = (JSONObject) args[0];
+//				try{
+//					String id = data.getString("id");
+//					System.out.println(id);
+//				}catch(JSONException e){
+//					System.out.println("Didn't create");
+//				}
+//			}
+//		});
+//	}
+
+
+
 }
