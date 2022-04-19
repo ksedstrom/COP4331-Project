@@ -47,6 +47,7 @@ public class Enemy extends Combatant{
 			for(j=0; j<8; j++){
 				behavior[i][j] = enemyData.get("behavior").get(i).get(j).asInt();
 			}
+			if(behavior[i][6] == 0) behavior[i][7] += 1; // fix for vulnerable decay bug
 		}
 	}
 
