@@ -131,36 +131,32 @@ public class Combat implements Screen {
 
 		// Process User Input
 
-		if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && canAct){
-			endTurn();
-		}
-
-		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && canAct){
-			if(cursorPos > 0){
-				cursorPos--;
-			}
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && canAct){
-			if(cursorPos < hand.getSize()-1){
-				cursorPos++;
-			}
-		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && canAct){
-
+		if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && canAct) endTurn();
+		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && canAct && cursorPos > 0) cursorPos--;
+		if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && canAct && cursorPos < hand.getSize()-1) cursorPos++;
+		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && canAct) {
 			// PLAY A CARD
 			// Check if selected card is ready to be played
 			if(cardReady && playCardDelay == 0){
-				selectedCard.play(this);
-				// only discard the card if it is not fragile
-				if(!selectedCard.getFragile()) {
-					discardPile.insert(selectedCard);
+				selectedCard.play(this); // play the card
+				
+				// check if a combatant is dead, 
+				if (player.getHealth() < 1) game.setScreen(new GameOver(game)); // proceed to game over screen
+				if (enemy.getHealth() < 1){
+					game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
+					dispose();
 				}
+				
+				// move card to a pile
+				if(selectedCard.getFragile()) brokenPile.insert(selectedCard); // break card
+				else discardPile.insert(selectedCard); // discard card
 				selectedCard = null;
-				// send selected cards to discard pile
+				
+				// pitch chosen cards to bottom of the draw pile
 				for(int i = 0; i < hand.getSize(); i++){
 					if(hand.getCard(i).pitching){
 						hand.getCard(i).pitching = false;
-						drawPile.tuck(hand.remove(i));
+						drawPile.insert(hand.remove(i));
 						i--;
 					}
 				}
@@ -168,22 +164,10 @@ public class Combat implements Screen {
 				empower = 0;
 				cardReady = false;
 
-				// If player is dead, proceed to game over screen
-				if (player.getHealth() < 1){
-					game.setScreen(new GameOver(game));
-				}
-
-				// If enemy is dead, proceed to combat rewards
-				if (enemy.getHealth() < 1){
-					game.setScreen(new Rewards(game, runData));
-					dispose();
-				}
-
 				// End the turn if hand is empty
-				if(hand.getSize() == 0){
-					endTurn();
-				}
+				if(hand.getSize() == 0) endTurn();
 			}
+			
 			// PITCH A CARD
 			// check cursor is pointing to a card
 			else if(cursorPos >= 0 && cursorPos < hand.getSize()){
