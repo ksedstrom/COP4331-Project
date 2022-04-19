@@ -22,6 +22,8 @@ public class Enemy extends Combatant{
 		healthTrigger = false;
 		healthBar = new Texture(Gdx.files.internal("HealthBar.png"));
 
+		nextAction = 0; // default value for UI purposes, should never actually get rendered
+
 		// parse enemyData for given id
 		JsonReader reader = new JsonReader();
 		JsonValue enemyData = reader.parse(Gdx.files.internal("EnemyData.json")).get(id);
@@ -55,6 +57,10 @@ public class Enemy extends Combatant{
 	public String getImageName(){
 		return imageName;
 	}
+
+	public int[] getNextAction(){
+		return behavior[nextAction];
+	}
 	
 	public void determineAction(int turn) {
 		nextAction = checkTriggers(turn);
@@ -67,6 +73,7 @@ public class Enemy extends Combatant{
 				behaviorChance = behaviorChance + behavior[i][0];
 				if(randInt < behaviorChance){
 					nextAction = i;
+					break;
 				}
 			}
 		}

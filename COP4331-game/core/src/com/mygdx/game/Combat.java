@@ -21,7 +21,8 @@ public class Combat implements Screen {
 	private Enemy enemy;
 	private Player player;
 	private CardStack drawPile, discardPile, brokenPile, hand;
-	private int turn = 1, empower = 0, pitch = 0;
+	// turn starts at 0 but immediately goes to 1 when StartTurn is called for the first time
+	private int turn = 0, empower = 0, pitch = 0, currentLevel;
 	private final int maxHandSize = 12;
 	private boolean canAct = false; // true if player can take actions
 
@@ -36,6 +37,7 @@ public class Combat implements Screen {
 	Texture healthBarOutline;
 	Texture combatCursor;
 	Texture enemyImage;
+	Texture background;
 
 	public Combat(final MyGdxGame game, final RunData data) {
 
@@ -49,6 +51,13 @@ public class Combat implements Screen {
 		playerHealthBar = new Texture(Gdx.files.internal("playerHP.png"));
 		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
 		combatCursor = new Texture(Gdx.files.internal("combatCursor.png"));
+		if(data.getLevel() < 5){
+			background = new Texture(Gdx.files.internal("DesertBackground.png"));
+		}
+		else{
+			background = new Texture(Gdx.files.internal("ForestBackground.png"));
+		}
+
 
 		// initialize all card stacks
 		drawPile = new CardStack();
@@ -69,6 +78,7 @@ public class Combat implements Screen {
 		//placeholder while enemy image assets are being made
 		enemyImage = new Texture(Gdx.files.internal("tempEnemy.png"));
 
+
 		startTurn();
 	}
 
@@ -85,9 +95,11 @@ public class Combat implements Screen {
 		}
 
 		game.batch.begin();
+
+		// Render background, be sure to resize any new background images to 1280x720
+		game.batch.draw(background, 0, 0);
+
 		// Render current hand and cursor
-		// TODO: End Turn, Discard Pile, and Draw Pile all need to have a display added
-		// TODO: Need to add code to render cursor while selecting end turn, discard, and draw piles
 		for(int i = hand.getSize()-1; i >= 0; i--) {
 			int x = 0;
 			int y = 45;
@@ -124,6 +136,16 @@ public class Combat implements Screen {
 			}
 		}
 
+		// Render discard and draw pile hud elements
+		// TODO: need a simple deck icon to make it so this isn't just floating text
+		String drawPileDisplay = "Draw Pile Size: " + drawPile.getSize();
+		game.fontLarge.draw(game.batch, drawPileDisplay, 0, 250);
+		String discardPileDisplay = "Discard Pile Size: " + discardPile.getSize();
+		game.fontLarge.draw(game.batch, discardPileDisplay, 0, 200);
+		//game.fontLarge.draw(game.batch, String.valueOf(discardPile.getSize()), 0, 300);
+
+		// pressing ENTER key will end the turn, but an End Turn button could maybe be added in the future
+
 		// Render selected card
 		if (selectedCard != null){
 			game.batch.draw(new Texture(Gdx.files.internal(selectedCard.getImageName())), 640, 360, (int)(cardWidth * 1.5), (int)(cardHeight*1.5));
@@ -135,18 +157,28 @@ public class Combat implements Screen {
 			playCardDelay = 15;
 		}
 
-		// Debugging HUD displaying some key variables
-		game.fontLarge.draw(game.batch, String.valueOf(hand.getCard(cursorPos).pitching), 0, 450);
-		game.fontLarge.draw(game.batch, String.valueOf(pitch),0, 400);
-		game.fontLarge.draw(game.batch, String.valueOf(cardReady),0, 350);
-		game.fontLarge.draw(game.batch, String.valueOf(hand.getSize()),0, 300);
-		game.fontLarge.draw(game.batch, String.valueOf(cursorPos), 0, 250);
-		game.fontLarge.draw(game.batch, String.valueOf(drawPile.getSize()), 0, 200);
-
-
-		// TODO :render enemy
-		// scuffed placeholder
+		// currently, enemyImage is loading tempEnemy.png
 		game.batch.draw(enemyImage, 1000, 380, 252, 252);
+
+		// TODO: pretty this up with some icons like slay the spire
+		// Render enemy's next action.
+		String temp = "";
+		if(enemy.getNextAction()[2] == 1){
+			temp = "Damage: " + enemy.getNextAction()[1] + "\n";
+		}
+		if(enemy.getNextAction()[2] > 1){
+			temp = "Damage: " + enemy.getNextAction()[1] + "x" + enemy.getNextAction()[2] + "\n";
+		}
+		if(enemy.getNextAction()[3] > 0){
+			temp = temp + "Block: " + enemy.getNextAction()[3] + "\n";
+		}
+		if(enemy.getNextAction()[6] != -1){
+			// Can probably be made more specific when adding icons
+			temp = temp + "Status will be applied";
+		}
+		game.fontMedium.draw(game.batch, temp, 800, 500);
+
+		// TODO: health bar for player and enemy should also have a segment showing how much block each one has
 
 		// Render player health bar
 		game.batch.draw(healthBarOutline, 0, 0, 1010,40);
@@ -174,7 +206,11 @@ public class Combat implements Screen {
 		game.batch.end();
 
 		// Process User Input
-		// TODO: add wrap around for left and right arrow keys, needs Discard, Draw, and End Turn to be selectable options first
+
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && canAct){
+			endTurn();
+		}
+
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && canAct){
 			if(cursorPos != 0){
 				cursorPos--;
@@ -191,20 +227,19 @@ public class Combat implements Screen {
 				selectedCard.play(this);
 				discardPile.insert(selectedCard);
 				selectedCard = null;
-				for(int i = 0; i < hand.getSize()-1; i++){
+				for(int i = 0; i < hand.getSize(); i++){
 					if(hand.getCard(i).pitching){
-						System.out.println("pitching card");
+						hand.getCard(i).pitching = false;
 						drawPile.tuck(hand.remove(i));
-					}
-				}
-				if(hand.getSize()==1){
-					if(hand.getCard(0).pitching){
-						drawPile.tuck(hand.remove(0));
 					}
 				}
 				pitch = 0;
 				empower = 0;
 				cardReady = false;
+				// End the turn if hand is empty
+				if(hand.getSize() == 0){
+					endTurn();
+				}
 			}
 			// check cursor is pointing to a card
 			else if(cursorPos >= 0 && cursorPos < hand.getSize()){
@@ -285,7 +320,6 @@ public class Combat implements Screen {
 				// put drawn card into hand
 				card.updateDescription(this);
 				hand.insert(card);
-				System.out.println("drawing a card");
 			}
 		}
 	}
@@ -298,6 +332,7 @@ public class Combat implements Screen {
 	
 	private void startTurn() {
 		// upkeep
+		turn++;
 		draw(6 + player.getStatus(3) + player.getStatus(12)); // draw next turn and capacity up
 		player.updateStatus();
 		enemy.updateStatus();
@@ -308,7 +343,7 @@ public class Combat implements Screen {
 	private void endTurn(){
 		canAct = false;
 		while(hand.getSize() != 0){
-			discardPile.insert(hand.getCard(0));
+			discardPile.insert(hand.remove(0));
 		}
 		enemy.act(this);
 		startTurn();
