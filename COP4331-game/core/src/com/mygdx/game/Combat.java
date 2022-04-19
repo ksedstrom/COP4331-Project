@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -8,15 +7,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import java.util.Stack;
-
 public class Combat implements Screen {
 	final MyGdxGame game;
-
 	OrthographicCamera camera;
-
-	final int cardWidth = 128;
-	final int cardHeight = 192;
 
 	private Enemy enemy;
 	private Player player;
@@ -32,24 +25,15 @@ public class Combat implements Screen {
 	private int playCardDelay = 0;
 	private boolean cardReady = false;
 
-	Texture enemyHealthBar;
-	Texture playerHealthBar;
-	Texture healthBarOutline;
-	Texture combatCursor;
-	Texture enemyImage;
-	Texture background;
+	private Texture combatCursor;
+	private Texture background;
 
 	public Combat(final MyGdxGame game, final RunData data) {
-
 		this.game = game;
-
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
 
 		// initialize textures
-		enemyHealthBar = new Texture(Gdx.files.internal("HealthBar.png"));
-		playerHealthBar = new Texture(Gdx.files.internal("playerHP.png"));
-		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
 		combatCursor = new Texture(Gdx.files.internal("combatCursor.png"));
 		if(data.getLevel() < 5){
 			background = new Texture(Gdx.files.internal("DesertBackground.png"));
@@ -58,7 +42,6 @@ public class Combat implements Screen {
 			background = new Texture(Gdx.files.internal("ForestBackground.png"));
 		}
 
-
 		// initialize all card stacks
 		drawPile = new CardStack();
 		discardPile = new CardStack();
@@ -66,18 +49,12 @@ public class Combat implements Screen {
 		hand = new CardStack();
 		// copy the deck to the draw pile and then shuffle
 		CardStack deck = data.getDeck();
-		for(int i=0; i<deck.getSize(); i++) {
-			drawPile.insert(deck.getCard(i));
-		}
+		for(int i=0; i<deck.getSize(); i++) drawPile.insert(deck.getCard(i));
 		drawPile.shuffle();
+		
 		// create enemy and player
 		enemy = generateEnemy(data.getLevel(), data.getSeed());
 		player = new Player(data.getMaxHealth(), data.getHealth());
-
-		//enemyImage = new Texture(Gdx.files.internal(enemy.getImageName()));
-		//placeholder while enemy image assets are being made
-		enemyImage = new Texture(Gdx.files.internal("tempEnemy.png"));
-
 
 		startTurn();
 	}
@@ -89,10 +66,8 @@ public class Combat implements Screen {
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 
-		// downtick playCardDelay
-		if (playCardDelay != 0){
-			playCardDelay--;
-		}
+		// decrement playCardDelay
+		if (playCardDelay != 0) playCardDelay--;
 
 		game.batch.begin();
 
@@ -103,18 +78,9 @@ public class Combat implements Screen {
 		for(int i = hand.getSize()-1; i >= 0; i--) {
 			int x = 0;
 			int y = 45;
-			if(hand.getCard(i).pitching){
-				y = y+20;
-			}
-			if (hand.getSize() < 10) {
-				x = 130*i+(576-64*hand.getSize());
-				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), x, y, cardWidth, cardHeight);
-				game.fontMedium.draw(game.batch, hand.getCard(i).getDescription(), x, y + 75, cardWidth, 1, true);
-				if(cursorPos == i){
-					// height and width are both equal to cardWidth for the cursor
-					game.batch.draw(combatCursor, x, y+185, 128, 128);
-				}
-			}
+			if(hand.getCard(i).pitching) y = y+20; // height offset for pitching cards
+			// calculate card position
+			if (hand.getSize() < 10) x = 130*i+(576-64*hand.getSize());
 			else {
 				switch(hand.getSize()) {
 				case 10:
@@ -127,13 +93,10 @@ public class Combat implements Screen {
 					x = 104*i+5;
 					break;
 				}
-				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), x, y+i*2, cardWidth, cardHeight);
-				game.fontMedium.draw(game.batch, hand.getCard(i).getDescription(), x, y+75+i*2, cardWidth, 1, true);
-				if(cursorPos == i){
-					// height and width are both equal to cardWidth for the cursor
-					game.batch.draw(combatCursor, x, y+185+i*2, 128, 128);
-				}
+				y += i*2;
 			}
+			hand.getCard(i).render(x, y, game, false); // render card
+			if(cursorPos == i) game.batch.draw(combatCursor, x, y+185, 128, 128); // render cursor
 		}
 
 		// Render discard and draw pile hud elements
@@ -147,62 +110,17 @@ public class Combat implements Screen {
 		// pressing ENTER key will end the turn, but an End Turn button could maybe be added in the future
 
 		// Render selected card
-		if (selectedCard != null){
-			game.batch.draw(new Texture(Gdx.files.internal(selectedCard.getImageName())), 640, 360, (int)(cardWidth * 1.5), (int)(cardHeight*1.5));
-			game.fontLarge.draw(game.batch, selectedCard.getDescription(), 640, 480, (int)(cardWidth*1.5), 1, true);
-		}
+		if (selectedCard != null) selectedCard.render(600, 360, game, true);
 		// Check if selected card is able to be played
 		if (selectedCard != null && !cardReady && selectedCard.getCost() == pitch){
 			cardReady = true;
 			playCardDelay = 15;
 		}
 
-		// currently, enemyImage is loading tempEnemy.png
-		game.batch.draw(enemyImage, 1000, 380, 252, 252);
-
-		// TODO: pretty this up with some icons like slay the spire
-		// Render enemy's next action.
-		String temp = "";
-		if(enemy.getNextAction()[2] == 1){
-			temp = "Damage: " + enemy.getNextAction()[1] + "\n";
-		}
-		if(enemy.getNextAction()[2] > 1){
-			temp = "Damage: " + enemy.getNextAction()[1] + "x" + enemy.getNextAction()[2] + "\n";
-		}
-		if(enemy.getNextAction()[3] > 0){
-			temp = temp + "Block: " + enemy.getNextAction()[3] + "\n";
-		}
-		if(enemy.getNextAction()[6] != -1){
-			// Can probably be made more specific when adding icons
-			temp = temp + "Status will be applied";
-		}
-		game.fontMedium.draw(game.batch, temp, 800, 500);
-
-		// TODO: health bar for player and enemy should also have a segment showing how much block each one has
-
-		// Render player health bar
-		game.batch.draw(healthBarOutline, 0, 0, 1010,40);
-		game.batch.draw(playerHealthBar, 5, 5, player.getHealth()*10, 30);
-		String hpDisplay = "HP: " + player.getHealth();
-		game.fontLarge.draw(game.batch, hpDisplay, 10, 25);
-
-		// Render enemy health bar
-		// hpMult is used to scale the size of enemy health bars to fit on the screen.
-		/*int hpMult = 10;
-		if(enemy.getMaxHealth() > 128){
-			hpMult = 9;
-		}
-		if(enemy.getName().equals("The Silent Hunter")){
-			hpMult = 6;
-		}
-		if(enemy.getName().equals("Hypercore Beast")){
-			hpMult = 2;
-		}*/
-		game.batch.draw(healthBarOutline, 1280 - 990, 680, 1010, 40);
-		game.batch.draw(enemyHealthBar, 1275 - 1000, 685, 275 * enemy.getHealth() / enemy.getMaxHealth(), 30);
-		String enemyDisplay = "HP: " + enemy.getHealth();
-		game.fontLarge.draw(game.batch, enemyDisplay, 1280 - enemy.getMaxHealth()*10, 705);
-		game.fontLarge.draw(game.batch, enemy.getName(), 1280 - enemy.getMaxHealth()*10, 670);
+		// Render player and enemy
+		player.render(0, 0, game);
+		enemy.render(270, 680, game);
+		
 		game.batch.end();
 
 		// Process User Input
@@ -325,13 +243,12 @@ public class Combat implements Screen {
 	}
 	
 	private Enemy generateEnemy(int level, float seed) {
-		// pseudo-randomly generate id from level and seed
+		// TODO: pseudo-randomly generate id from level and seed
 		int id = 0; // temporary
 		return new Enemy(id);
 	}
 	
 	private void startTurn() {
-		// upkeep
 		turn++;
 		draw(6 + player.getStatus(3) + player.getStatus(12)); // draw next turn and capacity up
 		player.updateStatus();
@@ -346,6 +263,7 @@ public class Combat implements Screen {
 			discardPile.insert(hand.remove(0));
 		}
 		enemy.act(this);
+		player.resetBlock();
 		startTurn();
 	}
 
@@ -368,12 +286,8 @@ public class Combat implements Screen {
 
 	// used to apply Unique Effects
 	public boolean drawPileEmpty(){
-		if(drawPile.getSize() <= 0){
-			return true;
-		}
-		else{
-			return false;
-		}
+		if(drawPile.getSize() <= 0) return true;
+		else return false;
 	}
 	public void applyOverclockEffect(){
 		for(int i = 0; i < 5; i++){

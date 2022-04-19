@@ -5,18 +5,23 @@ import com.badlogic.gdx.graphics.Texture;
 
 abstract class Combatant {
 	protected int health, maxHealth;
-	private int block;
+	protected int block;
 	protected int[] statusEffects;
 	
-	// GUI assets
-	private Texture healthBarOutline;
+	// GUI stuff
+	protected Texture healthBarOutline;
 	protected Texture healthBar;
+	protected Texture blkIcon;
+	protected String hpDisplay, blkDisplay;
 	
 	public Combatant() {
 		block = 0;
 		statusEffects = new int[14];
 		for(int i=0; i<14; i++) statusEffects[i] = 0;
 		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
+		// TODO: set block icon
+		// blkIcon = new Texture(Gdx.files.internal("BlockIcon.png"));
+		blkDisplay = String.valueOf(block);
 	}
 	
 	public int damage(int damage) {
@@ -32,6 +37,8 @@ abstract class Combatant {
 			// took no damage
 			block = -diff;
 		}
+		hpDisplay = "HP: " + health;
+		blkDisplay = String.valueOf(block);
 		return statusEffects[8]; // spikey
 	}
 	
@@ -46,6 +53,7 @@ abstract class Combatant {
 	
 	public void gainBlock(int blk) {
 		block += blk;
+		blkDisplay = String.valueOf(block);
 	}
 	
 	public void updateStatus() {
@@ -77,18 +85,12 @@ abstract class Combatant {
 	}
 	
 	public void render(int x, int y, final MyGdxGame game) {
-		// display health bar
-		game.batch.draw(healthBarOutline, 0, 0, 1010,40);
-		game.batch.draw(healthBar, 5, 5, health*10, 30);
-		String hpDisplay = "HP: " + health;
-		game.fontLarge.draw(game.batch, hpDisplay, 10, 25);
+		// health bar
+		game.batch.draw(healthBarOutline, x, y, 1010, 40);
+		game.batch.draw(healthBar, x + 5, y + 5, 1000 * health / maxHealth, 30);
+		game.fontLarge.draw(game.batch, hpDisplay, x + 10, y + 25);
 		
-		int hpMult = 10;
-		game.batch.draw(healthBarOutline, 1280 - maxHealth*hpMult-10, 680, maxHealth*hpMult+10, 40);
-		game.batch.draw(healthBar, 1275 - health*hpMult, 685, health*hpMult, 30);
-		game.fontLarge.draw(game.batch, hpDisplay, 1280 - maxHealth*hpMult, 705);
-		//game.fontLarge.draw(game.batch, name, 1280 - maxHealth*hpMult, 670);
+		// TODO: display status effects
 		
-		// block, and status effects
 	};
 }
