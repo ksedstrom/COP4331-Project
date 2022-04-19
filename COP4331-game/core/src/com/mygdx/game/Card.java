@@ -185,15 +185,8 @@ public class Card {
 		returnDescription = returnDescription + description;
 	}
 	
-	public void render(int x, int y, final MyGdxGame game, boolean selected) {
-		if(selected) {
-			game.batch.draw(image, x, y, (int)(cardWidth*1.5), (int)(cardHeight*1.5));
-			game.fontLarge.draw(game.batch, returnDescription, x, y+120, (int)(cardWidth*1.5), 1, true);
-		}
-		else {
-			game.batch.draw(image, x, y, cardWidth, cardHeight);
-			game.fontMedium.draw(game.batch, returnDescription, x, y+75, cardWidth, 1, true);
-		}
-		
+	public void render(int x, int y, final MyGdxGame game, double size) {
+		game.batch.draw(image, x, y, (int)(cardWidth*size), (int)(cardHeight*size));
+		game.fontMedium.draw(game.batch, returnDescription, x, y+75, (int)(cardWidth*size), 1, true);
 	}
 }
