@@ -1,14 +1,22 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+
 abstract class Combatant {
 	protected int health, maxHealth;
 	private int block;
 	protected int[] statusEffects;
 	
+	// GUI assets
+	private Texture healthBarOutline;
+	protected Texture healthBar;
+	
 	public Combatant() {
 		block = 0;
 		statusEffects = new int[14];
 		for(int i=0; i<14; i++) statusEffects[i] = 0;
+		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
 	}
 	
 	public int damage(int damage) {
@@ -68,7 +76,19 @@ abstract class Combatant {
 		return statusEffects[4] + statusEffects[13]; // temp accuracy + accuracy
 	}
 	
-	public void render(int x, int y) {
-		// display health bar, block, and status effects
+	public void render(int x, int y, final MyGdxGame game) {
+		// display health bar
+		game.batch.draw(healthBarOutline, 0, 0, 1010,40);
+		game.batch.draw(healthBar, 5, 5, health*10, 30);
+		String hpDisplay = "HP: " + health;
+		game.fontLarge.draw(game.batch, hpDisplay, 10, 25);
+		
+		int hpMult = 10;
+		game.batch.draw(healthBarOutline, 1280 - maxHealth*hpMult-10, 680, maxHealth*hpMult+10, 40);
+		game.batch.draw(healthBar, 1275 - health*hpMult, 685, health*hpMult, 30);
+		game.fontLarge.draw(game.batch, hpDisplay, 1280 - maxHealth*hpMult, 705);
+		//game.fontLarge.draw(game.batch, name, 1280 - maxHealth*hpMult, 670);
+		
+		// block, and status effects
 	};
 }

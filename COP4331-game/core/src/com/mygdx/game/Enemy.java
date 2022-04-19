@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
@@ -11,11 +12,15 @@ public class Enemy extends Combatant{
 	private int nextAction, prevAction, numActions;
 	private boolean lt5Damage, healthTrigger;
 	private int[][] behavior;
+	
+	// GUI assets
+	private Texture image;
 
 	public Enemy(int id) {
 		super();
 		lt5Damage = false;
 		healthTrigger = false;
+		healthBar = new Texture(Gdx.files.internal("HealthBar.png"));
 
 		// parse enemyData for given id
 		JsonReader reader = new JsonReader();
@@ -37,6 +42,10 @@ public class Enemy extends Combatant{
 				behavior[i][j] = enemyData.get("behavior").get(i).get(j).asInt();
 			}
 		}
+		
+		//enemyImage = new Texture(Gdx.files.internal(enemy.getImageName()));
+		//placeholder while enemy image assets are being made
+		image = new Texture(Gdx.files.internal("tempEnemy.png"));
 	}
 
 	public String getName(){
@@ -123,8 +132,11 @@ public class Enemy extends Combatant{
 	}
 	
 	@Override
-	public void render(int x, int y) {
+	public void render(int x, int y, final MyGdxGame game) {
 		// display image
-		super.render(x, y);
+		super.render(x, y, game);
+		// TODO :render enemy
+		// scuffed placeholder
+		game.batch.draw(image, 1000, 380, 252, 252);
 	}
 }
