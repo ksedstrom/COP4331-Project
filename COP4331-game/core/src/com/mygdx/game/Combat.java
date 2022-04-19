@@ -118,7 +118,7 @@ public class Combat implements Screen {
 		// Render selected card
 		if (selectedCard != null) selectedCard.render(600, 360, game, 1.5);
 		// Check if selected card is able to be played
-		if (selectedCard != null && !cardReady && selectedCard.getCost() >= pitch){
+		if (selectedCard != null && !cardReady && selectedCard.getCost() <= pitch){
 			cardReady = true;
 			playCardDelay = 15;
 		}
