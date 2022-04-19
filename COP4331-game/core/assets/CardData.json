@@ -73,7 +73,7 @@
     "block": 0,
     "blockMult": 0,
     "draw": 0,
-    "empower": 0,
+    "empower": 3,
     "uniqueEffect": 0,
     "statusId": -1,
     "statusValue": 0,

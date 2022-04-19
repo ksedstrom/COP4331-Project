@@ -11,6 +11,7 @@ public class Card {
 	private int id, cost;
 	private int damage, damageMult, block, blockMult; // damage and block
 	private int draw, empower, uniqueEffect; // special
+	private final boolean baseFragile; // determines if card was originally fragile or not
 	private boolean fragile;
 	private int[] status = new int[2]; // effect {id, value}
 	private String returnDescription = "";
@@ -46,6 +47,7 @@ public class Card {
 		// List of unique effects, numbered 1-7:
 		// Overclock, Master Plan, Plasma Cannon, Deconstruct, Refresh, Reduce to Scrap, Critical Hit
 		fragile = cardData.getBoolean("fragile");
+		baseFragile = cardData.getBoolean("fragile");
 		status[0] = cardData.getInt("statusId");
 		status[1] = cardData.getInt("statusValue");
 	}
@@ -56,6 +58,15 @@ public class Card {
 
 	public int getCost() {
 		return cost;
+	}
+
+	public void toggleUnstable(){
+		if(fragile){
+			fragile = baseFragile;
+		}
+		else{
+			fragile = true;
+		}
 	}
 
 	public boolean getFragile(){
@@ -183,6 +194,5 @@ public class Card {
 		if(size >= 2){
 			game.fontHuge.draw(game.batch, returnDescription, x, y+(int)(size*80), (int)(cardWidth*size*0.9), 1, true);
 		}
-
 	}
 }

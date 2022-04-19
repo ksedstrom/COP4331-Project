@@ -198,6 +198,10 @@ public class Combat implements Screen {
 						if(hand.getCard(cursorPos).getId() == 3){
 							pitch++;
 						}
+						// if the pitched card is an unstable cell, make the selected card fragile
+						if(hand.getCard(cursorPos).getId() == 4){
+							selectedCard.toggleUnstable();
+						}
 						empower = empower + hand.getCard(cursorPos).getEmpower(this);
 					}
 				}
@@ -220,6 +224,7 @@ public class Combat implements Screen {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && canAct){
 			// deselect current card
 			if(selectedCard != null){
+				selectedCard.toggleUnstable();
 				hand.insert(selectedCard);
 				selectedCard = null;
 				pitch = 0;
