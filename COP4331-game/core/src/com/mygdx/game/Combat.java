@@ -188,7 +188,7 @@ public class Combat implements Screen {
 
 		// Render enemy health bar
 		// hpMult is used to scale the size of enemy health bars to fit on the screen.
-		int hpMult = 10;
+		/*int hpMult = 10;
 		if(enemy.getMaxHealth() > 128){
 			hpMult = 9;
 		}
@@ -197,12 +197,12 @@ public class Combat implements Screen {
 		}
 		if(enemy.getName().equals("Hypercore Beast")){
 			hpMult = 2;
-		}
-		game.batch.draw(healthBarOutline, 1280 - enemy.getMaxHealth()*hpMult-10, 680, enemy.getMaxHealth()*hpMult+10, 40);
-		game.batch.draw(enemyHealthBar, 1275 - enemy.getHealth()*hpMult, 685, enemy.getHealth()*hpMult, 30);
+		}*/
+		game.batch.draw(healthBarOutline, 1280 - 990, 680, 1010, 40);
+		game.batch.draw(enemyHealthBar, 1275 - 1000, 685, 275 * enemy.getHealth() / enemy.getMaxHealth(), 30);
 		String enemyDisplay = "HP: " + enemy.getHealth();
-		game.fontLarge.draw(game.batch, enemyDisplay, 1280 - enemy.getMaxHealth()*hpMult, 705);
-		game.fontLarge.draw(game.batch, enemy.getName(), 1280 - enemy.getMaxHealth()*hpMult, 670);
+		game.fontLarge.draw(game.batch, enemyDisplay, 1280 - enemy.getMaxHealth()*10, 705);
+		game.fontLarge.draw(game.batch, enemy.getName(), 1280 - enemy.getMaxHealth()*10, 670);
 		game.batch.end();
 
 		// Process User Input
