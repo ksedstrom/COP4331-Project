@@ -133,12 +133,12 @@ public class Combat implements Screen {
 		}
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && canAct){
-			if(cursorPos != 0){
+			if(cursorPos > 0){
 				cursorPos--;
 			}
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && canAct){
-			if(cursorPos != hand.getSize()-1){
+			if(cursorPos < hand.getSize()-1){
 				cursorPos++;
 			}
 		}
@@ -226,11 +226,11 @@ public class Combat implements Screen {
 		}
 
 		// Debug Input
-		if (Gdx.input.isKeyJustPressed(Input.Keys.R)){
-			hand.insert(new Card(7));
+		if (Gdx.input.isKeyJustPressed(Input.Keys.K)){
+			enemy.damage(100);
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.D)){
-			draw(3);
+			draw(1);
 		}
 	}
 

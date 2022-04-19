@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,8 +18,10 @@ public class Rewards implements Screen {
     private Card[] rewards = new Card[3];
     private int xCor = 0;
     private int yCor = 0;
+    private int cursorPos = 0;
 
     private Texture cursor;
+    private Texture background;
 
     public Rewards (final MyGdxGame game, final RunData data){
         this.game = game;
@@ -28,7 +31,13 @@ public class Rewards implements Screen {
         camera.setToOrtho(false, 1280, 720);
 
         // initialize cursor
-        cursor = new Texture(Gdx.files.internal("combatCursor.png"));
+        cursor = new Texture(Gdx.files.internal("upCursor.png"));
+        if(runData.getLevel() < 5){
+            background = new Texture(Gdx.files.internal("DesertBackground.png"));
+        }
+        else{
+            background = new Texture(Gdx.files.internal("ForestBackground.png"));
+        }
 
         // generate reward IDs using the seed from RunData and the current level.
         Random rand = new Random(runData.getSeed());
@@ -42,6 +51,7 @@ public class Rewards implements Screen {
             if(id == 6 || id == 7){id = 35;}
             // generate associated card objects
             rewards[i] = new Card(id);
+            rewards[i].updateDescription(null);
         }
     }
 
@@ -55,16 +65,33 @@ public class Rewards implements Screen {
         // Render Stuff
         game.batch.begin();
 
+        // Render Background
+        game.batch.draw(background, 0, 0);
+
         // Render Rewards
         xCor = 128;
-        yCor = 360;
+        yCor = 168;
         for(int i = 0; i < 3; i++){
             rewards[i].render(xCor, yCor, game, 2);
+            // render cursor
+            if(i == cursorPos){
+                game.batch.draw(cursor, xCor + 64, 48, 128, 128);
+            }
             xCor += 384;
         }
         game.batch.end();
 
         // Process User Input
+        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
+            if(cursorPos > 0){
+                cursorPos--;
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            if (cursorPos < 3) {
+                cursorPos++;
+            }
+        }
     }
 
 

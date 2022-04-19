@@ -129,29 +129,37 @@ public class Card {
 	public void updateDescription(Combat combat){
 		String dmgString = null, blkString = null, powString = null;
 		returnDescription = "";
-		Player player = combat.getPlayer();
-		Enemy enemy = combat.getEnemy();
-		int power = combat.getEmpower();
+		if(combat != null){
+			Player player = combat.getPlayer();
+			Enemy enemy = combat.getEnemy();
+			int power = combat.getEmpower();
 
-		// Calculate dmgString
-		int displayDamage;
-		if(enemy.getStatus(6) > 0) displayDamage = 0; // burrow
-		else {
-			displayDamage = calcValue(damage + power + player.getAccuracy(), player.getStatus(2)); // empower, accuracy, and disoriented
-			if (enemy.getStatus(0) > 0) displayDamage = (int)(displayDamage * 1.5); // vulnerable
+			// Calculate dmgString
+			int displayDamage;
+			if(enemy.getStatus(6) > 0) displayDamage = 0; // burrow
+			else {
+				displayDamage = calcValue(damage + power + player.getAccuracy(), player.getStatus(2)); // empower, accuracy, and disoriented
+				if (enemy.getStatus(0) > 0) displayDamage = (int)(displayDamage * 1.5); // vulnerable
+			}
+			if(displayDamage == damage) dmgString = String.valueOf(damage); // damage is unmodified
+			else dmgString = displayDamage + "*"; // damage is modified
+
+			// calculate blkString
+			int displayBlock = calcValue(block + power, player.getStatus(1)); // empower and corroded
+			if(displayBlock == block) blkString = String.valueOf(block); // block is unmodified
+			else blkString = displayBlock + "*"; // block is modified
+
+			// calculate powString
+			powString = String.valueOf(getEmpower(combat));
+			if(!powString.equals(String.valueOf(empower))) powString += "*";
+
+
 		}
-		if(displayDamage == damage) dmgString = String.valueOf(damage); // damage is unmodified
-		else dmgString = displayDamage + "*"; // damage is modified
-
-		// calculate blkString
-		int displayBlock = calcValue(block + power, player.getStatus(1)); // empower and corroded
-		if(displayBlock == block) blkString = String.valueOf(block); // block is unmodified
-		else blkString = displayBlock + "*"; // block is modified
-
-		// calculate powString
-		powString = String.valueOf(getEmpower(combat));
-		if(!powString.equals(String.valueOf(empower))) powString += "*";
-
+		else{
+			dmgString = String.valueOf(damage);
+			blkString = String.valueOf(block);
+			powString = String.valueOf(empower);
+		}
 		if(fragile == true) returnDescription += "Fragile\n";
 		if(damageMult == 1) returnDescription += "Deal " + dmgString + " Damage.\n";
 		else if(damageMult > 1) returnDescription += "Deal " + dmgString + " Damage " + damageMult + " times.\n";
@@ -159,10 +167,19 @@ public class Card {
 		else if(damageMult > 1) returnDescription += "Gain " + blkString + " Block " + blockMult + " times.\n";
 		if(empower > 0) returnDescription += "Empower " + powString + "\n";
 		returnDescription += description;
+
 	}
 	
 	public void render(int x, int y, final MyGdxGame game, double size) {
 		game.batch.draw(image, x, y, (int)(cardWidth*size), (int)(cardHeight*size));
-		game.fontMedium.draw(game.batch, returnDescription, x, y+75, (int)(cardWidth*size), 1, true);
+		if(size == 1){
+			game.fontMedium.draw(game.batch, returnDescription, x, y+(int)(80*size), (int)(cardWidth*size), 1, true);
+		}
+		if(size > 1 && size < 2){
+			game.fontLarge.draw(game.batch, returnDescription, x, y+(int)(80*size), (int)(cardWidth*size), 1, true);
+		}
+		if(size >= 2){
+			game.fontHuge.draw(game.batch, returnDescription, x, y+(int)(80*size), (int)(cardWidth*size), 1, true);
+		}
 	}
 }
