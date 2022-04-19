@@ -103,26 +103,18 @@ public class Combat implements Screen {
 					game.batch.draw(combatCursor, x, y+185, 128, 128);
 				}
 			}
-			if (hand.getSize() == 10) {
-				x = 125*i+10;
-				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), x, y+i*2, cardWidth, cardHeight);
-				game.fontMedium.draw(game.batch, hand.getCard(i).getDescription(), x, y+75+i*2, cardWidth, 1, true);
-				if(cursorPos == i){
-					// height and width are both equal to cardWidth for the cursor
-					game.batch.draw(combatCursor, x, y+185+i*2, 128, 128);
+			else {
+				switch(hand.getSize()) {
+				case 10:
+					x = 125*i+10;
+					break;
+				case 11:
+					x = 114*i+5;
+					break;
+				case 12:
+					x = 104*i+5;
+					break;
 				}
-			}
-			if(hand.getSize() == 11){
-				x = 114*i+5;
-				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), x, y+i*2, cardWidth, cardHeight);
-				game.fontMedium.draw(game.batch, hand.getCard(i).getDescription(), x, y+75+i*2, cardWidth, 1, true);
-				if(cursorPos == i){
-					// height and width are both equal to cardWidth for the cursor
-					game.batch.draw(combatCursor, x, y+185+i*2, 128, 128);
-				}
-			}
-			if(hand.getSize() == 12){
-				x = 104*i+5;
 				game.batch.draw(new Texture(Gdx.files.internal(hand.getCard(i).getImageName())), x, y+i*2, cardWidth, cardHeight);
 				game.fontMedium.draw(game.batch, hand.getCard(i).getDescription(), x, y+75+i*2, cardWidth, 1, true);
 				if(cursorPos == i){
