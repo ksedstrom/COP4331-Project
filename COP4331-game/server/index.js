@@ -39,10 +39,16 @@ io.on('connection', function(socket){
     },
     socket.on('log_in', (uname, pword) =>{
         if(uname && pword){
-            let sql = 'Select * FROM Users Where username = ? AND password = ?';
-            con.query(sql, [(uname, pword)], function (error, data){
+            let sql = "Select * FROM Users Where username = '" + uname + "' AND password = '" + pword + "'";
+            con.query(sql, function (error, data){
                 if(error) throw error;
                 console.log(data)
+                console.log(data[0].idUsers)
+                if(data.length>0){
+                    socket.emit("login_success", {userID: data[0].idUsers});
+                } else {
+                    socket.emit("login_failed", {message: "Authentication Failed"});
+                }
             })
         }
     }),
