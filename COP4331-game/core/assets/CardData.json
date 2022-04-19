@@ -440,7 +440,7 @@
     "damageMult": 0,
     "block": 0,
     "blockMult": 0,
-    "draw": 0,
+    "draw": 1,
     "empower": 0,
     "uniqueEffect": 5,
     "statusId": -1,
