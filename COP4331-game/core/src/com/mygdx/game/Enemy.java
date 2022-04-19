@@ -47,6 +47,7 @@ public class Enemy extends Combatant{
 			for(j=0; j<8; j++){
 				behavior[i][j] = enemyData.get("behavior").get(i).get(j).asInt();
 			}
+			if(behavior[i][6] == 0) behavior[i][7] += 1; // fix for vulnerable decay bug
 		}
 	}
 
@@ -163,6 +164,17 @@ public class Enemy extends Combatant{
 		game.fontLarge.draw(game.batch, name, x+10, y-10); // name
 		game.batch.draw(image, 1000, 380, 252, 252); // image
 		// TODO: pretty this up with some icons like slay the spire
-		game.fontMedium.draw(game.batch, actionDesc, 800, 500); // next action
+		game.fontLarge.draw(game.batch, actionDesc, 800, 500); // next action
+
+		// Display Statuses
+		int yCor = 600;
+		String statusDisplay = null;
+		for(int i = 0; i < 14; i++){
+			if(statusEffects[i] != 0){
+				statusDisplay = effectNames[i] + ": " + (statusEffects[i]);
+				game.fontSmall.draw(game.batch, statusDisplay, 700, yCor);
+				yCor -= 16;
+			}
+		}
 	}
 }

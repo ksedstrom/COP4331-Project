@@ -11,6 +11,7 @@ public class Card {
 	private int id, cost;
 	private int damage, damageMult, block, blockMult; // damage and block
 	private int draw, empower, uniqueEffect; // special
+	private final boolean baseFragile; // determines if card was originally fragile or not
 	private boolean fragile;
 	private int[] status = new int[2]; // effect {id, value}
 	private String returnDescription = "";
@@ -46,6 +47,7 @@ public class Card {
 		// List of unique effects, numbered 1-7:
 		// Overclock, Master Plan, Plasma Cannon, Deconstruct, Refresh, Reduce to Scrap, Critical Hit
 		fragile = cardData.getBoolean("fragile");
+		baseFragile = cardData.getBoolean("fragile");
 		status[0] = cardData.getInt("statusId");
 		status[1] = cardData.getInt("statusValue");
 	}
@@ -58,13 +60,22 @@ public class Card {
 		return cost;
 	}
 
+	public void setFragile(boolean input){
+		// If the card is fragile by default, this will do nothing
+		if(!baseFragile){
+			fragile = input;
+		}
+	}
+
+	public boolean getFragile(){
+		return fragile;
+	}
+
 	public String getName(){return name;}
 
 	public int getEmpower(Combat combat) {
-		if(id < 5){
-			return empower + combat.getPlayer().getStatus(11);
-		}
-		return empower;
+		if(id < 5) return empower + combat.getPlayer().getStatus(11); // empower + overcharge
+		return 0; // not a cell card
 	}
 
 	public String getImageName(){return imageName;}
@@ -124,76 +135,58 @@ public class Card {
 		return base;
 	}
 
-	public String getDescription(){
-		return returnDescription;
-	}
-
 	public void updateDescription(Combat combat){
 		String dmgString = null, blkString = null, powString = null;
 		returnDescription = "";
+		if(combat != null){
+			Player player = combat.getPlayer();
+			Enemy enemy = combat.getEnemy();
+			int power = combat.getEmpower();
 
-		// Calculate dmgString
-		int displayDamage = calcValue(damage + combat.getEmpower() + combat.getPlayer().getAccuracy(), combat.getPlayer().getStatus(2));
-		if (combat.getEnemy().getStatus(0) > 0){
-			displayDamage = (int)(displayDamage * 1.5);
+			// Calculate dmgString
+			int displayDamage;
+			if(enemy.getStatus(6) > 0) displayDamage = 0; // burrow
+			else {
+				displayDamage = calcValue(damage + power + player.getAccuracy(), player.getStatus(2)); // empower, accuracy, and disoriented
+				if (enemy.getStatus(0) > 0) displayDamage = (int)(displayDamage * 1.5); // vulnerable
+			}
+			if(displayDamage == damage) dmgString = String.valueOf(damage); // damage is unmodified
+			else dmgString = displayDamage + "*"; // damage is modified
+
+			// calculate blkString
+			int displayBlock = calcValue(block + power, player.getStatus(1)); // empower and corroded
+			if(displayBlock == block) blkString = String.valueOf(block); // block is unmodified
+			else blkString = displayBlock + "*"; // block is modified
+
+			// calculate powString
+			powString = String.valueOf(getEmpower(combat));
+			if(!powString.equals(String.valueOf(empower))) powString += "*";
 		}
-		if(combat.getEnemy().getStatus(6) > 0){
-			displayDamage = 0;
-		}
-		if(displayDamage == damage){
+		if (combat == null){
 			dmgString = String.valueOf(damage);
-		}
-		else{
-			dmgString = displayDamage + "*";
-		}
-
-		// calculate blkString
-		int displayBlock = calcValue(block + combat.getEmpower(), combat.getPlayer().getStatus(1));
-		if(displayBlock == block){
 			blkString = String.valueOf(block);
-		}
-		else{
-			blkString = displayBlock + "*";
-		}
-
-		// calculate powString
-		if(empower == getEmpower(combat)){
 			powString = String.valueOf(empower);
 		}
-		else{
-			powString = getEmpower(combat) + "*";
-		}
 
-		if(fragile == true){
-			returnDescription = returnDescription + "Fragile\n";
-		}
-		if(damageMult == 1){
-			returnDescription = returnDescription + "Deal " + dmgString + " Damage.\n";
-		}
-		if(damageMult > 1){
-			returnDescription = returnDescription + "Deal " + dmgString + " Damage " + damageMult + " times.\n";
-		}
-		if(blockMult == 1){
-			returnDescription = returnDescription + "Gain " + blkString + " Block.\n";
-		}
-		if(damageMult > 1){
-			returnDescription = returnDescription + "Gain " + blkString + " Block " + blockMult + " times.\n";
-		}
-		if(empower > 0){
-			returnDescription = returnDescription + "Empower " + powString + "\n";
-		}
-		returnDescription = returnDescription + description;
+		if(fragile == true) returnDescription += "Fragile\n";
+		if(damageMult == 1) returnDescription += "Deal " + dmgString + " Damage.\n";
+		else if(damageMult > 1) returnDescription += "Deal " + dmgString + " Damage " + damageMult + " times.\n";
+		if(blockMult == 1) returnDescription += "Gain " + blkString + " Block.\n";
+		else if(blockMult > 1) returnDescription += "Gain " + blkString + " Block " + blockMult + " times.\n";
+		if(empower > 0) returnDescription += "Empower " + powString + "\n";
+		returnDescription += description;
 	}
 	
-	public void render(int x, int y, final MyGdxGame game, boolean selected) {
-		if(selected) {
-			game.batch.draw(image, x, y, (int)(cardWidth*1.5), (int)(cardHeight*1.5));
-			game.fontLarge.draw(game.batch, returnDescription, x, y+120, (int)(cardWidth*1.5), 1, true);
+	public void render(int x, int y, final MyGdxGame game, double size) {
+		game.batch.draw(image, x, y, (int)(cardWidth*size), (int)(cardHeight*size));
+		if(size == 1){
+			game.fontMedium.draw(game.batch, returnDescription, x+(int)(cardWidth*size*0.05), y+(int)(size*80), (int)(cardWidth*size*0.9), 1, true);
 		}
-		else {
-			game.batch.draw(image, x, y, cardWidth, cardHeight);
-			game.fontMedium.draw(game.batch, returnDescription, x, y+75, cardWidth, 1, true);
+		if(size > 1 && size < 2){
+			game.fontLarge.draw(game.batch, returnDescription, x+(int)(cardWidth*size*0.05), y+(int)(size*80), (int)(cardWidth*size*0.9), 1, true);
 		}
-		
+		if(size >= 2){
+			game.fontHuge.draw(game.batch, returnDescription, x+(int)(cardWidth*size*0.05), y+(int)(size*80), (int)(cardWidth*size*0.9), 1, true);
+		}
 	}
 }

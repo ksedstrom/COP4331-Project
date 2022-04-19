@@ -72,6 +72,7 @@ public class MainMenu implements Screen {
 				// Prompt user to log in
 			}
 			if(cursorPosition == 3){
+				// Create an account
 				game.setScreen(new CreateAccount(game));
 				dispose();
 			}

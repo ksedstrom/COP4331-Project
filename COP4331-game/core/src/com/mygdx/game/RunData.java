@@ -57,7 +57,11 @@ public class RunData {
 	public int getLevel() {
 		return currentLevel;
 	}
-	
+
+	public void incrementLevel(){
+		currentLevel++;
+	}
+
 	public void heal(int x) {
 		health += x;
 		if(health > maxHealth) health = maxHealth;

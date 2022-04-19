@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -9,13 +11,14 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Combat implements Screen {
 	final MyGdxGame game;
+	private RunData runData;
 	OrthographicCamera camera;
 
 	private Enemy enemy;
 	private Player player;
 	private CardStack drawPile, discardPile, brokenPile, hand;
 	// turn starts at 0 but immediately goes to 1 when StartTurn is called for the first time
-	private int turn = 0, empower = 0, pitch = 0, currentLevel;
+	private int turn = 0, empower = 0, pitch = 0;
 	private final int maxHandSize = 12;
 	private boolean canAct = false; // true if player can take actions
 
@@ -30,12 +33,15 @@ public class Combat implements Screen {
 
 	public Combat(final MyGdxGame game, final RunData data) {
 		this.game = game;
+		runData = data;
+		runData.incrementLevel();
+
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
 
 		// initialize textures
 		combatCursor = new Texture(Gdx.files.internal("combatCursor.png"));
-		if(data.getLevel() < 5){
+		if(runData.getLevel() <= 5){
 			background = new Texture(Gdx.files.internal("DesertBackground.png"));
 		}
 		else{
@@ -48,13 +54,13 @@ public class Combat implements Screen {
 		brokenPile = new CardStack();
 		hand = new CardStack();
 		// copy the deck to the draw pile and then shuffle
-		CardStack deck = data.getDeck();
+		CardStack deck = runData.getDeck();
 		for(int i=0; i<deck.getSize(); i++) drawPile.insert(deck.getCard(i));
 		drawPile.shuffle();
 		
 		// create enemy and player
-		enemy = generateEnemy(data.getLevel(), data.getSeed());
-		player = new Player(data.getMaxHealth(), data.getHealth());
+		enemy = generateEnemy(runData.getLevel(), runData.getSeed());
+		player = new Player(runData.getMaxHealth(), runData.getHealth());
 
 		startTurn();
 	}
@@ -95,7 +101,7 @@ public class Combat implements Screen {
 				}
 				y += i*2;
 			}
-			hand.getCard(i).render(x, y, game, false); // render card
+			hand.getCard(i).render(x, y, game, 1); // render card
 			if(cursorPos == i) game.batch.draw(combatCursor, x, y+185, 128, 128); // render cursor
 		}
 
@@ -110,7 +116,7 @@ public class Combat implements Screen {
 		// pressing ENTER key will end the turn, but an End Turn button could maybe be added in the future
 
 		// Render selected card
-		if (selectedCard != null) selectedCard.render(600, 360, game, true);
+		if (selectedCard != null) selectedCard.render(600, 360, game, 1.5);
 		// Check if selected card is able to be played
 		if (selectedCard != null && !cardReady && selectedCard.getCost() == pitch){
 			cardReady = true;
@@ -130,21 +136,27 @@ public class Combat implements Screen {
 		}
 
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && canAct){
-			if(cursorPos != 0){
+			if(cursorPos > 0){
 				cursorPos--;
 			}
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && canAct){
-			if(cursorPos != hand.getSize()-1){
+			if(cursorPos < hand.getSize()-1){
 				cursorPos++;
 			}
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && canAct){
+
+			// PLAY A CARD
 			// Check if selected card is ready to be played
 			if(cardReady && playCardDelay == 0){
 				selectedCard.play(this);
-				discardPile.insert(selectedCard);
+				// only discard the card if it is not fragile
+				if(!selectedCard.getFragile()) {
+					discardPile.insert(selectedCard);
+				}
 				selectedCard = null;
+
 				for(int i = 0; i < hand.getSize(); i++){
 					if(hand.getCard(i).pitching){
 						hand.getCard(i).pitching = false;
@@ -154,11 +166,24 @@ public class Combat implements Screen {
 				pitch = 0;
 				empower = 0;
 				cardReady = false;
+
+				// If player is dead, proceed to game over screen
+				if (player.getHealth() < 1){
+
+				}
+
+				// If enemy is dead, proceed to combat rewards
+				if (enemy.getHealth() < 1){
+					game.setScreen(new Rewards(game, runData));
+					dispose();
+				}
+
 				// End the turn if hand is empty
 				if(hand.getSize() == 0){
 					endTurn();
 				}
 			}
+			// PITCH A CARD
 			// check cursor is pointing to a card
 			else if(cursorPos >= 0 && cursorPos < hand.getSize()){
 				// if a card is currently selected, toggle pitch of current card
@@ -170,6 +195,10 @@ public class Combat implements Screen {
 						// if the pitched card is a heavy cell, add one more to the pitch value
 						if(hand.getCard(cursorPos).getId() == 3){
 							pitch++;
+						}
+						// if the pitched card is an unstable cell, make the selected card fragile
+						if(hand.getCard(cursorPos).getId() == 4){
+							selectedCard.setFragile(true);
 						}
 						empower = empower + hand.getCard(cursorPos).getEmpower(this);
 					}
@@ -187,11 +216,13 @@ public class Combat implements Screen {
 			if(selectedCard != null){
 				selectedCard.updateDescription(this);
 			}
-		}
+		} // end of SPACE inputs
+
 		// ESC key will serve as the "b button"
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && canAct){
 			// deselect current card
 			if(selectedCard != null){
+				selectedCard.setFragile(false);
 				hand.insert(selectedCard);
 				selectedCard = null;
 				pitch = 0;
@@ -207,11 +238,11 @@ public class Combat implements Screen {
 		}
 
 		// Debug Input
-		if (Gdx.input.isKeyJustPressed(Input.Keys.R)){
-			hand.insert(new Card(7));
+		if (Gdx.input.isKeyJustPressed(Input.Keys.K)){
+			enemy.damage(100);
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.D)){
-			draw(3);
+			draw(1);
 		}
 	}
 
@@ -236,15 +267,33 @@ public class Combat implements Screen {
 			}
 			else {
 				// put drawn card into hand
+				card.pitching = false;
 				card.updateDescription(this);
 				hand.insert(card);
 			}
 		}
 	}
 	
-	private Enemy generateEnemy(int level, float seed) {
-		// TODO: pseudo-randomly generate id from level and seed
-		int id = 0; // temporary
+	private Enemy generateEnemy(int level, long seed) {
+		Random rng = new Random(seed);
+		// Adjust randomizer based on levels cleared
+		for (int i = 0; i < level; i++){
+			rng.nextInt();
+		}
+		int id;
+		// assign random id by area
+		if(level > 10) id = rng.nextInt(6) + 16; // id: 16-21
+		else if (level > 5) id = rng.nextInt(7) + 8; // id: 8-14
+		else id = rng.nextInt(7); // id: 0-6
+		// override id if boss stage
+		switch(level) {
+		case 5: id = 7; // sand wyrm
+			break;
+		case 10: id = 15; // the silent hunter
+			break;
+		case 15: id = 22; // hypercore beast
+			break;
+		}
 		return new Enemy(id);
 	}
 	
@@ -336,6 +385,9 @@ public class Combat implements Screen {
 
 	@Override
 	public void dispose() {
-
+		// TODO: dispose of textures associated with enemy and player
+		// Do NOT dispose of any card textures since those are stored in RunData and will be used in future combats
+		combatCursor.dispose();
+		background.dispose();
 	}
 }
