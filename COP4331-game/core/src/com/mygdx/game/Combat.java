@@ -41,14 +41,12 @@ public class Combat implements Screen {
 
 		// initialize textures
 		combatCursor = new Texture(Gdx.files.internal("combatCursor.png"));
-		if(runData.getLevel() < 5){
+		if(runData.getLevel() <= 5){
 			background = new Texture(Gdx.files.internal("DesertBackground.png"));
 		}
 		else{
 			background = new Texture(Gdx.files.internal("ForestBackground.png"));
 		}
-
-
 
 		// initialize all card stacks
 		drawPile = new CardStack();
@@ -200,7 +198,7 @@ public class Combat implements Screen {
 						}
 						// if the pitched card is an unstable cell, make the selected card fragile
 						if(hand.getCard(cursorPos).getId() == 4){
-							selectedCard.toggleUnstable();
+							selectedCard.setFragile(true);
 						}
 						empower = empower + hand.getCard(cursorPos).getEmpower(this);
 					}
@@ -224,7 +222,7 @@ public class Combat implements Screen {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && canAct){
 			// deselect current card
 			if(selectedCard != null){
-				selectedCard.toggleUnstable();
+				selectedCard.setFragile(false);
 				hand.insert(selectedCard);
 				selectedCard = null;
 				pitch = 0;
@@ -269,6 +267,7 @@ public class Combat implements Screen {
 			}
 			else {
 				// put drawn card into hand
+				card.pitching = false;
 				card.updateDescription(this);
 				hand.insert(card);
 			}

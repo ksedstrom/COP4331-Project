@@ -475,8 +475,8 @@
     "draw": 0,
     "empower": 0,
     "uniqueEffect": 0,
-    "statusId": -1,
-    "statusValue": 0,
+    "statusId": 3,
+    "statusValue": 1,
     "fragile": false
   },
   {

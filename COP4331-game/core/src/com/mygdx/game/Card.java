@@ -60,12 +60,10 @@ public class Card {
 		return cost;
 	}
 
-	public void toggleUnstable(){
-		if(fragile){
-			fragile = baseFragile;
-		}
-		else{
-			fragile = true;
+	public void setFragile(boolean input){
+		// If the card is fragile by default, this will do nothing
+		if(!baseFragile){
+			fragile = input;
 		}
 	}
 
@@ -137,10 +135,6 @@ public class Card {
 		return base;
 	}
 
-	public String getDescription(){
-		return returnDescription;
-	}
-
 	public void updateDescription(Combat combat){
 		String dmgString = null, blkString = null, powString = null;
 		returnDescription = "";
@@ -178,7 +172,7 @@ public class Card {
 		if(damageMult == 1) returnDescription += "Deal " + dmgString + " Damage.\n";
 		else if(damageMult > 1) returnDescription += "Deal " + dmgString + " Damage " + damageMult + " times.\n";
 		if(blockMult == 1) returnDescription += "Gain " + blkString + " Block.\n";
-		else if(damageMult > 1) returnDescription += "Gain " + blkString + " Block " + blockMult + " times.\n";
+		else if(blockMult > 1) returnDescription += "Gain " + blkString + " Block " + blockMult + " times.\n";
 		if(empower > 0) returnDescription += "Empower " + powString + "\n";
 		returnDescription += description;
 	}
