@@ -135,6 +135,10 @@ public class CreateAccount implements Screen {
         }
         game.batch.end();
         s.draw();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            game.setScreen(new MainMenu(game));
+        }
     }
 
     @Override
