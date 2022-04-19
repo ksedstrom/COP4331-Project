@@ -170,7 +170,7 @@ public class Combat implements Screen {
 
 				// If player is dead, proceed to game over screen
 				if (player.getHealth() < 1){
-
+					game.setScreen(new GameOver(game));
 				}
 
 				// If enemy is dead, proceed to combat rewards
@@ -318,6 +318,9 @@ public class Combat implements Screen {
 			selectedCard = null;
 		}
 		enemy.act(this);
+		if(player.getHealth() < 0){
+			game.setScreen(new GameOver(game));
+		}
 		player.resetBlock();
 		startTurn();
 	}
