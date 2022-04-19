@@ -19,6 +19,8 @@ public class Rewards implements Screen {
     private int xCor = 0;
     private int yCor = 0;
     private int cursorPos = 0;
+    private boolean[] selectedRewards = new boolean[3];
+    private int numSelected = 0;
 
     private Texture cursor;
     private Texture background;
@@ -41,6 +43,10 @@ public class Rewards implements Screen {
 
         // generate reward IDs using the seed from RunData and the current level.
         Random rand = new Random(runData.getSeed());
+        // Adjust randomizer based on levels cleared
+        for (int i = 0; i < runData.getLevel(); i++){
+            rand.nextInt();
+        }
         for (int i = 0; i < 3; i++){
             // reward IDs will be from 0 to 33, does not avoid repeated values
             int id = rand.nextInt(34);
@@ -69,28 +75,74 @@ public class Rewards implements Screen {
         game.batch.draw(background, 0, 0);
 
         // Render Rewards
-        xCor = 128;
-        yCor = 168;
+        xCor = 64;
         for(int i = 0; i < 3; i++){
+            yCor = 168;
+            if(selectedRewards[i]){
+                yCor += 16;
+            }
             rewards[i].render(xCor, yCor, game, 2);
             // render cursor
             if(i == cursorPos){
                 game.batch.draw(cursor, xCor + 64, 48, 128, 128);
             }
-            xCor += 384;
+            xCor += 320;
         }
+
+        // Render Confirm Button
+        game.fontHuge.setColor(0, 100, 100, 1);
+        game.fontHuge.draw(game.batch, "Confirm and proceed to next level", 960, 360, 300, 1, true);
+        if(cursorPos ==3){
+            game.batch.draw(cursor, 1024, 128, 128, 128);
+        }
+
         game.batch.end();
 
         // Process User Input
         if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
-            if(cursorPos > 0){
+            if (cursorPos > 0){
                 cursorPos--;
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            if (cursorPos < 3) {
+            if (cursorPos < 3){
                 cursorPos++;
             }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+            // Proceed to next screen selected
+            if(cursorPos == 3){
+                // Apply selected rewards
+                for(int i = 0; i < 3; i++){
+                    if(selectedRewards[i]){
+                        if(rewards[i].getId() == 34){
+                            runData.heal(10);
+                        }
+                        else if(rewards[i].getId() == 35){
+                            // remove a card
+                        }
+                        else if(rewards[i].getId() < 34 && rewards[i].getId() >= 0){
+                            runData.addCard(rewards[i]);
+                        }
+                    }
+                }
+                // proceed to next fight
+                game.setScreen(new Combat(game, runData));
+                dispose();
+            }
+            if(cursorPos < 3 && cursorPos >= 0){
+                // Select a new reward
+                if(!selectedRewards[cursorPos] && numSelected < 2){
+                    selectedRewards[cursorPos] = true;
+                    numSelected++;
+                }
+                // Deselect a reward
+                else if(selectedRewards[cursorPos]){
+                    selectedRewards[cursorPos] = false;
+                    numSelected--;
+                }
+            }
+
         }
     }
 

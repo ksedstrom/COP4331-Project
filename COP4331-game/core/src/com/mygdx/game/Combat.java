@@ -265,6 +265,10 @@ public class Combat implements Screen {
 	
 	private Enemy generateEnemy(int level, long seed) {
 		Random rng = new Random(seed);
+		// Adjust randomizer based on levels cleared
+		for (int i = 0; i < runData.getLevel(); i++){
+			rng.nextInt();
+		}
 		int id;
 		// assign random id by area
 		if(level > 10) id = rng.nextInt(6) + 16; // id: 16-21
