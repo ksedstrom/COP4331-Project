@@ -31,9 +31,7 @@ public class Enemy extends Combatant{
 
 		// construct values using json data
 		name = enemyData.getString("name");
-		// TODO: update this once enemy images are done
-		//image = new Texture(Gdx.files.internal(enemyData.getString("imageName")));
-		image = new Texture(Gdx.files.internal("tempEnemy.png")); // placeholder while enemy image assets are being made
+		image = new Texture(Gdx.files.internal(enemyData.getString("imageName")));
 		health = enemyData.getInt("maxHealth") + levelBonus;
 		maxHealth = enemyData.getInt("maxHealth") + levelBonus;
 		numActions = enemyData.getInt("numActions");
