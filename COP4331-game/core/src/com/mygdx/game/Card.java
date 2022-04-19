@@ -152,25 +152,13 @@ public class Card {
 		powString = String.valueOf(getEmpower(combat));
 		if(!powString.equals(String.valueOf(empower))) powString += "*";
 
-		if(fragile == true){
-			returnDescription = returnDescription + "Fragile\n";
-		}
-		if(damageMult == 1){
-			returnDescription = returnDescription + "Deal " + dmgString + " Damage.\n";
-		}
-		else if(damageMult > 1){
-			returnDescription = returnDescription + "Deal " + dmgString + " Damage " + damageMult + " times.\n";
-		}
-		if(blockMult == 1){
-			returnDescription = returnDescription + "Gain " + blkString + " Block.\n";
-		}
-		else if(damageMult > 1){
-			returnDescription = returnDescription + "Gain " + blkString + " Block " + blockMult + " times.\n";
-		}
-		if(empower > 0){
-			returnDescription = returnDescription + "Empower " + powString + "\n";
-		}
-		returnDescription = returnDescription + description;
+		if(fragile == true) returnDescription += "Fragile\n";
+		if(damageMult == 1) returnDescription += "Deal " + dmgString + " Damage.\n";
+		else if(damageMult > 1) returnDescription += "Deal " + dmgString + " Damage " + damageMult + " times.\n";
+		if(blockMult == 1) returnDescription += "Gain " + blkString + " Block.\n";
+		else if(damageMult > 1) returnDescription += "Gain " + blkString + " Block " + blockMult + " times.\n";
+		if(empower > 0) returnDescription += "Empower " + powString + "\n";
+		returnDescription += description;
 	}
 	
 	public void render(int x, int y, final MyGdxGame game, double size) {
