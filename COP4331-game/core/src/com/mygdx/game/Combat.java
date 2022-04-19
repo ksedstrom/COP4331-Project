@@ -22,7 +22,7 @@ public class Combat implements Screen {
 	private Player player;
 	private CardStack drawPile, discardPile, brokenPile, hand;
 	// turn starts at 0 but immediately goes to 1 when StartTurn is called for the first time
-	private int turn = 0, empower = 0, pitch = 0;
+	private int turn = 0, empower = 0, pitch = 0, currentLevel;
 	private final int maxHandSize = 12;
 	private boolean canAct = false; // true if player can take actions
 
@@ -37,6 +37,7 @@ public class Combat implements Screen {
 	Texture healthBarOutline;
 	Texture combatCursor;
 	Texture enemyImage;
+	Texture background;
 
 	public Combat(final MyGdxGame game, final RunData data) {
 
@@ -50,6 +51,13 @@ public class Combat implements Screen {
 		playerHealthBar = new Texture(Gdx.files.internal("playerHP.png"));
 		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
 		combatCursor = new Texture(Gdx.files.internal("combatCursor.png"));
+		if(data.getLevel() < 5){
+			background = new Texture(Gdx.files.internal("DesertBackground.png"));
+		}
+		else{
+			background = new Texture(Gdx.files.internal("ForestBackground.png"));
+		}
+
 
 		// initialize all card stacks
 		drawPile = new CardStack();
@@ -70,6 +78,7 @@ public class Combat implements Screen {
 		//placeholder while enemy image assets are being made
 		enemyImage = new Texture(Gdx.files.internal("tempEnemy.png"));
 
+
 		startTurn();
 	}
 
@@ -86,6 +95,10 @@ public class Combat implements Screen {
 		}
 
 		game.batch.begin();
+
+		// Render background, be sure to resize any new background images to 1280x720
+		game.batch.draw(background, 0, 0);
+
 		// Render current hand and cursor
 		for(int i = hand.getSize()-1; i >= 0; i--) {
 			int x = 0;
