@@ -17,6 +17,10 @@ public class CardStack {
 	public void insert(Card card) {
 		stack.add(card);
 	}
+
+	public void tuck(Card card){
+		stack.add(0, card);
+	}
 	
 	public Card remove(int i) {
 		Card removed = stack.get(i);

@@ -38,6 +38,14 @@ public class Enemy extends Combatant{
 			}
 		}
 	}
+
+	public String getName(){
+		return name;
+	}
+
+	public String getImageName(){
+		return imageName;
+	}
 	
 	public void determineAction(int turn) {
 		nextAction = checkTriggers(turn);

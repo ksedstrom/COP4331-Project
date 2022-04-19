@@ -12,6 +12,8 @@ public class Card {
 	private int draw, empower, uniqueEffect; // special
 	private boolean fragile;
 	private int[] status = new int[2]; // effect {id, value}
+	private String returnDescription = "";
+	public boolean pitching = false;
 
 	public Card(int ID) {
 		// get card data from file by using the id
@@ -40,11 +42,20 @@ public class Card {
 		status[1] = cardData.getInt("statusValue");
 	}
 
+	public int getId(){
+		return id;
+	}
+
 	public int getCost() {
 		return cost;
 	}
 
-	public int getEmpower() {
+	public String getName(){return name;}
+
+	public int getEmpower(Combat combat) {
+		if(id < 5){
+			return empower + combat.getPlayer().getStatus(11);
+		}
 		return empower;
 	}
 
@@ -83,14 +94,14 @@ public class Card {
 			case 7:
 				critMultiplier = 3;
 		}
-		if(damage > 0) {
+		if(damageMult > 0) {
 			int dmg = calcValue((damage + power + player.getAccuracy()) * critMultiplier, player.getStatus(2));
 			for(int i=0; i<damageMult; i++) {
 				player.damage(enemy.damage(dmg)); // damage enemy and take spikey damage
 				if(combat.combatantDied()) return; // check if a combatant died from the damage
 			}
 		}
-		if(block > 0) player.gainBlock(blockMult * calcValue(block + power, player.getStatus(1)));
+		if(blockMult > 0) player.gainBlock(blockMult * calcValue(block + power, player.getStatus(1)));
 		if(draw > 0) combat.draw(draw);
 		if(status[0] >= 0) {
 			if(status[0] >= 3) player.applyStatus(status[0], status[1]);
@@ -104,27 +115,63 @@ public class Card {
 	}
 
 	public String getDescription(){
-		String returnDescription = "";
+		return returnDescription;
+	}
+
+	public void updateDescription(Combat combat){
+		String dmgString = null, blkString = null, powString = null;
+		returnDescription = "";
+
+		// Calculate dmgString
+		int displayDamage = calcValue(damage + combat.getEmpower() + combat.getPlayer().getAccuracy(), combat.getPlayer().getStatus(2));
+		if (combat.getEnemy().getStatus(0) > 0){
+			displayDamage = (int)(displayDamage * 1.5);
+		}
+		if(combat.getEnemy().getStatus(6) > 0){
+			displayDamage = 0;
+		}
+		if(displayDamage == damage){
+			dmgString = String.valueOf(damage);
+		}
+		else{
+			dmgString = displayDamage + "*";
+		}
+
+		// calculate blkString
+		int displayBlock = calcValue(block + combat.getEmpower(), combat.getPlayer().getStatus(1));
+		if(displayBlock == block){
+			blkString = String.valueOf(block);
+		}
+		else{
+			blkString = displayBlock + "*";
+		}
+
+		// calculate powString
+		if(empower == getEmpower(combat)){
+			powString = String.valueOf(empower);
+		}
+		else{
+			powString = getEmpower(combat) + "*";
+		}
+
 		if(fragile == true){
 			returnDescription = returnDescription + "Fragile\n";
 		}
 		if(damageMult == 1){
-			returnDescription = returnDescription + "Deal " + damage + " Damage.\n";
+			returnDescription = returnDescription + "Deal " + dmgString + " Damage.\n";
 		}
 		if(damageMult > 1){
-			returnDescription = returnDescription + "Deal " + damage + " Damage " + damageMult + " times.\n";
+			returnDescription = returnDescription + "Deal " + dmgString + " Damage " + damageMult + " times.\n";
 		}
 		if(blockMult == 1){
-			returnDescription = returnDescription + "Gain " + block + " Block.\n";
+			returnDescription = returnDescription + "Gain " + blkString + " Block.\n";
 		}
 		if(damageMult > 1){
-			returnDescription = returnDescription + "Gain " + block + " Block " + blockMult + " times.\n";
+			returnDescription = returnDescription + "Gain " + blkString + " Block " + blockMult + " times.\n";
 		}
 		if(empower > 0){
-			returnDescription = returnDescription + "Empower " + empower + "\n";
+			returnDescription = returnDescription + "Empower " + powString + "\n";
 		}
 		returnDescription = returnDescription + description;
-
-		return returnDescription;
 	}
 }

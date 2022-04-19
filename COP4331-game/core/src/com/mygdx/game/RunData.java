@@ -21,16 +21,12 @@ public class RunData {
 		seed = rd.nextLong();
 		// Create Starting Deck
 		deck = new CardStack();
-		Card powerCell = new Card(0);
-		Card blaster = new Card(5);
-		Card guard = new Card(6);
-		Card rewire = new Card(7);
-		deck.insert(rewire);
-		deck.insert(powerCell);
-		deck.insert(powerCell);
+		deck.insert(new Card(7));
+		deck.insert(new Card(0));
+		deck.insert(new Card(0));
 		for(int i = 0; i < 4; i++){
-			deck.insert(blaster);
-			deck.insert(guard);
+			deck.insert(new Card(5));
+			deck.insert(new Card(5));
 		}
 	}
 	
