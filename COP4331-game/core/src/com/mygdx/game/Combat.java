@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -16,7 +18,7 @@ public class Combat implements Screen {
 	private Player player;
 	private CardStack drawPile, discardPile, brokenPile, hand;
 	// turn starts at 0 but immediately goes to 1 when StartTurn is called for the first time
-	private int turn = 0, empower = 0, pitch = 0, currentLevel;
+	private int turn = 0, empower = 0, pitch = 0;
 	private final int maxHandSize = 12;
 	private boolean canAct = false; // true if player can take actions
 
@@ -261,9 +263,22 @@ public class Combat implements Screen {
 		}
 	}
 	
-	private Enemy generateEnemy(int level, float seed) {
-		// TODO: pseudo-randomly generate id from level and seed
-		int id = 0; // temporary
+	private Enemy generateEnemy(int level, long seed) {
+		Random rng = new Random(seed);
+		int id;
+		// assign random id by area
+		if(level > 10) id = rng.nextInt(6) + 16; // id: 16-21
+		else if (level > 5) id = rng.nextInt(7) + 8; // id: 8-14
+		else id = rng.nextInt(7); // id: 0-6
+		// override id if boss stage
+		switch(level) {
+		case 5: id = 7; // sand wyrm
+			break;
+		case 10: id = 15; // the silent hunter
+			break;
+		case 15: id = 22; // hypercore beast
+			break;
+		}
 		return new Enemy(id);
 	}
 	
