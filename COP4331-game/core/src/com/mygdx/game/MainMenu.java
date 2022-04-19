@@ -69,6 +69,8 @@ public class MainMenu implements Screen {
 				// Should also tell user if no save is available
 			}
 			if(cursorPosition == 2){
+				game.setScreen(new LogIn(game));
+				dispose();
 				// Prompt user to log in
 			}
 			if(cursorPosition == 3){
