@@ -70,42 +70,13 @@ public class CreateAccount implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-//        game.batch.draw(newGameButton, 100, 550, newGameButton.getWidth(), newGameButton.getHeight());
-//        game.batch.draw(loadGameButton, 100, 400, loadGameButton.getWidth(), loadGameButton.getHeight());
-//        game.batch.draw(logInButton, 100, 250, logInButton.getWidth(), logInButton.getHeight());
-//        game.batch.draw(createAccountButton, 100, 100, createAccountButton.getWidth(), createAccountButton.getHeight());
-//        game.batch.draw(menuCursor, 500, 550-(cursorPosition * 150), menuCursor.getWidth(), menuCursor.getHeight());
         game.batch.end();
         s.draw();
 
-        // process user input
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-//            if(cursorPosition != 0){
-//                cursorPosition--;
-//            }
-//        }
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-//            if(cursorPosition != 3){
-//                cursorPosition++;
-//            }
-//        }
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
-//            if(cursorPosition == 0){
-//                // Start a new game
-//                game.setScreen(new Combat(game, new RunData()));
-//                dispose();
-//            }
-//            if(cursorPosition == 1){
-//                // Load a game from a save, either online or offline
-//                // Should also tell user if no save is available
-//            }
-//            if(cursorPosition == 2){
-//                // Prompt user to log in
-//            }
-//            if(cursorPosition == 3){
-//                // Prompt user to create account
-//            }
-//        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            game.setScreen(new MainMenu(this.game));
+            dispose();
+        }
     }
 
     @Override
