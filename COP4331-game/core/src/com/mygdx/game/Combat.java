@@ -34,6 +34,7 @@ public class Combat implements Screen {
 	public Combat(final MyGdxGame game, final RunData data) {
 		this.game = game;
 		runData = data;
+		runData.incrementLevel();
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
@@ -46,6 +47,8 @@ public class Combat implements Screen {
 		else{
 			background = new Texture(Gdx.files.internal("ForestBackground.png"));
 		}
+
+
 
 		// initialize all card stacks
 		drawPile = new CardStack();
@@ -169,7 +172,7 @@ public class Combat implements Screen {
 
 				// If enemy is dead, proceed to combat rewards
 				if (enemy.getHealth() < 1){
-					game.setScreen(new Rewards(game, new RunData()));
+					game.setScreen(new Rewards(game, runData));
 					dispose();
 				}
 
@@ -265,6 +268,10 @@ public class Combat implements Screen {
 	
 	private Enemy generateEnemy(int level, long seed) {
 		Random rng = new Random(seed);
+		// Adjust randomizer based on levels cleared
+		for (int i = 0; i < level; i++){
+			rng.nextInt();
+		}
 		int id;
 		// assign random id by area
 		if(level > 10) id = rng.nextInt(6) + 16; // id: 16-21
