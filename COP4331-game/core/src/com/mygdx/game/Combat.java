@@ -169,7 +169,7 @@ public class Combat implements Screen {
 
 				// If enemy is dead, proceed to combat rewards
 				if (enemy.getHealth() < 1){
-					game.setScreen(new Rewards(game, new RunData()));
+					game.setScreen(new Rewards(game, runData));
 					dispose();
 				}
 
