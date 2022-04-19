@@ -51,7 +51,21 @@ abstract class Combatant {
 	}
 	
 	public void applyStatus(int id, int value) {
-		statusEffects[id] += value;
+		// Effects that apply multiple statues are set as over 100
+		if(id > 100){
+			if(id == 101){
+				statusEffects[3] += 2;
+				statusEffects[13] += 1;
+			}
+			if(id == 102){
+				statusEffects[0] += value;
+				statusEffects[1] += value;
+				statusEffects[2] += value;
+			}
+		}
+		else{
+			statusEffects[id] += value;
+		}
 	}
 	
 	public void gainBlock(int blk) {

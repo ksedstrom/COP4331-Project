@@ -118,7 +118,7 @@ public class Combat implements Screen {
 		// Render selected card
 		if (selectedCard != null) selectedCard.render(600, 360, game, 1.5);
 		// Check if selected card is able to be played
-		if (selectedCard != null && !cardReady && selectedCard.getCost() == pitch){
+		if (selectedCard != null && !cardReady && selectedCard.getCost() >= pitch){
 			cardReady = true;
 			playCardDelay = 15;
 		}
@@ -156,11 +156,12 @@ public class Combat implements Screen {
 					discardPile.insert(selectedCard);
 				}
 				selectedCard = null;
-
+				// send selected cards to discard pile
 				for(int i = 0; i < hand.getSize(); i++){
 					if(hand.getCard(i).pitching){
 						hand.getCard(i).pitching = false;
 						drawPile.tuck(hand.remove(i));
+						i--;
 					}
 				}
 				pitch = 0;
@@ -310,6 +311,10 @@ public class Combat implements Screen {
 		canAct = false;
 		while(hand.getSize() != 0){
 			discardPile.insert(hand.remove(0));
+		}
+		if(selectedCard != null){
+			discardPile.insert(selectedCard);
+			selectedCard = null;
 		}
 		enemy.act(this);
 		player.resetBlock();
