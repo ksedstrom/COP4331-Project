@@ -152,7 +152,7 @@ public class Card {
 		powString = String.valueOf(getEmpower(combat));
 		if(!powString.equals(String.valueOf(empower))) powString += "*";
 
-		if(fragile == true) returnDescription += "Fragile\n";
+		if(fragile) returnDescription += "Fragile\n";
 		if(damageMult == 1) returnDescription += "Deal " + dmgString + " Damage.\n";
 		else if(damageMult > 1) returnDescription += "Deal " + dmgString + " Damage " + damageMult + " times.\n";
 		if(blockMult == 1) returnDescription += "Gain " + blkString + " Block.\n";
