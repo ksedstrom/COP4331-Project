@@ -171,13 +171,13 @@ public class Card {
 	public void render(int x, int y, final MyGdxGame game, double size) {
 		game.batch.draw(image, x, y, (int)(cardWidth*size), (int)(cardHeight*size));
 		if(size == 1){
-			game.fontMedium.draw(game.batch, returnDescription, x, y+(int)(size*80), (int)(cardWidth*size), 1, true);
+			game.fontMedium.draw(game.batch, returnDescription, x, y+(int)(size*80), (int)(cardWidth*size*0.9), 1, true);
 		}
 		if(size > 1 && size < 2){
-			game.fontLarge.draw(game.batch, returnDescription, x, y+(int)(size*80), (int)(cardWidth*size), 1, true);
+			game.fontLarge.draw(game.batch, returnDescription, x, y+(int)(size*80), (int)(cardWidth*size*0.9), 1, true);
 		}
 		if(size >= 2){
-			game.fontHuge.draw(game.batch, returnDescription, x, y+(int)(size*80), (int)(cardWidth*size), 1, true);
+			game.fontHuge.draw(game.batch, returnDescription, x, y+(int)(size*80), (int)(cardWidth*size*0.9), 1, true);
 		}
 
 	}
