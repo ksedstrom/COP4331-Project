@@ -295,7 +295,8 @@ public class Combat implements Screen {
 		case 15: id = 22; // hypercore beast
 			break;
 		}
-		return new Enemy(id);
+		int levelBonus = level * 2 + rng.nextInt(5);
+		return new Enemy(id, levelBonus);
 	}
 	
 	private void startTurn() {

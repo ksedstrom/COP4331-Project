@@ -17,7 +17,7 @@ public class Enemy extends Combatant{
 	private Texture image;
 	private String actionDesc;
 
-	public Enemy(int id) {
+	public Enemy(int id, int levelBonus) {
 		super();
 		lt5Damage = false;
 		healthTrigger = false;
@@ -34,8 +34,8 @@ public class Enemy extends Combatant{
 		// TODO: update this once enemy images are done
 		//image = new Texture(Gdx.files.internal(enemyData.getString("imageName")));
 		image = new Texture(Gdx.files.internal("tempEnemy.png")); // placeholder while enemy image assets are being made
-		health = enemyData.getInt("maxHealth");
-		maxHealth = enemyData.getInt("maxHealth");
+		health = enemyData.getInt("maxHealth") + levelBonus;
+		maxHealth = enemyData.getInt("maxHealth") + levelBonus;
 		numActions = enemyData.getInt("numActions");
 		hpDisplay = "HP: " + health;
 
