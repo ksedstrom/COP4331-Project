@@ -7,6 +7,9 @@ abstract class Combatant {
 	protected int health, maxHealth;
 	protected int block;
 	protected int[] statusEffects;
+	final protected String[] effectNames = {"Vulnerable", "Corroded", "Disoriented", "DrawNextTurn", "TempAccuracy",
+			"BlockNextTurn", "Burrow", "Enrage", "Spikey", "Ritual", "QuickReflexes", "Overcharge", "CapacityUp", "Accuracy"};
+
 	
 	// GUI stuff
 	protected Texture healthBarOutline;
@@ -89,8 +92,6 @@ abstract class Combatant {
 		game.batch.draw(healthBarOutline, x, y, 1010, 40);
 		game.batch.draw(healthBar, x + 5, y + 5, 1000 * health / maxHealth, 30);
 		game.fontLarge.draw(game.batch, hpDisplay, x + 10, y + 25);
-		
-		// TODO: display status effects
 		
 	};
 }

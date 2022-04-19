@@ -24,5 +24,14 @@ public class Player extends Combatant{
 			//game.batch.draw(blkIcon, x-, y+, , ); // block icon
 			game.fontLarge.draw(game.batch, blkDisplay, x+1030, y+25); // block value
 		}
+		int yCor = 600;
+		String statusDisplay = null;
+		for(int i = 0; i < 14; i++){
+			if(statusEffects[i] != 0){
+				statusDisplay = effectNames[i] + ": " + (statusEffects[i]);
+				game.fontSmall.draw(game.batch, statusDisplay, 16, yCor);
+				yCor -= 16;
+			}
+		}
 	}
 }
