@@ -61,10 +61,8 @@ public class Card {
 	public String getName(){return name;}
 
 	public int getEmpower(Combat combat) {
-		if(id < 5){
-			return empower + combat.getPlayer().getStatus(11);
-		}
-		return empower;
+		if(id < 5) return empower + combat.getPlayer().getStatus(11); // empower + overcharge
+		return 0; // not a cell card
 	}
 
 	public String getImageName(){return imageName;}
@@ -131,38 +129,28 @@ public class Card {
 	public void updateDescription(Combat combat){
 		String dmgString = null, blkString = null, powString = null;
 		returnDescription = "";
+		Player player = combat.getPlayer();
+		Enemy enemy = combat.getEnemy();
+		int power = combat.getEmpower();
 
 		// Calculate dmgString
-		int displayDamage = calcValue(damage + combat.getEmpower() + combat.getPlayer().getAccuracy(), combat.getPlayer().getStatus(2));
-		if (combat.getEnemy().getStatus(0) > 0){
-			displayDamage = (int)(displayDamage * 1.5);
+		int displayDamage;
+		if(enemy.getStatus(6) > 0) displayDamage = 0; // burrow
+		else {
+			displayDamage = calcValue(damage + power + player.getAccuracy(), player.getStatus(2)); // empower, accuracy, and disoriented
+			if (enemy.getStatus(0) > 0) displayDamage = (int)(displayDamage * 1.5); // vulnerable
 		}
-		if(combat.getEnemy().getStatus(6) > 0){
-			displayDamage = 0;
-		}
-		if(displayDamage == damage){
-			dmgString = String.valueOf(damage);
-		}
-		else{
-			dmgString = displayDamage + "*";
-		}
+		if(displayDamage == damage) dmgString = String.valueOf(damage); // damage is unmodified
+		else dmgString = displayDamage + "*"; // damage is modified
 
 		// calculate blkString
-		int displayBlock = calcValue(block + combat.getEmpower(), combat.getPlayer().getStatus(1));
-		if(displayBlock == block){
-			blkString = String.valueOf(block);
-		}
-		else{
-			blkString = displayBlock + "*";
-		}
+		int displayBlock = calcValue(block + power, player.getStatus(1)); // empower and corroded
+		if(displayBlock == block) blkString = String.valueOf(block); // block is unmodified
+		else blkString = displayBlock + "*"; // block is modified
 
 		// calculate powString
-		if(empower == getEmpower(combat)){
-			powString = String.valueOf(empower);
-		}
-		else{
-			powString = getEmpower(combat) + "*";
-		}
+		powString = String.valueOf(getEmpower(combat));
+		if(!powString.equals(String.valueOf(empower))) powString += "*";
 
 		if(fragile == true){
 			returnDescription = returnDescription + "Fragile\n";
@@ -170,13 +158,13 @@ public class Card {
 		if(damageMult == 1){
 			returnDescription = returnDescription + "Deal " + dmgString + " Damage.\n";
 		}
-		if(damageMult > 1){
+		else if(damageMult > 1){
 			returnDescription = returnDescription + "Deal " + dmgString + " Damage " + damageMult + " times.\n";
 		}
 		if(blockMult == 1){
 			returnDescription = returnDescription + "Gain " + blkString + " Block.\n";
 		}
-		if(damageMult > 1){
+		else if(damageMult > 1){
 			returnDescription = returnDescription + "Gain " + blkString + " Block " + blockMult + " times.\n";
 		}
 		if(empower > 0){
