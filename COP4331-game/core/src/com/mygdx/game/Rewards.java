@@ -42,11 +42,8 @@ public class Rewards implements Screen {
         }
 
         // generate reward IDs using the seed from RunData and the current level.
-        Random rand = new Random(runData.getSeed());
+        Random rand = new Random(runData.getSeed() * runData.getLevel());
         // Adjust randomizer based on levels cleared
-        for (int i = 0; i < runData.getLevel(); i++){
-            rand.nextInt();
-        }
         for (int i = 0; i < 3; i++){
             // reward IDs will be from 0 to 33, does not avoid repeated values
             int id = rand.nextInt(34);
