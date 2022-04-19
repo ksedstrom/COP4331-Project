@@ -43,7 +43,6 @@ io.on('connection', function(socket){
             con.query(sql, function (error, data){
                 if(error) throw error;
                 console.log(data)
-                console.log(data[0].idUsers)
                 if(data.length>0){
                     socket.emit("login_success", {userID: data[0].idUsers});
                 } else {
