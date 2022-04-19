@@ -26,7 +26,7 @@ public class RunData {
 		deck.insert(new Card(0));
 		for(int i = 0; i < 4; i++){
 			deck.insert(new Card(5));
-			deck.insert(new Card(5));
+			deck.insert(new Card(6));
 		}
 	}
 	

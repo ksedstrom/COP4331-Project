@@ -88,6 +88,7 @@ public class Combat implements Screen {
 		// Render current hand and cursor
 		// TODO: End Turn, Discard Pile, and Draw Pile all need to have a display added
 		// TODO: Need to add code to render cursor while selecting end turn, discard, and draw piles
+
 		for(int i = hand.getSize()-1; i >= 0; i--) {
 			int x = 0;
 			int y = 45;
@@ -124,6 +125,12 @@ public class Combat implements Screen {
 			}
 		}
 
+		// Render discard and draw pile hud elements
+		// TODO: need a simple deck icon to make it so this isn't just floating text
+		String drawPileDisplay = "Draw Pile Size: " + drawPile.getSize();
+		game.fontLarge.draw(game.batch, drawPileDisplay, 0, 250);
+		game.fontLarge.draw(game.batch, String.valueOf(discardPile.getSize()), 0, 300);
+
 		// Render selected card
 		if (selectedCard != null){
 			game.batch.draw(new Texture(Gdx.files.internal(selectedCard.getImageName())), 640, 360, (int)(cardWidth * 1.5), (int)(cardHeight*1.5));
@@ -134,15 +141,6 @@ public class Combat implements Screen {
 			cardReady = true;
 			playCardDelay = 15;
 		}
-
-		// Debugging HUD displaying some key variables
-		game.fontLarge.draw(game.batch, String.valueOf(hand.getCard(cursorPos).pitching), 0, 450);
-		game.fontLarge.draw(game.batch, String.valueOf(pitch),0, 400);
-		game.fontLarge.draw(game.batch, String.valueOf(cardReady),0, 350);
-		game.fontLarge.draw(game.batch, String.valueOf(hand.getSize()),0, 300);
-		game.fontLarge.draw(game.batch, String.valueOf(cursorPos), 0, 250);
-		game.fontLarge.draw(game.batch, String.valueOf(drawPile.getSize()), 0, 200);
-
 
 		// TODO :render enemy
 		// scuffed placeholder
@@ -191,15 +189,10 @@ public class Combat implements Screen {
 				selectedCard.play(this);
 				discardPile.insert(selectedCard);
 				selectedCard = null;
-				for(int i = 0; i < hand.getSize()-1; i++){
+				for(int i = 0; i < hand.getSize(); i++){
 					if(hand.getCard(i).pitching){
-						System.out.println("pitching card");
+						hand.getCard(i).pitching = false;
 						drawPile.tuck(hand.remove(i));
-					}
-				}
-				if(hand.getSize()==1){
-					if(hand.getCard(0).pitching){
-						drawPile.tuck(hand.remove(0));
 					}
 				}
 				pitch = 0;

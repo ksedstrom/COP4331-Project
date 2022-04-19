@@ -67,6 +67,7 @@ public class Card {
 		Enemy enemy = combat.getEnemy();
 		int power = combat.getEmpower();
 		int critMultiplier = 1;
+		boolean reduceToScrapFlag = false;
 		// handle unique effects
 		switch(uniqueEffect) {
 			case 0:
@@ -87,10 +88,7 @@ public class Card {
 			case 5:
 				combat.applyRefreshEffect();
 			case 6:
-				if(enemy.getHealth() <= 0)
-				{
-					player.heal(5);
-				}
+				reduceToScrapFlag = true;
 			case 7:
 				critMultiplier = 3;
 		}
@@ -98,7 +96,11 @@ public class Card {
 			int dmg = calcValue((damage + power + player.getAccuracy()) * critMultiplier, player.getStatus(2));
 			for(int i=0; i<damageMult; i++) {
 				player.damage(enemy.damage(dmg)); // damage enemy and take spikey damage
-				if(combat.combatantDied()) return; // check if a combatant died from the damage
+				if(combat.combatantDied()){
+					if(reduceToScrapFlag){player.heal(5);}
+					return;
+				}
+				// check if a combatant died from the damage
 			}
 		}
 		if(blockMult > 0) player.gainBlock(blockMult * calcValue(block + power, player.getStatus(1)));
