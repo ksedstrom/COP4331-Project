@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
@@ -13,6 +14,9 @@ public class Card {
 	private boolean fragile;
 	private int[] status = new int[2]; // effect {id, value}
 	private String returnDescription = "";
+	private Texture image;
+	private final int cardWidth = 128;
+	private final int cardHeight = 192;
 	public boolean pitching = false;
 
 	public Card(int ID) {
@@ -27,6 +31,10 @@ public class Card {
 		name = cardData.getString("name");
 		description = cardData.getString("description");
 		imageName = cardData.getString("imageName");
+		
+		image = new Texture(Gdx.files.internal(imageName));
+		
+		
 		cost = cardData.getInt("cost");
 		damage = cardData.getInt("damage");
 		damageMult = cardData.getInt("damageMult");
@@ -175,5 +183,17 @@ public class Card {
 			returnDescription = returnDescription + "Empower " + powString + "\n";
 		}
 		returnDescription = returnDescription + description;
+	}
+	
+	public void render(int x, int y, final MyGdxGame game, boolean selected) {
+		if(selected) {
+			game.batch.draw(image, x, y, (int)(cardWidth*1.5), (int)(cardHeight*1.5));
+			game.fontLarge.draw(game.batch, returnDescription, x, y+120, (int)(cardWidth*1.5), 1, true);
+		}
+		else {
+			game.batch.draw(image, x, y, cardWidth, cardHeight);
+			game.fontMedium.draw(game.batch, returnDescription, x, y+75, cardWidth, 1, true);
+		}
+		
 	}
 }

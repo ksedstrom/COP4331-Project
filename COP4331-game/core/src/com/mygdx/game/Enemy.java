@@ -8,13 +8,14 @@ import com.badlogic.gdx.utils.JsonValue;
 import java.util.Random;
 
 public class Enemy extends Combatant{
-	private String name, imageName;
+	private String name;
 	private int nextAction, prevAction, numActions;
 	private boolean lt5Damage, healthTrigger;
 	private int[][] behavior;
 	
-	// GUI assets
+	// GUI stuff
 	private Texture image;
+	private String actionDesc;
 
 	public Enemy(int id) {
 		super();
@@ -30,13 +31,16 @@ public class Enemy extends Combatant{
 
 		// construct values using json data
 		name = enemyData.getString("name");
-		imageName = enemyData.getString("imageName");
+		// TODO: update this once enemy images are done
+		//image = new Texture(Gdx.files.internal(enemyData.getString("imageName")));
+		image = new Texture(Gdx.files.internal("tempEnemy.png")); // placeholder while enemy image assets are being made
 		health = enemyData.getInt("maxHealth");
 		maxHealth = enemyData.getInt("maxHealth");
 		numActions = enemyData.getInt("numActions");
+		hpDisplay = "HP: " + health;
 
 		// construct behavior array of form [actionID][actionData]
-		// action data contains 8 values in order: %, damage, damageMultiplier, Block, triggerType, triggerValue, statusType, statusValue
+		// action reference: 0:%, 1:dmg, 2:dmgMult, 3:blk, 4:trigType, 5:trigVal, 6:statType, 7:statVal
 		behavior = new int[numActions][8];
 		int j;
 		for(int i=0; i<numActions; i++){
@@ -44,18 +48,10 @@ public class Enemy extends Combatant{
 				behavior[i][j] = enemyData.get("behavior").get(i).get(j).asInt();
 			}
 		}
-		
-		//enemyImage = new Texture(Gdx.files.internal(enemy.getImageName()));
-		//placeholder while enemy image assets are being made
-		image = new Texture(Gdx.files.internal("tempEnemy.png"));
 	}
 
 	public String getName(){
 		return name;
-	}
-
-	public String getImageName(){
-		return imageName;
 	}
 
 	public int[] getNextAction(){
@@ -77,6 +73,21 @@ public class Enemy extends Combatant{
 				}
 			}
 		}
+		// text for action display
+		actionDesc = "";
+		if(behavior[nextAction][2] == 1){
+			actionDesc = "Damage: " + behavior[nextAction][1] + "\n";
+		}
+		if(behavior[nextAction][2] > 1){
+			actionDesc = "Damage: " + behavior[nextAction][1] + "x" + behavior[nextAction][2] + "\n";
+		}
+		if(behavior[nextAction][3] > 0){
+			actionDesc = actionDesc + "Block: " + behavior[nextAction][3] + "\n";
+		}
+		if(behavior[nextAction][6] != -1){
+			// Can probably be made more specific when adding icons
+			actionDesc = actionDesc + "Status will be applied";
+		}
 	}
 	
 	private int checkTriggers(int turn) {
@@ -95,7 +106,10 @@ public class Enemy extends Combatant{
 				if(turn == 1) trigger = i;
 				break;
 			case 2:
-				if(!healthTrigger && health < maxHealth/2) trigger = i;
+				if(!healthTrigger && health < maxHealth/2) {
+					trigger = i;
+					healthTrigger = true;
+				}
 				break;
 			case 3:
 				if(prevAction == behavior[i][5]) trigger = i;
@@ -126,7 +140,7 @@ public class Enemy extends Combatant{
 				if(combat.combatantDied()) return; // check if the player died from the damage
 			}
 		}
-		if(behavior[nextAction][3] > 0) player.gainBlock(calcValue(behavior[nextAction][3], statusEffects[1]));
+		if(behavior[nextAction][3] > 0) gainBlock(calcValue(behavior[nextAction][3], statusEffects[1]));
 		if(behavior[nextAction][6] >= 0) {
 			if(behavior[nextAction][6] <= 3) player.applyStatus(behavior[nextAction][5], behavior[nextAction][7]);
 			else applyStatus(behavior[nextAction][5], behavior[nextAction][7]);
@@ -140,10 +154,15 @@ public class Enemy extends Combatant{
 	
 	@Override
 	public void render(int x, int y, final MyGdxGame game) {
-		// display image
-		super.render(x, y, game);
-		// TODO :render enemy
-		// scuffed placeholder
-		game.batch.draw(image, 1000, 380, 252, 252);
+		super.render(x, y, game); // health bar
+		if(block > 0) {
+			// TODO: render icon for block
+			//game.batch.draw(blkIcon, x-, y+, , ); // block icon
+			game.fontLarge.draw(game.batch, blkDisplay, x-20, y+25); // block value
+		}
+		game.fontLarge.draw(game.batch, name, x+10, y-10); // name
+		game.batch.draw(image, 1000, 380, 252, 252); // image
+		// TODO: pretty this up with some icons like slay the spire
+		game.fontMedium.draw(game.batch, actionDesc, 800, 500); // next action
 	}
 }
