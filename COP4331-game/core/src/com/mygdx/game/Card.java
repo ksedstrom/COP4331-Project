@@ -58,6 +58,10 @@ public class Card {
 		return cost;
 	}
 
+	public boolean getFragile(){
+		return fragile;
+	}
+
 	public String getName(){return name;}
 
 	public int getEmpower(Combat combat) {

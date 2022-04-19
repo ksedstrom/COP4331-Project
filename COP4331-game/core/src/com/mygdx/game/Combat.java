@@ -153,8 +153,12 @@ public class Combat implements Screen {
 			// Check if selected card is ready to be played
 			if(cardReady && playCardDelay == 0){
 				selectedCard.play(this);
-				discardPile.insert(selectedCard);
+				// only discard the card if it is not fragile
+				if(!selectedCard.getFragile()) {
+					discardPile.insert(selectedCard);
+				}
 				selectedCard = null;
+
 				for(int i = 0; i < hand.getSize(); i++){
 					if(hand.getCard(i).pitching){
 						hand.getCard(i).pitching = false;
