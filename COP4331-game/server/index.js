@@ -33,9 +33,19 @@ io.on('connection', function(socket){
         ]
         con.query(sql, [values], function(err, result){
             if (err) throw err;
-            console.log(result);
+            socket.emit("create_success", {id: socket.id});
+            console.log(result);          
         })
     },
+    socket.on('log_in', (uname, pword) =>{
+        if(uname && pword){
+            let sql = 'Select * FROM Users Where username = ? AND password = ?';
+            con.query(sql, [(uname, pword)], function (error, data){
+                if(error) throw error;
+                console.log(data)
+            })
+        }
+    }),
     socket.on('disconnect',function(){
         console.log("Player Disconnected");
     })
