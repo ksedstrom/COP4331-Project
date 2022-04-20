@@ -200,8 +200,14 @@ public class Enemy extends Combatant{
 			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][3]), 960, 515, 40, 1, false);
 		}
 		if(behavior[nextAction][6] != -1){
-			game.batch.draw(effectTextures[behavior[nextAction][6]], 960, 450);
-			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][7]), 960, 475, 40, 1, false);
+			if(behavior[nextAction][6] == 102){
+				game.batch.draw(specialEffectTexture, 960, 450);
+			}
+			else{
+				game.batch.draw(effectTextures[behavior[nextAction][6]], 960, 450);
+				game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][7]), 960, 475, 40, 1, false);
+			}
+
 		}
 	}
 }
