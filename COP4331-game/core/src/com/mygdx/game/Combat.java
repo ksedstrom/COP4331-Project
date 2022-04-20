@@ -126,8 +126,8 @@ public class Combat implements Screen {
 		}
 
 		// Render player and enemy
-		player.render(0, 0, game);
-		enemy.render(270, 680, game);
+		player.render(0, 0, game, this);
+		enemy.render(270, 680, game, this);
 		
 		game.batch.end();
 
