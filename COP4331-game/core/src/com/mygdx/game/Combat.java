@@ -326,7 +326,7 @@ public class Combat implements Screen {
 	}
 	
 	private void updateHand() {
-		for(int i = 0; i < hand.getSize()-1; i++) hand.getCard(i).updateDescription(this);
+		for(int i = 0; i < hand.getSize(); i++) hand.getCard(i).updateDescription(this);
 	}
 
 	// used to apply Unique Effects
