@@ -26,11 +26,13 @@ public class Player extends Combatant{
 		for(int i = 0; i < 7; i++){
 			if(statusEffects[i] != 0){
 				game.batch.draw(effectTextures[i], i*40, 400);
+				game.fontHuge.draw(game.batch, String.valueOf(statusEffects[i]), i*40, 425, 40, 1, false);
 			}
 		}
 		for(int i = 7; i < 14; i++){
 			if(statusEffects[i] != 0){
 				game.batch.draw(effectTextures[i], (i-7)*40, 360);
+				game.fontHuge.draw(game.batch, String.valueOf(statusEffects[i]), (i-7)*40, 385, 40, 1, false);
 			}
 		}
 	}

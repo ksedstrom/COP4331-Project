@@ -168,9 +168,23 @@ public class Enemy extends Combatant{
 			game.batch.draw(blkIcon, x-40, y); // block icon
 			game.fontHuge.draw(game.batch, blkDisplay, x-40, y+25, 40, 1, false); // block value
 		}
+
+		// Render Status Effect Icons
+		for(int i = 0; i < 7; i++){
+			if(statusEffects[i] != 0){
+				game.batch.draw(effectTextures[i], 1000+i*40, 340);
+				game.fontHuge.draw(game.batch, String.valueOf(statusEffects[i]), 1000+i*40, 365, 40, 1, false);
+			}
+		}
+		for(int i = 7; i < 14; i++){
+			if(statusEffects[i] != 0){
+				game.batch.draw(effectTextures[i], 1000+(i-7)*40, 300);
+				game.fontHuge.draw(game.batch, String.valueOf(statusEffects[i]), 1000+(i-7)*40, 325, 40, 1, false);
+			}
+		}
+
 		game.fontLarge.draw(game.batch, name, x+10, y-10); // name
 		game.batch.draw(image, 1000, 380, 252, 252); // image
-		// TODO: pretty this up with some icons like slay the spire
 		if(behavior[nextAction][2] == 1){
 			game.batch.draw(dmgIcon, 960, 530);
 			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][1]), 960, 555, 40, 1, false);
@@ -188,17 +202,6 @@ public class Enemy extends Combatant{
 		if(behavior[nextAction][6] != -1){
 			game.batch.draw(effectTextures[behavior[nextAction][6]], 960, 450);
 			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][7]), 960, 475, 40, 1, false);
-		}
-
-		// Display Statuses
-		int yCor = 600;
-		String statusDisplay = null;
-		for(int i = 0; i < 14; i++){
-			if(statusEffects[i] != 0){
-				statusDisplay = effectNames[i] + ": " + (statusEffects[i]);
-				game.fontSmall.draw(game.batch, statusDisplay, 700, yCor);
-				yCor -= 16;
-			}
 		}
 	}
 }
