@@ -259,6 +259,7 @@ public class Combat implements Screen {
 			else {
 				// put drawn card into hand
 				card.pitching = false;
+				card.setFragile(false);
 				card.updateDescription(this);
 				hand.insert(card);
 			}
