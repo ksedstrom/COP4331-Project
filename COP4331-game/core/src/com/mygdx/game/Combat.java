@@ -143,6 +143,7 @@ public class Combat implements Screen {
 				// check if a combatant is dead, 
 				if (player.getHealth() < 1) game.setScreen(new GameOver(game)); // proceed to game over screen
 				if (enemy.getHealth() < 1){
+					runData.setHealth(player.getHealth());
 					game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
 					dispose();
 				}
@@ -303,7 +304,9 @@ public class Combat implements Screen {
 		}
 		enemy.act(this);
 		if(player.getHealth() < 0){
+			runData.setHealth(player.getHealth());
 			game.setScreen(new GameOver(game));
+			dispose();
 		}
 		player.resetBlock();
 		startTurn();
