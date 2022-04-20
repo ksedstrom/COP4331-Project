@@ -64,10 +64,14 @@ public class LogIn implements Screen {
         usernameText = new TextField("", skin);
         usernameText.setPosition(500, 480);
         usernameText.setSize(300,60);
+        usernameText.setMaxLength(20);
 
         passwordText = new TextField("", skin);
         passwordText.setPosition(500, 400);
         passwordText.setSize(300,60);
+        passwordText.setPasswordMode(true);
+        passwordText.setPasswordCharacter('*');
+        passwordText.setMaxLength(20);
         s.addActor(backToMenu);
         s.addActor(btnLogIn);
         s.addActor(usernameText);
@@ -138,14 +142,16 @@ public class LogIn implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
+        font.draw(game.batch, "Username: ", 400, 515);
+        font.draw(game.batch, "Password: ", 400, 435);
         switch(loggedin){
             case 0:
                 break;
             case 1:
-                font.draw(game.batch, "Successfully Logged In", 500, 80);
+                font.draw(game.batch, "Successfully Logged In", 550, 80);
                 break;
             case 2:
-                font.draw(game.batch, "Failed to Log In", 500, 80);
+                font.draw(game.batch, "Failed to Log In", 550, 80);
                 break;
             default:
 

@@ -32,9 +32,16 @@ io.on('connection', function(socket){
             pword
         ]
         con.query(sql, [values], function(err, result){
-            if (err) throw err;
+            if (err){
+                if(err.code === 'ER_DUP_ENTRY'){
+                    socket.emit("duplicate_user", {message: "Duplicate User"})
+                }
+                else
+                    throw err;  
+            }else{
             socket.emit("create_success", {id: socket.id});
-            console.log(result);          
+            console.log(result);
+            }          
         })
     },
     socket.on('log_in', (uname, pword) =>{

@@ -32,9 +32,11 @@ public class CreateAccount implements Screen {
     private TextButton backToMenu;
     private TextField usernameText;
     private TextField passwordText;
+    private TextField confpwordText;
     private BitmapFont font;
+    private boolean passmismatch;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-    private boolean registered = false;
+    private int registered = 0; //0 for no create attempt //1 for successful creation //2 for duplicate username
     public CreateAccount(final MyGdxGame game) {
         this.game = game;
         camera = new OrthographicCamera();
@@ -52,12 +54,7 @@ public class CreateAccount implements Screen {
         backToMenu = new TextButton("Return to Main Menu", skin);
         backToMenu.setPosition(50, 650);
         backToMenu.setSize(200, 50);
-        btnCreate.addListener(new ClickListener(){
-            @Override
-            public void touchUp(InputEvent e, float x, float y, int point, int button){
-                btnLoginClicked();
-            }
-        });
+        setListener();
 
         backToMenu.addListener(new ClickListener(){
             @Override
@@ -75,10 +72,22 @@ public class CreateAccount implements Screen {
         usernameText = new TextField("", skin);
         usernameText.setPosition(500, 480);
         usernameText.setSize(300,60);
+        usernameText.setMaxLength(20);
 
         passwordText = new TextField("", skin);
         passwordText.setPosition(500, 400);
         passwordText.setSize(300,60);
+        passwordText.setPasswordMode(true);
+        passwordText.setPasswordCharacter('*');
+        passwordText.setMaxLength(20);
+
+        confpwordText = new TextField("", skin);
+        confpwordText.setPosition(500, 320);
+        confpwordText.setSize(300, 60);
+        confpwordText.setPasswordMode(true);
+        confpwordText.setPasswordCharacter('*');
+        confpwordText.setMaxLength(20);
+        s.addActor(confpwordText);
         s.addActor(backToMenu);
         s.addActor(btnCreate);
         s.addActor(usernameText);
@@ -86,21 +95,36 @@ public class CreateAccount implements Screen {
 
     }
 
-
+    public void setListener(){
+        btnCreate.addListener(new ClickListener(){
+            @Override
+            public void touchUp(InputEvent e, float x, float y, int point, int button){
+                btnLoginClicked();
+            }
+        });
+    }
     // TextField usernameTextField = new TextField("",));
    // s.addActor(usernameTextField)
     //game.socket.on("create_success")
     public void registeredUser(){
-        registered = true;
+        registered = 1;
     }
-
+    public void dupUser(){
+        registered = 2;
+    }
     public void backToMenuClicked(){
         game.setScreen(new MainMenu(game));
     }
     public void btnLoginClicked(){
-        game.socket.emit("create_account", usernameText.getText(), passwordText.getText());
-        System.out.println(usernameText.getText());
-        System.out.println(passwordText.getText());
+        if(passwordText.getText().equals(confpwordText.getText())) {
+            passmismatch = false;
+            game.socket.emit("create_account", usernameText.getText(), passwordText.getText());
+        }
+        else{
+            passmismatch = true;
+            setListener();
+
+        }
     }
     public void configSocketEvents(){
         game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
@@ -120,6 +144,12 @@ public class CreateAccount implements Screen {
                     System.out.println("Didn't create");
                 }
             }
+        }).on("duplicate_user", new Emitter.Listener(){
+            @Override
+            public void call(Object... args){
+                System.out.println("Username already taken");
+                dupUser();
+            }
         });
     }
     @Override
@@ -130,8 +160,17 @@ public class CreateAccount implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        if(registered){
-            font.draw(game.batch, "Successfully Registered a User", 500, 40);
+        font.draw(game.batch, "Username: ", 400, 515);
+        font.draw(game.batch, "Password: ", 400, 435);
+        font.draw(game.batch, "Confirm Password: ", 340, 355);
+        if(passmismatch){
+            font.draw(game.batch, "Passwords Do Not Match", 550, 80);
+        }
+        if(registered == 1){
+            font.draw(game.batch, "Successfully Registered a User", 550, 80);
+        }
+        if (registered == 2) {
+            font.draw(game.batch, "Username is already Taken", 550, 80);
         }
         game.batch.end();
         s.draw();
