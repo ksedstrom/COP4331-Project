@@ -42,7 +42,16 @@ public class CardStack {
 		return stack.get(i);
 	}
 	
-	public void render(int x, int y) {
-		
+	public void render(int x, int y, final MyGdxGame game, int offSet) {
+
+		int gridWidth = 9;
+		int widthOffset = 15;
+		int heightOffset = 15;
+		for(int i = 0; i < getSize(); i++) {
+			x = (i % gridWidth) * 136 + widthOffset;
+			y = ((i / gridWidth) * 200 + heightOffset) - offSet;
+			getCard(i).render(x, y, game, 1);
+
+		}
 	}
 }
