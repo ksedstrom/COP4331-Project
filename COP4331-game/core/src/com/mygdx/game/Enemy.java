@@ -131,7 +131,7 @@ public class Enemy extends Combatant{
 	public void actStage1(Combat combat) {
 		 // block next turn
 		if(statusEffects[5] > 0) {
-			gainBlock(statusEffects[5]);
+			gainBlock(statusEffects[5], combat);
 			statusEffects[5] = 0;
 		}
 		// action reference: 0:%, 1:dmg, 2:dmgMult, 3:blk, 4:trigType, 5:trigVal, 6:statType, 7:statVal
@@ -144,7 +144,7 @@ public class Enemy extends Combatant{
 				if(combat.combatantDied()) return; // check if the player died from the damage
 			}
 		}
-		if(behavior[nextAction][3] > 0) gainBlock(behavior[nextAction][3]); // block
+		if(behavior[nextAction][3] > 0) gainBlock(behavior[nextAction][3], combat); // block
 	}
 	
 	public void actStage2(Combat combat) {

@@ -80,7 +80,8 @@ abstract class Combatant {
 		statusEffects[id] = 0;
 	}
 	
-	public void gainBlock(int blk) {
+	public void gainBlock(int blk, Combat combat) {
+		combat.getEnemy().applyStatus(13, combat.getEnemy().getStatus(7));
 		block += blk;
 		blkDisplay = String.valueOf(block);
 	}
