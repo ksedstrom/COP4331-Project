@@ -67,17 +67,17 @@ abstract class Combatant {
 		}
 	}
 	
+	public void removeStatus(int id) {
+		statusEffects[id] = 0;
+	}
+	
 	public void gainBlock(int blk) {
 		block += blk;
 		blkDisplay = String.valueOf(block);
 	}
 	
-	public void updateStatus() {
-		int i;
-		block += statusEffects[5]; // block next turn
-		statusEffects[13] += statusEffects[9]; // ritual
-		for(i=0; i<3; i++) if(statusEffects[i] > 0) statusEffects[i] -= 1; // decaying
-		for(i=3; i<7; i++) statusEffects[i] = 0; // temporary
+	public void decayStatus() {
+		for(int i=0; i<3; i++) if(statusEffects[i] > 0) statusEffects[i]--;
 	}
 	
 	public int getHealth() {

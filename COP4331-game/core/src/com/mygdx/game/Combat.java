@@ -288,9 +288,8 @@ public class Combat implements Screen {
 	private void startTurn() {
 		turn++;
 		draw(6 + player.getStatus(3) + player.getStatus(12)); // draw next turn and capacity up
-		player.updateStatus();
-		enemy.updateStatus();
-		enemy.determineAction(turn);
+		player.removeStatus(3); // remove draw next turn
+		enemy.determineAction(turn); // also handles ritual
 		canAct = true;
 	}
 
@@ -303,11 +302,17 @@ public class Combat implements Screen {
 			discardPile.insert(selectedCard);
 			selectedCard = null;
 		}
-		enemy.act(this);
+		enemy.removeStatus(6); // remove burrow
+		player.removeStatus(4); // remove temp accuracy
+		enemy.actStage1(this); // action stage 1
 		if(player.getHealth() < 0){
 			game.setScreen(new GameOver(game));
 			dispose();
 		}
+		// update decaying status effects
+		player.decayStatus();
+		enemy.decayStatus();
+		enemy.actStage2(this); // action stage 2
 		player.resetBlock();
 		startTurn();
 	}

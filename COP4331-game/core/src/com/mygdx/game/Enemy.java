@@ -45,7 +45,6 @@ public class Enemy extends Combatant{
 			for(j=0; j<8; j++){
 				behavior[i][j] = enemyData.get("behavior").get(i).get(j).asInt();
 			}
-			if(behavior[i][6] == 0) behavior[i][7] += 1; // fix for vulnerable decay bug
 		}
 	}
 
@@ -58,6 +57,7 @@ public class Enemy extends Combatant{
 	}
 	
 	public void determineAction(int turn) {
+		statusEffects[13] += statusEffects[9]; // ritual
 		nextAction = checkTriggers(turn);
 		if(nextAction == -1) {
 			// no triggers; roll for action
@@ -65,7 +65,7 @@ public class Enemy extends Combatant{
 			int randInt = random.nextInt(100);
 			int behaviorChance = 0;
 			for(int i=0; i<numActions; i++){
-				behaviorChance = behaviorChance + behavior[i][0];
+				behaviorChance += behavior[i][0];
 				if(randInt < behaviorChance){
 					nextAction = i;
 					break;
@@ -128,7 +128,12 @@ public class Enemy extends Combatant{
 		return trigger;
 	}
 	
-	public void act(Combat combat) {
+	public void actStage1(Combat combat) {
+		 // block next turn
+		if(statusEffects[5] > 0) {
+			gainBlock(statusEffects[5]);
+			statusEffects[5] = 0;
+		}
 		// action reference: 0:%, 1:dmg, 2:dmgMult, 3:blk, 4:trigType, 5:trigVal, 6:statType, 7:statVal
 		prevAction = nextAction;
 		Player player = combat.getPlayer();
@@ -139,9 +144,13 @@ public class Enemy extends Combatant{
 				if(combat.combatantDied()) return; // check if the player died from the damage
 			}
 		}
-		if(behavior[nextAction][3] > 0) gainBlock(calcValue(behavior[nextAction][3], statusEffects[1]));
+		if(behavior[nextAction][3] > 0) gainBlock(behavior[nextAction][3]); // block
+	}
+	
+	public void actStage2(Combat combat) {
+		// action reference: 0:%, 1:dmg, 2:dmgMult, 3:blk, 4:trigType, 5:trigVal, 6:statType, 7:statVal
 		if(behavior[nextAction][6] >= 0) {
-			if(behavior[nextAction][6] <= 3) player.applyStatus(behavior[nextAction][6], behavior[nextAction][7]);
+			if(behavior[nextAction][6] <= 3) combat.getPlayer().applyStatus(behavior[nextAction][6], behavior[nextAction][7]);
 			else applyStatus(behavior[nextAction][6], behavior[nextAction][7]);
 		}
 	}
