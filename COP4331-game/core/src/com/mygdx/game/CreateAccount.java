@@ -75,10 +75,14 @@ public class CreateAccount implements Screen {
         usernameText = new TextField("", skin);
         usernameText.setPosition(500, 480);
         usernameText.setSize(300,60);
+        usernameText.setMaxLength(20);
 
         passwordText = new TextField("", skin);
         passwordText.setPosition(500, 400);
         passwordText.setSize(300,60);
+        passwordText.setPasswordMode(true);
+        passwordText.setPasswordCharacter('*');
+        passwordText.setMaxLength(20);
         s.addActor(backToMenu);
         s.addActor(btnCreate);
         s.addActor(usernameText);
