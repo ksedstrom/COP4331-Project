@@ -117,7 +117,9 @@ public class Card {
 				}
 		}
 		// Quick Reflexes Handler
-		player.gainBlock(player.getStatus(10), combat);
+		if(player.getStatus(10) > 0){
+			player.gainBlock(player.getStatus(10), combat);
+		}
 
 		// Deal Damage
 		if(damageMult > 0) {
