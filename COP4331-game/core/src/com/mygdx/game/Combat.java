@@ -60,7 +60,7 @@ public class Combat implements Screen {
 		
 		// create enemy and player
 		enemy = generateEnemy(runData.getLevel(), runData.getSeed());
-		player = new Player(runData.getMaxHealth(), runData.getHealth());
+		player = new Player(runData.getHealth(), runData.getMaxHealth());
 
 		startTurn();
 	}
@@ -141,9 +141,14 @@ public class Combat implements Screen {
 				selectedCard.play(this); // play the card
 				
 				// check if a combatant is dead, 
-				if (player.getHealth() < 1) game.setScreen(new GameOver(game)); // proceed to game over screen
+				if (player.getHealth() < 1){
+					game.setScreen(new GameOver(game)); // proceed to game over screen
+					dispose();
+				}
 				if (enemy.getHealth() < 1){
 					runData.setHealth(player.getHealth());
+					System.out.println(player.getHealth());
+					System.out.println(runData.getHealth());
 					game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
 					dispose();
 				}
@@ -304,7 +309,6 @@ public class Combat implements Screen {
 		}
 		enemy.act(this);
 		if(player.getHealth() < 0){
-			runData.setHealth(player.getHealth());
 			game.setScreen(new GameOver(game));
 			dispose();
 		}
