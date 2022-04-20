@@ -21,8 +21,8 @@ public class Player extends Combatant{
 		super.render(x, y, game); // health bar and status
 		if(block > 0) {
 			// TODO: render icon for block
-			//game.batch.draw(blkIcon, x-, y+, , ); // block icon
-			game.fontLarge.draw(game.batch, blkDisplay, x+1030, y+25); // block value
+			game.batch.draw(blkIcon, x+1000, y); // block icon
+			game.fontHuge.draw(game.batch, blkDisplay, x+1000, y+25, 40, 1, false); // block value
 		}
 		int yCor = 600;
 		String statusDisplay = null;

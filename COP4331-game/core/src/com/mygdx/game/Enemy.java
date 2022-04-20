@@ -155,9 +155,8 @@ public class Enemy extends Combatant{
 	public void render(int x, int y, final MyGdxGame game) {
 		super.render(x, y, game); // health bar
 		if(block > 0) {
-			// TODO: render icon for block
-			//game.batch.draw(blkIcon, x-, y+, , ); // block icon
-			game.fontLarge.draw(game.batch, blkDisplay, x-20, y+25); // block value
+			game.batch.draw(blkIcon, x-40, y); // block icon
+			game.fontHuge.draw(game.batch, blkDisplay, x-40, y+25, 40, 1, false); // block value
 		}
 		game.fontLarge.draw(game.batch, name, x+10, y-10); // name
 		game.batch.draw(image, 1000, 380, 252, 252); // image

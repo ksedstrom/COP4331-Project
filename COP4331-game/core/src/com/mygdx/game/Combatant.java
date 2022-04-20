@@ -22,8 +22,7 @@ abstract class Combatant {
 		statusEffects = new int[14];
 		for(int i=0; i<14; i++) statusEffects[i] = 0;
 		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
-		// TODO: set block icon
-		// blkIcon = new Texture(Gdx.files.internal("BlockIcon.png"));
+		blkIcon = new Texture(Gdx.files.internal("BlockIcon.png"));
 		blkDisplay = String.valueOf(block);
 	}
 	
