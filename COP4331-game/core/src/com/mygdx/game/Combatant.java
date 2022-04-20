@@ -10,6 +10,7 @@ abstract class Combatant {
 	final protected String[] effectNames = {"Vulnerable", "Corroded", "Disoriented", "DrawNextTurn", "TempAccuracy",
 			"BlockNextTurn", "Burrow", "Enrage", "Spikey", "Ritual", "QuickReflexesEffect", "OverchargeEffect", "CapacityUpEffect", "Accuracy"};
 	protected Texture[] effectTextures = new Texture[14];
+	protected Texture specialEffectTexture;
 
 	
 	// GUI stuff
@@ -31,6 +32,7 @@ abstract class Combatant {
 		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
 		blkIcon = new Texture(Gdx.files.internal("BlockIcon.png"));
 		dmgIcon = new Texture(Gdx.files.internal("DamageIcon.png"));
+		specialEffectTexture = new Texture(Gdx.files.internal("specialEffect.png"));
 
 		blkDisplay = String.valueOf(block);
 	}
@@ -80,7 +82,8 @@ abstract class Combatant {
 		statusEffects[id] = 0;
 	}
 	
-	public void gainBlock(int blk) {
+	public void gainBlock(int blk, Combat combat) {
+		combat.getEnemy().applyStatus(13, combat.getEnemy().getStatus(7));
 		block += blk;
 		blkDisplay = String.valueOf(block);
 	}
@@ -109,7 +112,7 @@ abstract class Combatant {
 		return statusEffects[4] + statusEffects[13]; // temp accuracy + accuracy
 	}
 	
-	public void render(int x, int y, final MyGdxGame game) {
+	public void render(int x, int y, final MyGdxGame game, Combat combat) {
 		// health bar
 		game.batch.draw(healthBarOutline, x, y, 1010, 40);
 		game.batch.draw(healthBar, x + 5, y + 5, 1000 * health / maxHealth, 30);

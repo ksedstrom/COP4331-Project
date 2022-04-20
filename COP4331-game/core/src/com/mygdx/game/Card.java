@@ -116,6 +116,12 @@ public class Card {
 					critMultiplier = 3;
 				}
 		}
+		// Quick Reflexes Handler
+		if(player.getStatus(10) > 0){
+			player.gainBlock(player.getStatus(10), combat);
+		}
+
+		// Deal Damage
 		if(damageMult > 0) {
 			int dmg = calcValue((damage + power + player.getAccuracy()) * critMultiplier, player.getStatus(2));
 			for(int i=0; i<damageMult; i++) {
@@ -127,7 +133,7 @@ public class Card {
 				// check if a combatant died from the damage
 			}
 		}
-		if(blockMult > 0) player.gainBlock(blockMult * calcValue(block + power, player.getStatus(1)));
+		if(blockMult > 0) player.gainBlock(blockMult * calcValue(block + power, player.getStatus(1)), combat);
 		if(draw > 0) combat.draw(draw);
 		if(status[0] >= 0) {
 			if(status[0] >= 3) player.applyStatus(status[0], status[1]);
