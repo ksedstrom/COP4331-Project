@@ -17,8 +17,8 @@ public class Player extends Combatant{
 	}
 	
 	@Override
-	public void render(int x, int y, final MyGdxGame game) {
-		super.render(x, y, game); // health bar and status
+	public void render(int x, int y, final MyGdxGame game, Combat combat) {
+		super.render(x, y, game, combat); // health bar and status
 		if(block > 0) {
 			game.batch.draw(blkIcon, x+1000, y); // block icon
 			game.fontHuge.draw(game.batch, blkDisplay, x+1000, y+25, 40, 1, false); // block value

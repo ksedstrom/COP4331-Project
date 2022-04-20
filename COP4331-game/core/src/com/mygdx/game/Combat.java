@@ -61,7 +61,7 @@ public class Combat implements Screen {
 		
 		// create enemy and player
 		enemy = generateEnemy(runData.getLevel(), runData.getSeed());
-		// enemy = new Enemy(17, 0); // Choose a specific enemy for debugging
+		//enemy = new Enemy(22, 0); // Choose a specific enemy for debugging
 		player = new Player(runData.getHealth(), runData.getMaxHealth());
 
 		startTurn();
@@ -126,8 +126,8 @@ public class Combat implements Screen {
 		}
 
 		// Render player and enemy
-		player.render(0, 0, game);
-		enemy.render(270, 680, game);
+		player.render(0, 0, game, this);
+		enemy.render(270, 680, game, this);
 		
 		game.batch.end();
 
@@ -151,6 +151,7 @@ public class Combat implements Screen {
 					runData.setHealth(player.getHealth());
 					System.out.println(player.getHealth());
 					System.out.println(runData.getHealth());
+					saveGame();
 					game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
 					dispose();
 				}
@@ -235,7 +236,17 @@ public class Combat implements Screen {
 			draw(1);
 		}
 	}
-
+	public void saveGame(){
+		int x;
+		if(runData.getCombatClear()){
+			x = 1;
+		}
+		else{
+			x = 0;
+		}
+		game.socket.emit("save_game", game.userID, runData.getSeed(), runData.getHealth(), runData.getMaxHealth(),
+				runData.getLevel(), runData.getDeckList(), x);
+	}
 	public void draw(int x) {
 		Card card;
 		for(int i=0; i<x; i++) {

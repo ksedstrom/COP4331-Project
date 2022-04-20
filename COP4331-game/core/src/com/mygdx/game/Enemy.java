@@ -161,9 +161,9 @@ public class Enemy extends Combatant{
 	}
 	
 	@Override
-	public void render(int x, int y, final MyGdxGame game) {
+	public void render(int x, int y, final MyGdxGame game, Combat combat) {
 		String temp = null;
-		super.render(x, y, game); // health bar
+		super.render(x, y, game, combat); // health bar
 		if(block > 0) {
 			game.batch.draw(blkIcon, x-40, y); // block icon
 			game.fontHuge.draw(game.batch, blkDisplay, x-40, y+25, 40, 1, false); // block value
@@ -185,13 +185,18 @@ public class Enemy extends Combatant{
 
 		game.fontLarge.draw(game.batch, name, x+10, y-10); // name
 		game.batch.draw(image, 1000, 380, 252, 252); // image
+
+		// Render next action
+		// Calculate expected damage output
+		int displayDamage = calcValue(behavior[nextAction][1] + getAccuracy(), getStatus(2));
+		if(combat.getPlayer().getStatus(0)>0) displayDamage = (int)(displayDamage * 1.5);
 		if(behavior[nextAction][2] == 1){
 			game.batch.draw(dmgIcon, 960, 530);
-			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][1]), 960, 555, 40, 1, false);
+			game.fontHuge.draw(game.batch, String.valueOf(displayDamage), 960, 555, 40, 1, false);
 		}
 		if(behavior[nextAction][2] > 1){
 			game.batch.draw(dmgIcon, 960, 530);
-			temp = behavior[nextAction][1] + "x" + behavior[nextAction][2];
+			temp = displayDamage + "x" + behavior[nextAction][2];
 			game.fontLarge.draw(game.batch, temp, 960, 555, 40, 1, false);
 		}
 		if(behavior[nextAction][3] > 0){
@@ -200,8 +205,14 @@ public class Enemy extends Combatant{
 			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][3]), 960, 515, 40, 1, false);
 		}
 		if(behavior[nextAction][6] != -1){
-			game.batch.draw(effectTextures[behavior[nextAction][6]], 960, 450);
-			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][7]), 960, 475, 40, 1, false);
+			if(behavior[nextAction][6] == 102){
+				game.batch.draw(specialEffectTexture, 960, 450);
+			}
+			else{
+				game.batch.draw(effectTextures[behavior[nextAction][6]], 960, 450);
+				game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][7]), 960, 475, 40, 1, false);
+			}
+
 		}
 	}
 }

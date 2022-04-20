@@ -38,7 +38,8 @@ io.on('connection', function(socket){
                 }
                 else
                     throw err;  
-            }else{
+            }
+            else{
             socket.emit("create_success", {id: socket.id});
             console.log(result);
             }          
@@ -57,6 +58,35 @@ io.on('connection', function(socket){
                 }
             })
         }
+    }),
+    socket.on('load_game', (userID) => {
+        let sql = "Select * From RunData Where idUsers = "+ userID;
+        con.query(sql, function(error, data){
+            if(error) throw error;
+            console.log(data)
+            if(data.length>0){
+                socket.emit("game_loaded", data[0]);
+            }else{
+                socket.emit("no_save_found", {message: "no save"});
+            }
+        })
+    }),
+    socket.on('save_game', (userID, seed, health, maxHealth, level, deckList, combatclear) =>{
+        let sql = "Insert INTO RunData (idUsers, seed, health, maxHealth, currentLevel, deckString, combatCleared) VALUES (?) ON DUPLICATE KEY UPDATE seed = " + seed + ", health = "+ health + ", maxHealth = "+ maxHealth+ ", currentLevel = "+ level + ", deckString = '"+ deckList+"', combatCleared = " + combatclear;
+        let values =[
+            userID,
+            seed,
+            health,
+            maxHealth,
+            level,
+            deckList,
+            combatclear
+        ]
+        console.log(values)
+        con.query(sql, [values], function(err, result){
+            if(err) throw err;
+            console.log(result);
+        })
     }),
     socket.on('disconnect',function(){
         console.log("Player Disconnected");
