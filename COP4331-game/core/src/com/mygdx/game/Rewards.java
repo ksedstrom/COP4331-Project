@@ -30,6 +30,7 @@ public class Rewards implements Screen {
     public Rewards (final MyGdxGame game, final RunData data){
         this.game = game;
         runData = data;
+        runData.setCombatClear(true);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);

@@ -35,6 +35,7 @@ public class Combat implements Screen {
 		this.game = game;
 		runData = data;
 		runData.incrementLevel();
+		runData.setCombatClear(false);
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);

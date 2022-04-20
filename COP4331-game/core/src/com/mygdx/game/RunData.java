@@ -7,11 +7,13 @@ public class RunData {
 	private int health;
 	private int maxHealth; // constant?
 	private int currentLevel;
-	//private int lastState; can be reserved for save file management
+	private String deckList;
+	private boolean combatClear = true;
 	private CardStack deck;
 	
-	public RunData() {
+	public RunData(String deckList) {
 		// Assign Default values
+		this.deckList = deckList;
 		maxHealth = 75;
 		health = maxHealth;
 		currentLevel = 0;
@@ -21,17 +23,15 @@ public class RunData {
 		seed = rd.nextLong();
 		// Create Starting Deck
 		deck = new CardStack();
-		deck.insert(new Card(7));
-		deck.insert(new Card(0));
-		deck.insert(new Card(0));
-		for(int i = 0; i < 4; i++){
-			deck.insert(new Card(5));
-			deck.insert(new Card(6));
+		for(int i = 0; i < deckList.length(); i++){
+			deck.insert(new Card(deckList.charAt(i) - 'A'));
 		}
 	}
 	
 	public void addCard(Card card) {
 		deck.insert(card);
+		char newCard = (char)(card.getId() + 65);
+		deckList = deckList + newCard;
 	}
 	
 	public Card removeCard(int index) {
@@ -40,6 +40,14 @@ public class RunData {
 	
 	public CardStack getDeck() {
 		return deck;
+	}
+
+	public void setCombatClear(boolean input){
+		combatClear = input;
+	}
+
+	public String getDeckList(){
+		return deckList;
 	}
 	
 	public long getSeed() {

@@ -11,6 +11,8 @@ public class MainMenu implements Screen {
 
 	final MyGdxGame game;
 
+	final String defaultDeckList = "AAFFFFGGGGH";
+
 	OrthographicCamera camera;
 	Texture newGameButton;
 	Texture loadGameButton;
@@ -69,7 +71,7 @@ public class MainMenu implements Screen {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
 			if(cursorPosition == 0){
 				// Start a new game
-				game.setScreen(new Combat(game, new RunData()));
+				game.setScreen(new Combat(game, new RunData(defaultDeckList)));
 				dispose();
 			}
 			if(cursorPosition == 1 && game.userID != 0){
