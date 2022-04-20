@@ -21,6 +21,7 @@ public class MainMenu implements Screen {
 	Texture menuCursor;
 	Texture logOutButton;
 	int cursorPosition = 0;
+	int cursorPositionX = 0;
 
 	public MainMenu(final MyGdxGame game) {
 		this.game = game;
@@ -38,7 +39,7 @@ public class MainMenu implements Screen {
 
 	@Override
 	public void render(float delta) {
-		ScreenUtils.clear(0, 0, 0.2f, 1);
+		ScreenUtils.clear(1, 1, 1, 1);
 
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
@@ -54,7 +55,8 @@ public class MainMenu implements Screen {
 			game.batch.draw(loadGameButton, 100, 400, loadGameButton.getWidth(), loadGameButton.getHeight());
 			game.batch.draw(logOutButton, 100, 250, logOutButton.getWidth(), logOutButton.getHeight());
 		}
-		game.batch.draw(menuCursor, 500, 550-(cursorPosition * 150), menuCursor.getWidth(), menuCursor.getHeight());
+		game.batch.draw(menuCursor, 500 + (cursorPositionX*400), 550-(cursorPosition * 150), menuCursor.getWidth(), menuCursor.getHeight());
+		game.fontHuge.draw(game.batch, "Change Font Size", 700, 550);
 		game.batch.end();
 
 		// process user input
@@ -68,30 +70,42 @@ public class MainMenu implements Screen {
 				cursorPosition++;
 			}
 		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+			if(cursorPositionX > 0){
+				cursorPositionX--;
+			}
+		}
+		if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+			if(cursorPositionX < 1){
+				cursorPositionX++;
+			}
+		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
-			if(cursorPosition == 0){
+			if(cursorPositionX == 1){
+				game.toggleLargeFont();
+			}
+			else if(cursorPosition == 0){
 				// Start a new game
 				game.setScreen(new Combat(game, new RunData(defaultDeckList)));
 				dispose();
 			}
-			if(cursorPosition == 1 && game.userID != 0){
+			else if(cursorPosition == 1 && game.userID != 0){
 				// Load a game from a save, either online or offline
 				// Should also tell user if no save is available
 			}
-			if(cursorPosition == 1 && game.userID == 0){
+			else if(cursorPosition == 1 && game.userID == 0){
 				game.setScreen(new LogIn(game));
 				dispose();
 				// Prompt user to log in
 			}
-			if(cursorPosition == 2 && game.userID == 0){
+			else if(cursorPosition == 2 && game.userID == 0){
 				// Create an account
 				game.setScreen(new CreateAccount(game));
 				dispose();
 			}
-			if(cursorPosition == 2 && game.userID !=0){
+			else if(cursorPosition == 2 && game.userID !=0){
 				game.userID = 0;
 			}
-
 		}
 	}
 	

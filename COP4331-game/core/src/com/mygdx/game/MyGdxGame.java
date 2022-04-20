@@ -14,6 +14,7 @@ import org.json.JSONObject;
 public class MyGdxGame extends Game {
 	public SpriteBatch batch;
 	public BitmapFont fontSmall, fontMedium, fontLarge, fontHuge;
+	public boolean largeFont = false;
 	public Socket socket;
 	public int userID = 0;
 	public void create() {
@@ -37,6 +38,23 @@ public class MyGdxGame extends Game {
 		fontMedium.dispose();
 		fontLarge.dispose();
 		fontHuge.dispose();
+	}
+
+	public void toggleLargeFont(){
+		if(largeFont){
+			largeFont = false;
+			fontSmall = new BitmapFont(Gdx.files.internal("Arial8px.fnt"));
+			fontMedium = new BitmapFont(Gdx.files.internal("Arial12px.fnt"));
+			fontLarge = new BitmapFont(Gdx.files.internal("Arial18px.fnt"));
+			fontHuge = new BitmapFont(Gdx.files.internal("Arial24px.fnt"));
+		}
+		else{
+			largeFont = true;
+			fontSmall = new BitmapFont(Gdx.files.internal("Arial12px.fnt"));
+			fontMedium = new BitmapFont(Gdx.files.internal("Arial18px.fnt"));
+			fontLarge = new BitmapFont(Gdx.files.internal("Arial24px.fnt"));
+			fontHuge = new BitmapFont(Gdx.files.internal("Arial32px.fnt"));
+		}
 	}
 
 	public void connectSocket(){
