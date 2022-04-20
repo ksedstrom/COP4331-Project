@@ -200,13 +200,9 @@ public class Combat implements Screen {
 					if(cursorPos == hand.getSize() && hand.getSize() != 0){cursorPos--;}
 				}
 			}
-			//  Every time the SPACE is pressed, update the card descriptions
-			for(int i = 0; i < hand.getSize()-1; i++){
-				hand.getCard(i).updateDescription(this);
-			}
-			if(selectedCard != null){
-				selectedCard.updateDescription(this);
-			}
+			// Every time the SPACE is pressed, update the card descriptions
+			updateHand();
+			if(selectedCard != null) selectedCard.updateDescription(this);
 		} // end of SPACE inputs
 
 		// ESC key will serve as the "b button"
@@ -223,9 +219,7 @@ public class Combat implements Screen {
 					hand.getCard(i).pitching = false;
 				}
 			}
-			for(int i = 0; i < hand.getSize()-1; i++){
-				hand.getCard(i).updateDescription(this);
-			}
+			updateHand();
 		}
 
 		// Debug Input
@@ -242,10 +236,7 @@ public class Combat implements Screen {
 		for(int i=0; i<x; i++) {
 			// if drawPile is empty, shuffle in the discardPile
 			if(drawPile.getSize() == 0) {
-				// if discardPile is also empty, break
-				if(discardPile.getSize() == 0){
-					break;
-				}
+				if(discardPile.getSize() == 0) break; // if discardPile is also empty, break
 				while(discardPile.getSize() > 0) {
 					drawPile.insert(discardPile.remove(0));
 				}
@@ -332,6 +323,10 @@ public class Combat implements Screen {
 	public boolean combatantDied() {
 		if(enemy.getHealth() <= 0 || player.getHealth() <= 0) return true;
 		return false;
+	}
+	
+	private void updateHand() {
+		for(int i = 0; i < hand.getSize()-1; i++) hand.getCard(i).updateDescription(this);
 	}
 
 	// used to apply Unique Effects
