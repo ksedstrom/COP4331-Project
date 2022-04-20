@@ -34,7 +34,7 @@ public class LogIn implements Screen {
     private TextField passwordText;
     private BitmapFont font;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-    private boolean registered = false;
+    private int loggedin = 0;
     public LogIn(final MyGdxGame game) {
         this.game = game;
         camera = new OrthographicCamera();
@@ -52,12 +52,8 @@ public class LogIn implements Screen {
         backToMenu = new TextButton("Return to Main Menu", skin);
         backToMenu.setPosition(50, 650);
         backToMenu.setSize(200, 50);
-        btnLogIn.addListener(new ClickListener(){
-            @Override
-            public void touchUp(InputEvent e, float x, float y, int point, int button){
-                btnLoginClicked();
-            }
-        });
+        setupListener();
+
 
         backToMenu.addListener(new ClickListener(){
             @Override
@@ -79,14 +75,25 @@ public class LogIn implements Screen {
 
     }
 
-
+    public void setupListener(){
+        btnLogIn.addListener(new ClickListener(){
+            @Override
+            public void touchUp(InputEvent e, float x, float y, int point, int button){
+                btnLoginClicked();
+                setupListener();
+            }
+        });
+    }
     // TextField usernameTextField = new TextField("",));
     // s.addActor(usernameTextField)
     //game.socket.on("create_success")
-    public void registeredUser(){
-        registered = true;
+    public void loggedIn(){
+        loggedin = 1;
     }
 
+    public void loginFailed(){
+        loggedin = 2;
+    }
     public void backToMenuClicked(){
         game.setScreen(new MainMenu(game));
     }
@@ -106,6 +113,7 @@ public class LogIn implements Screen {
             public void call(Object... args){
                 JSONObject data = (JSONObject) args[0];
                 try{
+                    loggedIn();
                     String userID = data.getString("userID");
                     System.out.println(userID);
                 }catch(JSONException e){
@@ -115,6 +123,7 @@ public class LogIn implements Screen {
         }).on("login_failed", new Emitter.Listener(){
             @Override
             public void call(Object... args){
+                loginFailed();
                 System.out.println("Failed to log in");
             }
         });
@@ -127,8 +136,17 @@ public class LogIn implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        if(registered){
-            font.draw(game.batch, "Successfully Registered a User", 500, 40);
+        switch(loggedin){
+            case 0:
+                break;
+            case 1:
+                font.draw(game.batch, "Successfully Logged In", 500, 80);
+                break;
+            case 2:
+                font.draw(game.batch, "Failed to Log In", 500, 80);
+                break;
+            default:
+
         }
         game.batch.end();
         s.draw();
