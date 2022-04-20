@@ -172,6 +172,9 @@ public class Combat implements Screen {
 
 				// End the turn if hand is empty
 				if(hand.getSize() == 0) endTurn();
+				if(cursorPos > hand.getSize()){
+					cursorPos = hand.getSize();
+				}
 			}
 			
 			// PITCH A CARD

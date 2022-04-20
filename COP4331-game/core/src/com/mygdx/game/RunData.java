@@ -12,8 +12,8 @@ public class RunData {
 	
 	public RunData() {
 		// Assign Default values
-		health = 100;
-		maxHealth = 100;
+		maxHealth = 75;
+		health = maxHealth;
 		currentLevel = 0;
 
 		// Generate run seed

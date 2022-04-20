@@ -15,6 +15,8 @@ public class Rewards implements Screen {
 
     OrthographicCamera camera;
 
+    private final int NUM_ALLOWED = 1; // Determines the number of rewards that can be chosen between fights
+
     private Card[] rewards = new Card[3];
     private int xCor = 0;
     private int yCor = 0;
@@ -129,7 +131,7 @@ public class Rewards implements Screen {
             }
             if(cursorPos < 3 && cursorPos >= 0){
                 // Select a new reward
-                if(!selectedRewards[cursorPos] && numSelected < 2){
+                if(!selectedRewards[cursorPos] && numSelected < NUM_ALLOWED){
                     selectedRewards[cursorPos] = true;
                     numSelected++;
                 }
