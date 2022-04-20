@@ -142,6 +142,8 @@ public class LogIn implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
+        font.draw(game.batch, "Username: ", 400, 515);
+        font.draw(game.batch, "Password: ", 400, 435);
         switch(loggedin){
             case 0:
                 break;
