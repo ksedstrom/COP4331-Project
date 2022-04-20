@@ -61,7 +61,7 @@ public class Combat implements Screen {
 		
 		// create enemy and player
 		enemy = generateEnemy(runData.getLevel(), runData.getSeed());
-		enemy = new Enemy(22, 0); // Choose a specific enemy for debugging
+		//enemy = new Enemy(22, 0); // Choose a specific enemy for debugging
 		player = new Player(runData.getHealth(), runData.getMaxHealth());
 
 		startTurn();
