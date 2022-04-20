@@ -39,7 +39,7 @@ io.on('connection', function(socket){
     },
     socket.on('log_in', (uname, pword) =>{
         if(uname && pword){
-            let sql = "Select * FROM Users Where username = '" + uname + "' AND password = '" + pword + "'";
+            let sql = "Select * FROM Users Where username = BINARY '" + uname + "' AND password = BINARY'" + pword + "'";
             con.query(sql, function (error, data){
                 if(error) throw error;
                 console.log(data)
