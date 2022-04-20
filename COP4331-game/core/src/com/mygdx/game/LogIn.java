@@ -80,7 +80,6 @@ public class LogIn implements Screen {
             @Override
             public void touchUp(InputEvent e, float x, float y, int point, int button){
                 btnLoginClicked();
-                setupListener();
             }
         });
     }
@@ -93,6 +92,7 @@ public class LogIn implements Screen {
 
     public void loginFailed(){
         loggedin = 2;
+        setupListener();
     }
     public void backToMenuClicked(){
         game.setScreen(new MainMenu(game));
@@ -115,7 +115,9 @@ public class LogIn implements Screen {
                 try{
                     loggedIn();
                     String userID = data.getString("userID");
+                    game.userID = Integer.parseInt(userID);
                     System.out.println(userID);
+                    System.out.println("games user id: " + userID);
                 }catch(JSONException e){
                     System.out.println("Json Exception at logging in");
                 }

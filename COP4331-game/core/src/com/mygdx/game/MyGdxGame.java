@@ -15,7 +15,7 @@ public class MyGdxGame extends Game {
 	public SpriteBatch batch;
 	public BitmapFont fontSmall, fontMedium, fontLarge, fontHuge;
 	public Socket socket;
-
+	public int userID = 0;
 	public void create() {
 		batch = new SpriteBatch();
 		connectSocket();
