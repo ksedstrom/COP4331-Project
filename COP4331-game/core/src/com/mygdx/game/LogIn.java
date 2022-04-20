@@ -142,10 +142,10 @@ public class LogIn implements Screen {
             case 0:
                 break;
             case 1:
-                font.draw(game.batch, "Successfully Logged In", 500, 80);
+                font.draw(game.batch, "Successfully Logged In", 550, 80);
                 break;
             case 2:
-                font.draw(game.batch, "Failed to Log In", 500, 80);
+                font.draw(game.batch, "Failed to Log In", 550, 80);
                 break;
             default:
 

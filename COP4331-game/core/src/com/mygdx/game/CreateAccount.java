@@ -34,7 +34,7 @@ public class CreateAccount implements Screen {
     private TextField passwordText;
     private BitmapFont font;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-    private boolean registered = false;
+    private int registered = 0; //0 for no create attempt //1 for successful creation //2 for duplicate username
     public CreateAccount(final MyGdxGame game) {
         this.game = game;
         camera = new OrthographicCamera();
@@ -91,9 +91,11 @@ public class CreateAccount implements Screen {
    // s.addActor(usernameTextField)
     //game.socket.on("create_success")
     public void registeredUser(){
-        registered = true;
+        registered = 1;
     }
-
+    public void dupUser(){
+        registered = 2;
+    }
     public void backToMenuClicked(){
         game.setScreen(new MainMenu(game));
     }
@@ -120,6 +122,12 @@ public class CreateAccount implements Screen {
                     System.out.println("Didn't create");
                 }
             }
+        }).on("duplicate_user", new Emitter.Listener(){
+            @Override
+            public void call(Object... args){
+                System.out.println("Username already taken");
+                dupUser();
+            }
         });
     }
     @Override
@@ -130,8 +138,11 @@ public class CreateAccount implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        if(registered){
-            font.draw(game.batch, "Successfully Registered a User", 500, 40);
+        if(registered == 1){
+            font.draw(game.batch, "Successfully Registered a User", 550, 80);
+        }
+        if (registered == 2) {
+            font.draw(game.batch, "Username is already Taken", 550, 80);
         }
         game.batch.end();
         s.draw();

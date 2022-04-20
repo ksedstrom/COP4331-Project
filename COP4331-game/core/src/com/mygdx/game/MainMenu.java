@@ -43,12 +43,13 @@ public class MainMenu implements Screen {
 
 		game.batch.begin();
 		game.batch.draw(newGameButton, 100, 550, newGameButton.getWidth(), newGameButton.getHeight());
-		game.batch.draw(loadGameButton, 100, 400, loadGameButton.getWidth(), loadGameButton.getHeight());
+
 		if(game.userID == 0) {
-			game.batch.draw(logInButton, 100, 250, logInButton.getWidth(), logInButton.getHeight());
-			game.batch.draw(createAccountButton, 100, 100, createAccountButton.getWidth(), createAccountButton.getHeight());
+			game.batch.draw(logInButton, 100, 400, logInButton.getWidth(), logInButton.getHeight());
+			game.batch.draw(createAccountButton, 100, 250, createAccountButton.getWidth(), createAccountButton.getHeight());
 		}
 		else{
+			game.batch.draw(loadGameButton, 100, 400, loadGameButton.getWidth(), loadGameButton.getHeight());
 			game.batch.draw(logOutButton, 100, 250, logOutButton.getWidth(), logOutButton.getHeight());
 		}
 		game.batch.draw(menuCursor, 500, 550-(cursorPosition * 150), menuCursor.getWidth(), menuCursor.getHeight());
@@ -61,10 +62,7 @@ public class MainMenu implements Screen {
 			}
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-			if(cursorPosition != 3 && game.userID == 0){
-				cursorPosition++;
-			}
-			else if(cursorPosition != 2 && game.userID != 0){
+			if(cursorPosition != 2){
 				cursorPosition++;
 			}
 		}
@@ -74,23 +72,24 @@ public class MainMenu implements Screen {
 				game.setScreen(new Combat(game, new RunData()));
 				dispose();
 			}
-			if(cursorPosition == 1){
+			if(cursorPosition == 1 && game.userID != 0){
 				// Load a game from a save, either online or offline
 				// Should also tell user if no save is available
 			}
-			if(cursorPosition == 2 && game.userID == 0){
+			if(cursorPosition == 1 && game.userID == 0){
 				game.setScreen(new LogIn(game));
 				dispose();
 				// Prompt user to log in
 			}
-			if(cursorPosition == 2 && game.userID !=0){
-				game.userID = 0;
-			}
-			if(cursorPosition == 3){
+			if(cursorPosition == 2 && game.userID == 0){
 				// Create an account
 				game.setScreen(new CreateAccount(game));
 				dispose();
 			}
+			if(cursorPosition == 2 && game.userID !=0){
+				game.userID = 0;
+			}
+
 		}
 	}
 	
