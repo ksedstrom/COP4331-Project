@@ -104,12 +104,17 @@ public class Card {
 				break;
 			case 4:
 				combat.applyDeconstructEffect();
+				break;
 			case 5:
 				combat.applyRefreshEffect();
+				break;
 			case 6:
 				reduceToScrapFlag = true;
+				break;
 			case 7:
-				critMultiplier = 3;
+				if(combat.drawPileEmpty()){
+					critMultiplier = 3;
+				}
 		}
 		if(damageMult > 0) {
 			int dmg = calcValue((damage + power + player.getAccuracy()) * critMultiplier, player.getStatus(2));
