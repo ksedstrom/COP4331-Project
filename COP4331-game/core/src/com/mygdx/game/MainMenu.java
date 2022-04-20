@@ -6,6 +6,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainMenu implements Screen {
 
@@ -22,6 +26,14 @@ public class MainMenu implements Screen {
 	Texture logOutButton;
 	int cursorPosition = 0;
 	int cursorPositionX = 0;
+	RunData loadedData;
+	long loadedseed;
+	int loadedhealth;
+	int loadedmaxHealth;
+	int loadedlevel;
+	String loadeddeck;
+	boolean loadedcombatcleared;
+	boolean gameloaded;
 
 	public MainMenu(final MyGdxGame game) {
 		this.game = game;
@@ -35,8 +47,62 @@ public class MainMenu implements Screen {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
+		configSocketEvents();
+	}
+	public void configSocketEvents(){
+		game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
+			@Override
+			public void call(Object... args){
+				System.out.println("Connected to server");
+			}
+		}).on("game_loaded", new Emitter.Listener(){
+			@Override
+			public void call(Object... args){
+				JSONObject data = (JSONObject) args[0];
+				try{
+					long seed = data.getLong("seed");
+					int health = data.getInt("health");
+					int maxHealth = data.getInt("maxHealth");
+					int level = data.getInt("currentLevel");
+					String deck = data.getString("deckString");
+					int combatCleared = data.getInt("combatCleared");
+					//loadedData = new RunData(seed, health, maxHealth, level, deck, combatCleared);
+					System.out.println("Loaded seed:" + seed);
+					System.out.println("Loaded health:" + health);
+					System.out.println("Loaded maxHealth:" + maxHealth);
+					System.out.println("Loaded level:" + level);
+					System.out.println("Loaded deck:" + deck);
+					System.out.println("Loaded combatCleared:" + combatCleared);
+
+					loadGame(seed, health, maxHealth, level, deck, combatCleared);
+
+				}catch(JSONException e){
+					System.out.println("Didn't create");
+				}
+			}
+		});
 	}
 
+	public void loadGame(long seed, int health, int maxhealth, int level, String deck, int combatCleared){
+		loadedseed = seed;
+		loadedhealth = health;
+		loadedmaxHealth = maxhealth;
+		loadedlevel = level;
+		loadeddeck = deck;
+		if(combatCleared == 1) {
+			loadedcombatcleared = true;
+		}
+		else{
+			loadedcombatcleared = false;
+		}
+		gameloaded = true;
+//			if(loadedData.getCombatClear()){
+//				game.setScreen(new Combat(game, new RunData(seed, health, maxhealth, level, deck, combatCleared)));
+//			}
+//			else{
+//				game.setScreen(new Rewards(game, new RunData(seed, health, maxhealth, level, deck, combatCleared)));
+//			}
+	}
 	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(1, 1, 1, 1);
@@ -58,7 +124,16 @@ public class MainMenu implements Screen {
 		game.batch.draw(menuCursor, 500 + (cursorPositionX*400), 550-(cursorPosition * 150), menuCursor.getWidth(), menuCursor.getHeight());
 		game.fontHuge.draw(game.batch, "Change Font Size", 700, 550);
 		game.batch.end();
-
+		if(gameloaded){
+			if(loadedcombatcleared){
+				game.setScreen(new Combat(game, new RunData(loadedseed, loadedhealth, loadedmaxHealth, loadedlevel,
+						loadeddeck, loadedcombatcleared)));
+			}
+			else{
+				game.setScreen(new Rewards(game, new RunData(loadedseed, loadedhealth, loadedmaxHealth, loadedlevel,
+						loadeddeck, loadedcombatcleared)));
+			}
+		}
 		// process user input
 		if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
 			if(cursorPosition != 0){
@@ -90,6 +165,7 @@ public class MainMenu implements Screen {
 				dispose();
 			}
 			else if(cursorPosition == 1 && game.userID != 0){
+				game.socket.emit("load_game", game.userID);
 				// Load a game from a save, either online or offline
 				// Should also tell user if no save is available
 			}

@@ -1,8 +1,9 @@
 package com.mygdx.game;
 
+import java.io.Serializable;
 import java.util.Random;
 
-public class RunData {
+public class RunData{
 	private long seed;
 	private int health;
 	private int maxHealth; // constant?
@@ -27,6 +28,19 @@ public class RunData {
 			deck.insert(new Card(deckList.charAt(i) - 'A'));
 		}
 	}
+
+	public RunData(long seed, int health, int maxHealth, int currentLevel, String deckList, boolean combat){
+		this.seed = seed;
+		this.health = health;
+		this.maxHealth = maxHealth;
+		this.currentLevel = currentLevel;
+		this.deckList = deckList;
+		this.combatClear = combat;
+		deck = new CardStack();
+		for(int i = 0; i < deckList.length(); i++){
+			deck.insert(new Card(deckList.charAt(i) - 'A'));
+		}
+	}
 	
 	public void addCard(Card card) {
 		deck.insert(card);
@@ -45,6 +59,8 @@ public class RunData {
 	public void setCombatClear(boolean input){
 		combatClear = input;
 	}
+
+	public boolean getCombatClear(){return combatClear;}
 
 	public String getDeckList(){
 		return deckList;

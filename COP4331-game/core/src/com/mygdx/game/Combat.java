@@ -150,6 +150,7 @@ public class Combat implements Screen {
 					runData.setHealth(player.getHealth());
 					System.out.println(player.getHealth());
 					System.out.println(runData.getHealth());
+					saveGame();
 					game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
 					dispose();
 				}
@@ -234,7 +235,17 @@ public class Combat implements Screen {
 			draw(1);
 		}
 	}
-
+	public void saveGame(){
+		int x;
+		if(runData.getCombatClear()){
+			x = 1;
+		}
+		else{
+			x = 0;
+		}
+		game.socket.emit("save_game", game.userID, runData.getSeed(), runData.getHealth(), runData.getMaxHealth(),
+				runData.getLevel(), runData.getDeckList(), x);
+	}
 	public void draw(int x) {
 		Card card;
 		for(int i=0; i<x; i++) {

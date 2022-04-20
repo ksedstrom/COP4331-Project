@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.Random;
@@ -23,7 +24,7 @@ public class Rewards implements Screen {
     private int cursorPos = 0;
     private boolean[] selectedRewards = new boolean[3];
     private int numSelected = 0;
-
+    private TextButton SaveGame;
     private Texture cursor;
     private Texture background;
 
@@ -61,6 +62,17 @@ public class Rewards implements Screen {
         }
     }
 
+    public void saveGame(){
+        int x;
+        if(runData.getCombatClear()){
+            x = 1;
+        }
+        else{
+            x = 0;
+        }
+        game.socket.emit("save_game", game.userID, runData.getSeed(), runData.getHealth(), runData.getMaxHealth(),
+                runData.getLevel(), runData.getDeckList(), x);
+    }
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0.2f, 1);
@@ -127,6 +139,9 @@ public class Rewards implements Screen {
                     }
                 }
                 // proceed to next fight
+                if(game.userID != 0){
+                    saveGame();
+                }
                 game.setScreen(new Combat(game, runData));
                 dispose();
             }
