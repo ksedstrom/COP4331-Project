@@ -15,7 +15,6 @@ public class Enemy extends Combatant{
 	
 	// GUI stuff
 	private Texture image;
-	private String actionDesc;
 
 	public Enemy(int id, int levelBonus) {
 		super();
@@ -72,7 +71,7 @@ public class Enemy extends Combatant{
 				}
 			}
 		}
-		// text for action display
+		/*
 		actionDesc = "";
 		if(behavior[nextAction][2] == 1){
 			actionDesc = "Damage: " + behavior[nextAction][1] + "\n";
@@ -87,6 +86,7 @@ public class Enemy extends Combatant{
 			// Can probably be made more specific when adding icons
 			actionDesc = actionDesc + "Status will be applied";
 		}
+		*/
 	}
 	
 	private int checkTriggers(int turn) {
@@ -153,6 +153,7 @@ public class Enemy extends Combatant{
 	
 	@Override
 	public void render(int x, int y, final MyGdxGame game) {
+		String temp = null;
 		super.render(x, y, game); // health bar
 		if(block > 0) {
 			game.batch.draw(blkIcon, x-40, y); // block icon
@@ -161,7 +162,24 @@ public class Enemy extends Combatant{
 		game.fontLarge.draw(game.batch, name, x+10, y-10); // name
 		game.batch.draw(image, 1000, 380, 252, 252); // image
 		// TODO: pretty this up with some icons like slay the spire
-		game.fontLarge.draw(game.batch, actionDesc, 800, 500); // next action
+		if(behavior[nextAction][2] == 1){
+			game.batch.draw(dmgIcon, 960, 530);
+			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][1]), 960, 555, 40, 1, false);
+		}
+		if(behavior[nextAction][2] > 1){
+			game.batch.draw(dmgIcon, 960, 530);
+			temp = behavior[nextAction][1] + "x" + behavior[nextAction][2];
+			game.fontLarge.draw(game.batch, temp, 960, 555, 40, 1, false);
+		}
+		if(behavior[nextAction][3] > 0){
+			//actionDesc = actionDesc + "Block: " + behavior[nextAction][3] + "\n";
+			game.batch.draw(blkIcon, 960, 490);
+			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][3]), 960, 515, 40, 1, false);
+		}
+		if(behavior[nextAction][6] != -1){
+			game.batch.draw(effectTextures[behavior[nextAction][6]], 960, 450);
+			game.fontHuge.draw(game.batch, String.valueOf(behavior[nextAction][7]), 960, 475, 40, 1, false);
+		}
 
 		// Display Statuses
 		int yCor = 600;

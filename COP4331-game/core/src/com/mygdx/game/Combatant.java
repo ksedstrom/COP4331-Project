@@ -8,21 +8,30 @@ abstract class Combatant {
 	protected int block;
 	protected int[] statusEffects;
 	final protected String[] effectNames = {"Vulnerable", "Corroded", "Disoriented", "DrawNextTurn", "TempAccuracy",
-			"BlockNextTurn", "Burrow", "Enrage", "Spikey", "Ritual", "QuickReflexes", "Overcharge", "CapacityUp", "Accuracy"};
+			"BlockNextTurn", "Burrow", "Enrage", "Spikey", "Ritual", "QuickReflexesEffect", "OverchargeEffect", "CapacityUpEffect", "Accuracy"};
+	protected Texture[] effectTextures = new Texture[14];
 
 	
 	// GUI stuff
 	protected Texture healthBarOutline;
 	protected Texture healthBar;
 	protected Texture blkIcon;
+	protected Texture dmgIcon;
 	protected String hpDisplay, blkDisplay;
 	
 	public Combatant() {
 		block = 0;
+		String temp = null;
 		statusEffects = new int[14];
-		for(int i=0; i<14; i++) statusEffects[i] = 0;
+		for(int i=0; i<14; i++){
+			statusEffects[i] = 0;
+			temp = effectNames[i] + ".png";
+			effectTextures[i] = new Texture((Gdx.files.internal(temp)));
+		}
 		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
 		blkIcon = new Texture(Gdx.files.internal("BlockIcon.png"));
+		dmgIcon = new Texture(Gdx.files.internal("DamageIcon.png"));
+
 		blkDisplay = String.valueOf(block);
 	}
 	
