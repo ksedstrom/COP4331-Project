@@ -107,6 +107,25 @@ io.on('connection', function(socket){
             console.log(result);
         })
     }),
+    socket.on('load_runs', (userID) =>{
+        let sql = "Select * From leaderboard Where idUsers =" + userID;
+        con.query(sql, function(error,data){
+            if(error) throw error;
+            console.log(data)
+            socket.emit("loaded_run",{runscomplete: data[0].runscompleted})
+        })
+    }),
+    socket.on('update_runs',(userID, runscomplete) =>{
+        let sql = "Update leaderboard SET runscompleted = ? WHERE idUsers = ?";
+        let values = [
+            runscomplete,
+            userID
+        ]
+        con.query(sql, values, function(err, result){
+            if(err) throw err;
+            console.log(result);
+        })
+    }),
     socket.on('disconnect',function(){
         console.log("Player Disconnected");
     })

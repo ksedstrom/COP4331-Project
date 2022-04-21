@@ -38,6 +38,9 @@ public class MainMenu implements Screen {
 
 	public MainMenu(final MyGdxGame game) {
 		this.game = game;
+		if(game.userID != 0){
+			game.socket.emit("load_runs", game.userID);
+		}
 
 		newGameButton = new Texture(Gdx.files.internal("newGameButton.png"));
 		loadGameButton = new Texture(Gdx.files.internal("loadGameButton.png"));
@@ -86,7 +89,20 @@ public class MainMenu implements Screen {
 			public void call(Object... args){
 				nosavefound();
 			}
+		}).on("loaded_run", new Emitter.Listener(){
+			@Override
+			public void call(Object... args){
+				JSONObject data = (JSONObject) args[0];
+				try{
+					setRunCompleted(data.getInt("runscomplete"));
+				}catch(JSONException e){
+					System.out.println("Json exception at runscomplete on main menu");
+				}
+			}
 		});
+	}
+	public void setRunCompleted(int runscomplete){
+		game.runscompleted = runscomplete;
 	}
 	public void nosavefound(){
 		nosave = true;
@@ -123,7 +139,9 @@ public class MainMenu implements Screen {
 		if(nosave){
 			game.fontLarge.draw(game.batch, "No Save \n Found", 35, 455);
 		}
-
+		if(game.userID != 0){
+			game.fontLarge.draw(game.batch, "Runs Completed: " + game.runscompleted, 1050, 50);
+		}
 		if(game.userID == 0) {
 			game.batch.draw(logInButton, 100, 400, logInButton.getWidth(), logInButton.getHeight());
 			game.batch.draw(createAccountButton, 100, 250, createAccountButton.getWidth(), createAccountButton.getHeight());
