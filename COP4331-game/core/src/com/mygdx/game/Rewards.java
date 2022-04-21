@@ -27,6 +27,9 @@ public class Rewards implements Screen {
     private TextButton SaveGame;
     private Texture cursor;
     private Texture background;
+    private int cardRemovalFlag = 0;
+    private int offset = 0;
+    private Texture removalSelector;
 
     public Rewards (final MyGdxGame game, final RunData data){
         this.game = game;
@@ -36,7 +39,7 @@ public class Rewards implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
 
-        // initialize cursor
+        // initialize Textures
         cursor = new Texture(Gdx.files.internal("upCursor.png"));
         if(runData.getLevel() < 5){
             background = new Texture(Gdx.files.internal("DesertBackground.png"));
@@ -44,6 +47,7 @@ public class Rewards implements Screen {
         else{
             background = new Texture(Gdx.files.internal("ForestBackground.png"));
         }
+        removalSelector = new Texture(Gdx.files.internal("HealthBar.png")); // Reusing HealthBar.png for a generic red rectangle
 
         // generate reward IDs using the seed from RunData and the current level.
         Random rand = new Random(runData.getSeed() * runData.getLevel());
@@ -57,7 +61,7 @@ public class Rewards implements Screen {
             if(id == 0 || id == 5){id = 34;}
             if(id == 6 || id == 7){id = 35;}
             // generate associated card objects
-            rewards[i] = new Card(id);
+            rewards[i] = new Card(35);
             rewards[i].updateDescription(null);
         }
     }
@@ -86,81 +90,102 @@ public class Rewards implements Screen {
         // Render Background
         game.batch.draw(background, 0, 0);
 
-        // Render Rewards
-        xCor = 64;
-        for(int i = 0; i < 3; i++){
-            yCor = 168;
-            if(selectedRewards[i]){
-                yCor += 16;
+        if(cardRemovalFlag == 0){
+            // Render Rewards
+            xCor = 64;
+            for(int i = 0; i < 3; i++){
+                yCor = 168;
+                if(selectedRewards[i]){
+                    yCor += 16;
+                }
+                rewards[i].render(xCor, yCor, game, 2);
+                // render cursor
+                if(i == cursorPos){
+                    game.batch.draw(cursor, xCor + 64, 48, 128, 128);
+                }
+                xCor += 320;
             }
-            rewards[i].render(xCor, yCor, game, 2);
-            // render cursor
-            if(i == cursorPos){
-                game.batch.draw(cursor, xCor + 64, 48, 128, 128);
-            }
-            xCor += 320;
-        }
 
-        // Render Confirm Button
-        game.fontHuge.setColor(0, 100, 100, 1);
-        game.fontHuge.draw(game.batch, "Confirm and proceed to next level", 960, 360, 300, 1, true);
-        if(cursorPos ==3){
-            game.batch.draw(cursor, 1024, 128, 128, 128);
-        }
-
-        game.batch.end();
-
-        // Process User Input
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
-            if (cursorPos > 0){
-                cursorPos--;
+            // Render Confirm Button
+            game.fontHuge.setColor(0, 100, 100, 1);
+            game.fontHuge.draw(game.batch, "Confirm and proceed to next level", 960, 360, 300, 1, true);
+            if(cursorPos ==3){
+                game.batch.draw(cursor, 1024, 128, 128, 128);
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            if (cursorPos < 3){
+       else{
+           game.batch.draw(removalSelector, cursorPos%9*136+11, (cursorPos/9*200+11)-offset, 136, 200);
+           runData.getDeck().render(0,0,game, offset);
+        }
+
+       game.batch.end();
+
+       // Process User Input
+       if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
+           if (cursorPos > 0){
+               cursorPos--;
+           }
+       }
+       if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+           if (cursorPos < 3 || cursorPos < runData.getDeck().getSize()-1 && cardRemovalFlag != 0){
                 cursorPos++;
             }
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
-            // Proceed to next screen selected
-            if(cursorPos == 3){
-                // Apply selected rewards
-                for(int i = 0; i < 3; i++){
-                    if(selectedRewards[i]){
-                        if(rewards[i].getId() == 34){
-                            runData.heal(10);
+       }
+       if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+            if(cardRemovalFlag == 0){
+                // Proceed to next screen selected
+                if(cursorPos == 3){
+                    // Apply selected rewards
+                    for(int i = 0; i < 3; i++){
+                        if(selectedRewards[i]){
+                            if(rewards[i].getId() == 34){
+                                runData.heal(10);
+                            }
+                            else if(rewards[i].getId() == 35){
+                                cardRemovalFlag++;
+                                cursorPos = 0;
+                            }
+                            else if(rewards[i].getId() < 34 && rewards[i].getId() >= 0){
+                                runData.addCard(rewards[i]);
+                            }
                         }
-                        else if(rewards[i].getId() == 35){
-                            // remove a card
-                        }
-                        else if(rewards[i].getId() < 34 && rewards[i].getId() >= 0){
-                            runData.addCard(rewards[i]);
-                        }
+                   }
+                   if(cardRemovalFlag == 0){
+                       // proceed to next fight
+                       if(game.userID != 0){
+                           saveGame();
+                       }
+                       game.setScreen(new Combat(game, runData));
+                       dispose();
+                   }
+               }
+               if(cursorPos < 3 && cursorPos >= 0){
+                   // Select a new reward
+                   if(!selectedRewards[cursorPos] && numSelected < NUM_ALLOWED){
+                       selectedRewards[cursorPos] = true;
+                       numSelected++;
+                   }
+                   // Deselect a reward
+                   else if(selectedRewards[cursorPos]){
+                       selectedRewards[cursorPos] = false;
+                       numSelected--;
+                   }
+               }
+           }
+            else if(cardRemovalFlag > 0){
+                runData.getDeck().remove(cursorPos);
+                cardRemovalFlag--;
+                if(cardRemovalFlag == 0){
+                    // proceed to next fight
+                    if(game.userID != 0){
+                        saveGame();
                     }
-                }
-                // proceed to next fight
-                if(game.userID != 0){
-                    saveGame();
-                }
-                game.setScreen(new Combat(game, runData));
-                dispose();
-            }
-            if(cursorPos < 3 && cursorPos >= 0){
-                // Select a new reward
-                if(!selectedRewards[cursorPos] && numSelected < NUM_ALLOWED){
-                    selectedRewards[cursorPos] = true;
-                    numSelected++;
-                }
-                // Deselect a reward
-                else if(selectedRewards[cursorPos]){
-                    selectedRewards[cursorPos] = false;
-                    numSelected--;
+                    game.setScreen(new Combat(game, runData));
+                    dispose();
                 }
             }
-
-        }
+       }
     }
-
 
     // Default Screen Methods
     @Override
