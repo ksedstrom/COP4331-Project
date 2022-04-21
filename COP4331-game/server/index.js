@@ -40,8 +40,9 @@ io.on('connection', function(socket){
                     throw err;  
             }
             else{
-            socket.emit("create_success", {id: socket.id});
-            console.log(result);
+            socket.emit("create_success", result);
+            console.log([result])
+
             }          
         })
     },
@@ -82,7 +83,6 @@ io.on('connection', function(socket){
             deckList,
             combatclear
         ]
-        console.log(values)
         con.query(sql, [values], function(err, result){
             if(err) throw err;
             console.log(result);
@@ -93,6 +93,18 @@ io.on('connection', function(socket){
         con.query(sql, function(error, data){
             if(error) throw error;
             console.log(data)
+        })
+    }),
+    socket.on('initialize_leaderboard', (userID, uname) =>{
+        let sql = "Insert INTO leaderboard (idUsers, username, runscompleted) VALUES (?)";
+        let values = [
+            userID,
+            uname,
+            0
+        ]
+        con.query(sql, [values], function(err, result){
+            if (err) throw err;
+            console.log(result);
         })
     }),
     socket.on('disconnect',function(){
