@@ -40,10 +40,6 @@ public class Combat implements Screen {
 		runData = data;
 		runData.incrementLevel();
 		runData.setCombatClear(false);
-		if(runData.getLevel() == 5){
-			game.runscompleted++;
-			game.socket.emit("update_runs", game.userID, game.runscompleted);
-		}
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
 
@@ -175,9 +171,14 @@ public class Combat implements Screen {
 						runData.setMaxHealth(100);
 						runData.heal(50);
 					}
-					saveGame();
-					game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
-					dispose();
+					if(runData.getLevel() == 15){
+						game.setScreen(new Winning(game));
+					}
+					else {
+						saveGame();
+						game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
+						dispose();
+					}
 				}
 				
 				// move card to a pile

@@ -34,11 +34,12 @@ public class MainMenu implements Screen {
 	int loadedlevel;
 	String loadeddeck;
 	boolean loadedcombatcleared;
-	boolean gameloaded;
+	boolean gameloaded = false;
 	boolean nosave;
 
 	public MainMenu(final MyGdxGame game) {
 		this.game = game;
+		configSocketEvents();
 		if(game.userID != 0){
 			game.socket.emit("load_runs", game.userID);
 		}
@@ -64,7 +65,7 @@ public class MainMenu implements Screen {
 		}).on("game_loaded", new Emitter.Listener(){
 			@Override
 			public void call(Object... args){
-				turnOffListeners();
+
 				JSONObject data = (JSONObject) args[0];
 				try{
 					long seed = data.getLong("seed");
@@ -90,12 +91,12 @@ public class MainMenu implements Screen {
 		}).on("no_save_found", new Emitter.Listener(){
 			@Override
 			public void call(Object... args){
+				System.out.println("no save found");
 				nosavefound();
 			}
 		}).on("loaded_runscomplete", new Emitter.Listener(){
 			@Override
 			public void call(Object... args){
-				turnOffListeners();
 				JSONObject data = (JSONObject) args[0];
 				try{
 					setRunCompleted(data.getInt("runscomplete"));
@@ -108,6 +109,7 @@ public class MainMenu implements Screen {
 	public void turnOffListeners(){
 		game.socket.off("game_loaded");
 		game.socket.off("no_save_found");
+		game.socket.off("loaded_runscomplete");
 	}
 	public void setRunCompleted(int runscomplete){
 		game.runscompleted = runscomplete;
@@ -157,6 +159,7 @@ public class MainMenu implements Screen {
 		game.fontHuge.draw(game.batch, "Change Font Size", 700, 550);
 		game.batch.end();
 		if(gameloaded){
+			turnOffListeners();
 			if(loadedcombatcleared){
 				game.setScreen(new Combat(game, new RunData(loadedseed, loadedhealth, loadedmaxHealth, loadedlevel,
 						loadeddeck, loadedcombatcleared)));
