@@ -121,6 +121,7 @@ io.on('connection', function(socket){
             runscomplete,
             userID
         ]
+        console.log(values);
         con.query(sql, values, function(err, result){
             if(err) throw err;
             console.log(result);
