@@ -114,6 +114,8 @@ public class Rewards implements Screen {
             }
         }
        else{
+           if(cursorPos>=27){offset = 210;}
+           else{offset = 0;}
            game.batch.draw(removalSelector, cursorPos%9*136+11, (cursorPos/9*200+11)-offset, 136, 200);
            runData.getDeck().render(0,0,game, offset, false);
         }
