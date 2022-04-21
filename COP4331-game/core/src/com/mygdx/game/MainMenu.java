@@ -24,6 +24,7 @@ public class MainMenu implements Screen {
 	Texture createAccountButton;
 	Texture menuCursor;
 	Texture logOutButton;
+	Texture leaderboardbutton;
 	int cursorPosition = 0;
 	int cursorPositionX = 0;
 	RunData loadedData;
@@ -48,6 +49,7 @@ public class MainMenu implements Screen {
 		createAccountButton = new Texture(Gdx.files.internal("createAccountButton.png"));
 		logOutButton = new Texture(Gdx.files.internal("logOutButton.png"));
 		menuCursor = new Texture(Gdx.files.internal("menuCursor.png"));
+		leaderboardbutton = new Texture(Gdx.files.internal("leaderboardbutton.png"));
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
@@ -89,7 +91,7 @@ public class MainMenu implements Screen {
 			public void call(Object... args){
 				nosavefound();
 			}
-		}).on("loaded_run", new Emitter.Listener(){
+		}).on("loaded_runscomplete", new Emitter.Listener(){
 			@Override
 			public void call(Object... args){
 				JSONObject data = (JSONObject) args[0];
@@ -136,6 +138,7 @@ public class MainMenu implements Screen {
 
 		game.batch.begin();
 		game.batch.draw(newGameButton, 100, 550, newGameButton.getWidth(), newGameButton.getHeight());
+		game.batch.draw(leaderboardbutton, 100, 100, leaderboardbutton.getWidth(), leaderboardbutton.getHeight());
 		if(nosave){
 			game.fontLarge.draw(game.batch, "No Save \n Found", 35, 455);
 		}
@@ -170,7 +173,7 @@ public class MainMenu implements Screen {
 			}
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-			if(cursorPosition != 2){
+			if(cursorPosition != 3){
 				cursorPosition++;
 			}
 		}
@@ -210,6 +213,11 @@ public class MainMenu implements Screen {
 			}
 			else if(cursorPosition == 2 && game.userID !=0){
 				game.userID = 0;
+				game.runscompleted = 0;
+			}
+			else if(cursorPosition == 3){
+				game.setScreen(new Leaderboard(game));
+				dispose();
 			}
 		}
 	}
