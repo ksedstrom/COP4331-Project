@@ -36,7 +36,7 @@ public class Combat implements Screen {
 		runData = data;
 		runData.incrementLevel();
 		runData.setCombatClear(false);
-		if(runData.getLevel() > 5){
+		if(runData.getLevel() == 5){
 			game.runscompleted++;
 			game.socket.emit("update_runs", game.userID, game.runscompleted);
 		}
