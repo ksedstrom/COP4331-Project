@@ -63,13 +63,7 @@ public class CreateAccount implements Screen {
                 backToMenuClicked();
             }
         });
-//        game.socket.on("create_success", new Emitter.Listener(){
-//            @Override
-//            public void call(Object... args){
-//                Gdx.app.log("CreateAccount", "account is created");
-//            }
-//
-//        });
+
         usernameText = new TextField("", skin);
         usernameText.setPosition(500, 480);
         usernameText.setSize(300,60);
@@ -104,9 +98,7 @@ public class CreateAccount implements Screen {
             }
         });
     }
-    // TextField usernameTextField = new TextField("",));
-   // s.addActor(usernameTextField)
-    //game.socket.on("create_success")
+
     public void registeredUser(){
         registered = 1;
     }
@@ -135,9 +127,7 @@ public class CreateAccount implements Screen {
         createdID = id;
     }
 
-//    public void initializeLeaderboard(){
-//        game.socket.emit("initialize_leaderboard", createdID, usernameText.getText());
-//    }
+
     public void configSocketEvents(){
         game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
             @Override
@@ -153,9 +143,8 @@ public class CreateAccount implements Screen {
                     int id = data.getInt("insertId");
                     System.out.println(id);
                 }catch(JSONException e){
-                    System.out.println("Didn't create");
+                    System.out.println("problem at json exception at creating account response");
                 }
-                //initializeLeaderboard();
             }
         }).on("duplicate_user", new Emitter.Listener(){
             @Override

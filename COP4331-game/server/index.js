@@ -108,18 +108,6 @@ io.on('connection', function(socket){
             console.log(data)
         })
     }),
-    socket.on('initialize_leaderboard', (userID, uname) =>{
-        let sql = "Insert INTO leaderboard (idUsers, username, runscompleted) VALUES (?)";
-        let values = [
-            userID,
-            uname,
-            0
-        ]
-        con.query(sql, [values], function(err, result){
-            if (err) throw err;
-            console.log(result);
-        })
-    }),
     socket.on('load_runs', (userID) =>{
         let sql = "Select * From leaderboard Where idUsers =" + userID;
         con.query(sql, function(error,data){
