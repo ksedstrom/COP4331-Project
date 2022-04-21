@@ -174,6 +174,7 @@ public class Combat implements Screen {
 					if(hand.getCard(i).pitching){
 						hand.getCard(i).pitching = false;
 						hand.getCard(i).unknown = false;
+						hand.getCard(i).updateDescription(this);
 						drawPile.insert(hand.remove(i));
 						i--;
 					}
