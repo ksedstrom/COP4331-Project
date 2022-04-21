@@ -328,7 +328,7 @@ public class Combat implements Screen {
 		enemy.removeStatus(6); // remove burrow
 		player.removeStatus(4); // remove temp accuracy
 		enemy.actStage1(this); // action stage 1
-		if(player.getHealth() < 0){
+		if(player.getHealth() <= 0){
 			game.setScreen(new GameOver(game));
 			dispose();
 		}
