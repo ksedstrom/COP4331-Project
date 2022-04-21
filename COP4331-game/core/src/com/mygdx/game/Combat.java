@@ -128,10 +128,18 @@ public class Combat implements Screen {
 		// Render player and enemy
 		player.render(0, 0, game, this);
 		enemy.render(270, 680, game, this);
-		
+
+		// If TAB is being held, overwrite with background then render draw pile
+		if (Gdx.input.isKeyPressed(Input.Keys.TAB)){
+			canAct = false;
+			game.batch.draw(background, 0, 0);
+			drawPile.render(0,0,game,0,true);
+		}
 		game.batch.end();
 
 		// Process User Input
+
+		if (!Gdx.input.isKeyPressed(Input.Keys.TAB)){canAct=true;}
 
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && canAct) endTurn();
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && canAct && cursorPos > 0) cursorPos--;
@@ -165,6 +173,7 @@ public class Combat implements Screen {
 				for(int i = 0; i < hand.getSize(); i++){
 					if(hand.getCard(i).pitching){
 						hand.getCard(i).pitching = false;
+						hand.getCard(i).unknown = false;
 						drawPile.insert(hand.remove(i));
 						i--;
 					}
@@ -227,6 +236,7 @@ public class Combat implements Screen {
 			}
 			updateHand();
 		}
+
 
 		// Debug Input
 		if (Gdx.input.isKeyJustPressed(Input.Keys.K)){

@@ -1,11 +1,16 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+
 import java.util.ArrayList;
 import java.util.Random;
 
 public class CardStack {
 	private ArrayList<Card> stack;
-	
+
+	private Texture unknownCard = new Texture(Gdx.files.internal("UnknownCard.png"));
+
 	public CardStack() {
 		stack = new ArrayList<Card>();
 	}
@@ -28,6 +33,11 @@ public class CardStack {
 		Random rng = new Random(); // this can be seeded
 		int i, random;
 		Card temp;
+
+		for(i=0;i<stack.size();i++){
+			stack.get(i).unknown=true;
+		}
+
 		// Fisher-Yates shuffle
 		for(i=stack.size()-1; i>1; i--) {
 			random = rng.nextInt(i);
@@ -42,7 +52,7 @@ public class CardStack {
 		return stack.get(i);
 	}
 	
-	public void render(int x, int y, final MyGdxGame game, int offSet) {
+	public void render(int x, int y, final MyGdxGame game, int offSet, boolean drawPile) {
 
 		int gridWidth = 9;
 		int widthOffset = 15;
@@ -51,7 +61,9 @@ public class CardStack {
 			x = (i % gridWidth) * 136 + widthOffset;
 			y = ((i / gridWidth) * 200 + heightOffset) - offSet;
 			getCard(i).render(x, y, game, 1);
-
+			if(drawPile && getCard(i).unknown){
+				game.batch.draw(unknownCard, x, y, 128, 192);
+			}
 		}
 	}
 }

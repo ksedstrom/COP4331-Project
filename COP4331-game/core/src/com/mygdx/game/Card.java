@@ -19,6 +19,7 @@ public class Card {
 	private final int cardWidth = 128;
 	private final int cardHeight = 192;
 	public boolean pitching = false;
+	public boolean unknown = true;
 
 	public Card(int ID) {
 		// get card data from file by using the id
