@@ -157,8 +157,14 @@ public class Combat implements Screen {
 				}
 				if (enemy.getHealth() < 1){
 					runData.setHealth(player.getHealth());
-					System.out.println(player.getHealth());
-					System.out.println(runData.getHealth());
+					if(runData.getLevel()==5){
+						runData.setMaxHealth(85);
+						runData.heal(40);
+					}
+					if(runData.getLevel()==10){
+						runData.setMaxHealth(100);
+						runData.heal(50);
+					}
 					saveGame();
 					game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
 					dispose();

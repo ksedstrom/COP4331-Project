@@ -77,6 +77,10 @@ public class RunData{
 	public int getMaxHealth() {
 		return maxHealth;
 	}
+
+	public void setMaxHealth(int input){
+		maxHealth = input;
+	}
 	
 	public int getLevel() {
 		return currentLevel;
