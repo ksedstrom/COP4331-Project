@@ -64,6 +64,7 @@ public class MainMenu implements Screen {
 		}).on("game_loaded", new Emitter.Listener(){
 			@Override
 			public void call(Object... args){
+				turnOffListeners();
 				JSONObject data = (JSONObject) args[0];
 				try{
 					long seed = data.getLong("seed");
@@ -94,6 +95,7 @@ public class MainMenu implements Screen {
 		}).on("loaded_runscomplete", new Emitter.Listener(){
 			@Override
 			public void call(Object... args){
+				turnOffListeners();
 				JSONObject data = (JSONObject) args[0];
 				try{
 					setRunCompleted(data.getInt("runscomplete"));
@@ -102,6 +104,10 @@ public class MainMenu implements Screen {
 				}
 			}
 		});
+	}
+	public void turnOffListeners(){
+		game.socket.off("game_loaded");
+		game.socket.off("no_save_found");
 	}
 	public void setRunCompleted(int runscomplete){
 		game.runscompleted = runscomplete;
@@ -122,12 +128,6 @@ public class MainMenu implements Screen {
 			loadedcombatcleared = false;
 		}
 		gameloaded = true;
-//			if(loadedData.getCombatClear()){
-//				game.setScreen(new Combat(game, new RunData(seed, health, maxhealth, level, deck, combatCleared)));
-//			}
-//			else{
-//				game.setScreen(new Rewards(game, new RunData(seed, health, maxhealth, level, deck, combatCleared)));
-//			}
 	}
 	@Override
 	public void render(float delta) {
@@ -237,6 +237,7 @@ public class MainMenu implements Screen {
 		logInButton.dispose();
 		createAccountButton.dispose();
 		menuCursor.dispose();
+		leaderboardbutton.dispose();
 	}
 	
 	@Override

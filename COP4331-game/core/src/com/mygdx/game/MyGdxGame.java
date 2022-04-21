@@ -67,25 +67,7 @@ public class MyGdxGame extends Game {
 			System.out.println(e);
 		}
 	}
-//	public void configSocketEvents(){
-//		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
-//			@Override
-//			public void call(Object... args){
-//				System.out.println("Connected to server");
-//			}
-//		}).on("create_success", new Emitter.Listener(){
-//			@Override
-//			public void call(Object... args){
-//				JSONObject data = (JSONObject) args[0];
-//				try{
-//					String id = data.getString("id");
-//					System.out.println(id);
-//				}catch(JSONException e){
-//					System.out.println("Didn't create");
-//				}
-//			}
-//		});
-//	}
+
 
 
 

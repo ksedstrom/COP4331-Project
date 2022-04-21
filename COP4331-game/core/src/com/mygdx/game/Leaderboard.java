@@ -102,6 +102,9 @@ public class Leaderboard implements Screen {
             System.out.println(tables[x][1]);
         }
     }
+    public void turnOffListener(){
+        game.socket.off("leaderboard");
+    }
     public void configSocketEvents(){
         game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
             @Override
@@ -111,6 +114,7 @@ public class Leaderboard implements Screen {
         }).on("leaderboard", new Emitter.Listener(){
             @Override
             public void call(Object... args){
+                turnOffListener();
                 JSONArray data = (JSONArray) args[0];
                 initializeTables(data.length());
                 try{
@@ -139,29 +143,6 @@ public class Leaderboard implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-//        if(tableFinished) {
-////            for (int x = 0; x < tables.length; x++){
-////                game.fontLarge.draw(game.batch, tables[x][0], 300, 650 - (x * 30));
-////                game.fontLarge.draw(game.batch, tables[x][1], 500, 650 - (x * 30));
-////                String temp = "" + (x+1);
-////                game.fontLarge.draw(game.batch, temp, 270, 650 - (x*30));
-////
-////            }
-//        }
-//        font.draw(game.batch, "Username: ", 400, 515);
-//        font.draw(game.batch, "Password: ", 400, 435);
-//        switch(loggedin){
-//            case 0:
-//                break;
-//            case 1:
-//                font.draw(game.batch, "Successfully Logged In", 550, 80);
-//                break;
-//            case 2:
-//                font.draw(game.batch, "Failed to Log In", 550, 80);
-//                break;
-//            default:
-//
-//        }
         game.batch.end();
         s.draw();
 

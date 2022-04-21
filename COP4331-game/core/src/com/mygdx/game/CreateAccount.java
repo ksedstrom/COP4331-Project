@@ -36,7 +36,6 @@ public class CreateAccount implements Screen {
     private BitmapFont font;
     private boolean passmismatch;
     private boolean emptyfield;
-    private int createdID;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     private int registered = 0; //0 for no create attempt //1 for successful creation //2 for duplicate username
     public CreateAccount(final MyGdxGame game) {
@@ -129,7 +128,10 @@ public class CreateAccount implements Screen {
             setListener();
         }
     }
-
+    public void turnOffListener(){
+        game.socket.off("create_success");
+        game.socket.off("duplicate_user");
+    }
     public void configSocketEvents(){
         game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
             @Override
@@ -139,6 +141,7 @@ public class CreateAccount implements Screen {
         }).on("create_success", new Emitter.Listener(){
             @Override
             public void call(Object... args){
+                turnOffListener();
                 JSONObject data = (JSONObject) args[0];
                 try{
                     registeredUser();
