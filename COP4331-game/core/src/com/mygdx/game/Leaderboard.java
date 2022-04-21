@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -31,7 +28,8 @@ public class Leaderboard implements Screen {
     private boolean tableFinished;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     Table leaderboard;
-
+    ScrollPane scroll;
+    Table container;
 
     public Leaderboard(final MyGdxGame game) {
         this.game = game;
@@ -61,12 +59,14 @@ public class Leaderboard implements Screen {
     }
     public void setUpTable(){
         leaderboard = new Table();
-        leaderboard.setFillParent(true);
         Label rank = new Label("Rank", skin);
         Label userheader = new Label("Username", skin);
         Label scoreheader = new Label("Runs Completed", skin);
-        leaderboard.top().padTop(80);
-        leaderboard.add(rank).padLeft(10).left().width(150);
+        leaderboard.top().left();
+        Label esc = new Label("Press [Esc] to Return", skin);
+        leaderboard.add(esc).left().top().padLeft(10);
+        leaderboard.row();
+        leaderboard.add(rank).padLeft(350).left().width(150);
         leaderboard.add(userheader).padLeft(10).left().width(300);
         leaderboard.add(scoreheader).padLeft(10).left().width(200);
         for(int x = 0; x < tables.length; x++){
@@ -74,13 +74,27 @@ public class Leaderboard implements Screen {
             Label position = new Label(""+ (x+1), skin);
             Label username = new Label(tables[x][0], skin);
             Label score = new Label(tables[x][1], skin);
-            leaderboard.add(position).padLeft(10).left();
-            leaderboard.add(username).padLeft(10).left();
-            leaderboard.add(score).padLeft(10).left();
+            if(x == tables.length - 1){
+                leaderboard.add(position).padLeft(350).left().padBottom(40);
+                leaderboard.add(username).padLeft(10).left().padBottom(40);
+                leaderboard.add(score).padLeft(10).left().padBottom(40);
+            }
+            else{
+                leaderboard.add(position).padLeft(350).left();
+                leaderboard.add(username).padLeft(10).left();
+                leaderboard.add(score).padLeft(10).left();
+            }
+
 
         }
-
-        s.addActor(leaderboard);
+        scroll = new ScrollPane(leaderboard, skin);
+        scroll.setHeight(720);
+        scroll.setWidth(1280);
+        scroll.setScrollbarsVisible(true);
+        container = new Table();
+        container.setPosition(640,360);
+        container.add(scroll).width(1280).height(720);
+        s.addActor(container);
     }
     public void initializeTables(int length){
         tables = new String[length][2];
@@ -144,6 +158,7 @@ public class Leaderboard implements Screen {
 
         game.batch.begin();
         game.batch.end();
+        s.act(Math.min(Gdx.graphics.getDeltaTime(), 1/30f));
         s.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
