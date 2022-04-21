@@ -375,9 +375,8 @@ public class Combat implements Screen {
 	}
 	public void applyDeconstructEffect(){
 		// does not need to check hand size because playing deconstruct will inherently remove 2 cards from hand
-		Card newCell = new Card(0);
-		hand.insert(newCell);
-		hand.insert(newCell);
+		hand.insert(new Card(0));
+		hand.insert(new Card(0));
 	}
 	public void applyRefreshEffect(){
 		while(discardPile.getSize() > 0) {
