@@ -148,8 +148,8 @@ public class Combat implements Screen {
 		// Process User Input
 
 		if (!Gdx.input.isKeyPressed(Input.Keys.TAB)){canAct=true;}
-		else if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){deckDisplayScroll+=128;}
-		else if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){deckDisplayScroll-=128;}
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){deckDisplayScroll+=210;}
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){deckDisplayScroll-=210;}
 
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && canAct) endTurn();
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && canAct && cursorPos > 0) cursorPos--;
