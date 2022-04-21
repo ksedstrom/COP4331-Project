@@ -61,7 +61,7 @@ public class Rewards implements Screen {
             if(id == 0 || id == 5){id = 34;}
             if(id == 6 || id == 7){id = 35;}
             // generate associated card objects
-            rewards[i] = new Card(35);
+            rewards[i] = new Card(id);
             rewards[i].updateDescription(null);
         }
     }
