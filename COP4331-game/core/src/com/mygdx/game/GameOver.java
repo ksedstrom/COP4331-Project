@@ -16,11 +16,16 @@ public class GameOver implements Screen {
 
     public GameOver(final MyGdxGame game) {
         this.game = game;
+        deleteSaveData();
         delay = 120;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
 
 
+    }
+
+    public void deleteSaveData(){
+        game.socket.emit("delete_save", game.userID);
     }
     @Override
     public void show() {

@@ -88,6 +88,13 @@ io.on('connection', function(socket){
             console.log(result);
         })
     }),
+    socket.on('delete_save', (userID) =>{
+        let sql = "Delete FROM RunData WHERE idUsers =" + userID;
+        con.query(sql, function(error, data){
+            if(error) throw error;
+            console.log(data)
+        })
+    }),
     socket.on('disconnect',function(){
         console.log("Player Disconnected");
     })

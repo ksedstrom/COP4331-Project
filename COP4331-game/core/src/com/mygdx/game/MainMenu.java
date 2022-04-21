@@ -34,6 +34,7 @@ public class MainMenu implements Screen {
 	String loadeddeck;
 	boolean loadedcombatcleared;
 	boolean gameloaded;
+	boolean nosave;
 
 	public MainMenu(final MyGdxGame game) {
 		this.game = game;
@@ -80,9 +81,16 @@ public class MainMenu implements Screen {
 					System.out.println("Didn't create");
 				}
 			}
+		}).on("no_save_found", new Emitter.Listener(){
+			@Override
+			public void call(Object... args){
+				nosavefound();
+			}
 		});
 	}
-
+	public void nosavefound(){
+		nosave = true;
+	}
 	public void loadGame(long seed, int health, int maxhealth, int level, String deck, int combatCleared){
 		loadedseed = seed;
 		loadedhealth = health;
@@ -112,6 +120,9 @@ public class MainMenu implements Screen {
 
 		game.batch.begin();
 		game.batch.draw(newGameButton, 100, 550, newGameButton.getWidth(), newGameButton.getHeight());
+		if(nosave){
+			game.fontLarge.draw(game.batch, "No Save \n Found", 35, 455);
+		}
 
 		if(game.userID == 0) {
 			game.batch.draw(logInButton, 100, 400, logInButton.getWidth(), logInButton.getHeight());
