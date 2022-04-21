@@ -35,6 +35,7 @@ public class CreateAccount implements Screen {
     private TextField confpwordText;
     private BitmapFont font;
     private boolean passmismatch;
+    private boolean emptyfield;
     private int createdID;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     private int registered = 0; //0 for no create attempt //1 for successful creation //2 for duplicate username
@@ -111,22 +112,23 @@ public class CreateAccount implements Screen {
         dispose();
     }
     public void btnLoginClicked(){
-        if(passwordText.getText().equals(confpwordText.getText())) {
+        if(passwordText.getText().equals(confpwordText.getText()) && passwordText.getText().isEmpty() == false && usernameText.getText().isEmpty() == false) {
             passmismatch = false;
+            emptyfield = false;
             game.socket.emit("create_account", usernameText.getText(), passwordText.getText());
 
         }
+        else if(passwordText.getText().isEmpty() == true || usernameText.getText().isEmpty() == true || confpwordText.getText().isEmpty() == true){
+            emptyfield = true;
+            passmismatch = false;
+            setListener();
+        }
         else{
+            emptyfield = false;
             passmismatch = true;
             setListener();
-
         }
     }
-
-    public void setCreatedID(int id){
-        createdID = id;
-    }
-
 
     public void configSocketEvents(){
         game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
@@ -167,6 +169,9 @@ public class CreateAccount implements Screen {
         font.draw(game.batch, "Confirm Password: ", 340, 355);
         if(passmismatch){
             font.draw(game.batch, "Passwords Do Not Match", 550, 80);
+        }
+        if(emptyfield){
+            font.draw(game.batch, "One of your fields is empty", 550, 80);
         }
         if(registered == 1){
             font.draw(game.batch, "Successfully Registered a User", 550, 80);
