@@ -99,7 +99,9 @@ public class LogIn implements Screen {
         setupListener();
     }
     public void backToMenuClicked(){
+
         game.setScreen(new MainMenu(game));
+        dispose();
     }
     public void btnLoginClicked(){
         game.socket.emit("log_in", usernameText.getText(), passwordText.getText());
@@ -174,7 +176,6 @@ public class LogIn implements Screen {
 
     @Override
     public void dispose() {
-        game.batch.dispose();
         s.dispose();
         font.dispose();
     }

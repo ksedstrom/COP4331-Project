@@ -114,12 +114,15 @@ public class CreateAccount implements Screen {
         registered = 2;
     }
     public void backToMenuClicked(){
+
         game.setScreen(new MainMenu(game));
+        dispose();
     }
     public void btnLoginClicked(){
         if(passwordText.getText().equals(confpwordText.getText())) {
             passmismatch = false;
             game.socket.emit("create_account", usernameText.getText(), passwordText.getText());
+
         }
         else{
             passmismatch = true;
@@ -130,12 +133,11 @@ public class CreateAccount implements Screen {
 
     public void setCreatedID(int id){
         createdID = id;
-        initializeLeaderboard();
     }
 
-    public void initializeLeaderboard(){
-        game.socket.emit("initialize_leaderboard", createdID, usernameText.getText());
-    }
+//    public void initializeLeaderboard(){
+//        game.socket.emit("initialize_leaderboard", createdID, usernameText.getText());
+//    }
     public void configSocketEvents(){
         game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
             @Override
@@ -149,11 +151,11 @@ public class CreateAccount implements Screen {
                 try{
                     registeredUser();
                     int id = data.getInt("insertId");
-                    setCreatedID(id);
                     System.out.println(id);
                 }catch(JSONException e){
                     System.out.println("Didn't create");
                 }
+                //initializeLeaderboard();
             }
         }).on("duplicate_user", new Emitter.Listener(){
             @Override
@@ -201,7 +203,6 @@ public class CreateAccount implements Screen {
 
     @Override
     public void dispose() {
-        game.batch.dispose();
         s.dispose();
         font.dispose();
     }

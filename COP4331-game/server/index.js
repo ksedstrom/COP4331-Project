@@ -40,6 +40,19 @@ io.on('connection', function(socket){
                     throw err;  
             }
             else{
+                socket.emit("create_success", result);
+                console.log([result])
+                console.log(result.insertId)
+                let sql = "Insert INTO leaderboard (idUsers, username, runscompleted) VALUES (?)";
+                let values = [
+                    result.insertId,
+                    uname,
+                    0
+                ]
+                con.query(sql, [values], function(error, res){
+                    if(err)throw(error)
+                    console.log(res)
+                })
             socket.emit("create_success", result);
             console.log([result])
 
