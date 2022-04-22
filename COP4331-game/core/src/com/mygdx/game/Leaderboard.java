@@ -94,6 +94,7 @@ public class Leaderboard implements Screen {
         container = new Table();
         container.setPosition(640,360);
         container.add(scroll).width(1280).height(720);
+        scroll.setFadeScrollBars(false);
         s.addActor(container);
     }
     public void initializeTables(int length){

@@ -58,8 +58,11 @@ public class Combat implements Screen {
 		if(runData.getLevel() <= 5){
 			background = new Texture(Gdx.files.internal("DesertBackground.png"));
 		}
-		else{
+		else if(runData.getLevel() <= 10){
 			background = new Texture(Gdx.files.internal("ForestBackground.png"));
+		}
+		else{
+			background = new Texture(Gdx.files.internal("ruinedcitybackground.jpg"));
 		}
 
 		// initialize all card stacks

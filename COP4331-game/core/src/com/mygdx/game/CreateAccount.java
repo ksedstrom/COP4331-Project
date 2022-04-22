@@ -36,11 +36,13 @@ public class CreateAccount implements Screen {
     private BitmapFont font;
     private boolean passmismatch;
     private boolean emptyfield;
+    private Texture background;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     private int registered = 0; //0 for no create attempt //1 for successful creation //2 for duplicate username
     public CreateAccount(final MyGdxGame game) {
         this.game = game;
         camera = new OrthographicCamera();
+        background = new Texture(Gdx.files.internal("ruinedcitybackground.jpg"));
         configSocketEvents();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
@@ -163,26 +165,27 @@ public class CreateAccount implements Screen {
     }
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0, 0, 0.2f, 1);
+        ScreenUtils.clear(0, 0, 0, 0);
 
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        font.draw(game.batch, "Username: ", 400, 515);
-        font.draw(game.batch, "Password: ", 400, 435);
-        font.draw(game.batch, "Confirm Password: ", 340, 355);
+        game.batch.draw(background, 0, 0);
+        game.fontLarge.draw(game.batch, "Username: ", 400, 515);
+        game.fontLarge.draw(game.batch, "Password: ", 400, 435);
+        game.fontLarge.draw(game.batch, "Confirm Password: ", 340, 355);
         if(passmismatch){
-            font.draw(game.batch, "Passwords Do Not Match", 550, 80);
+            game.fontLarge.draw(game.batch, "Passwords Do Not Match", 550, 80);
         }
         if(emptyfield){
-            font.draw(game.batch, "One of your fields is empty", 550, 80);
+            game.fontLarge.draw(game.batch, "One of your fields is empty", 550, 80);
         }
         if(registered == 1){
-            font.draw(game.batch, "Successfully Registered a User", 550, 80);
+            game.fontLarge.draw(game.batch, "Successfully Registered a User", 550, 80);
         }
         if (registered == 2) {
-            font.draw(game.batch, "Username is already Taken", 550, 80);
+            game.fontLarge.draw(game.batch, "Username is already Taken", 550, 80);
         }
         game.batch.end();
         s.draw();
