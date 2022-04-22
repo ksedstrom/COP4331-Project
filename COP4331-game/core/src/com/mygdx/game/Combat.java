@@ -274,7 +274,7 @@ public class Combat implements Screen {
 		}
 	}
 	public void saveGame(){
-		game.gameSaved = false;
+		//game.gameSaved = false;
 		int x;
 		if(runData.getCombatClear()){
 			x = 1;
