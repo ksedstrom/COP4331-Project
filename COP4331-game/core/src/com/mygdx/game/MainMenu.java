@@ -185,8 +185,8 @@ public class MainMenu implements Screen {
 			game.batch.draw(loadGameButton, 100, 400, loadGameButton.getWidth(), loadGameButton.getHeight());
 			game.batch.draw(logOutButton, 100, 250, logOutButton.getWidth(), logOutButton.getHeight());
 		}
-		game.batch.draw(menuCursor, 500 + (cursorPositionX*400), 550-(cursorPosition * 150), menuCursor.getWidth(), menuCursor.getHeight());
-		game.fontHuge.draw(game.batch, "Change Font Size", 700, 550);
+		game.batch.draw(menuCursor, 500 + (cursorPositionX*420), 550-(cursorPosition * 150), menuCursor.getWidth(), menuCursor.getHeight());
+		game.fontHuge.draw(game.batch, "Change Font Size", 700, 610);
 		game.batch.end();
 		if(gameloaded){
 			turnOffListeners();

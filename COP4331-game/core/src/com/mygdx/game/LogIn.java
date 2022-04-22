@@ -35,9 +35,11 @@ public class LogIn implements Screen {
     private BitmapFont font;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     private int loggedin = 0;
+    private Texture background;
     public LogIn(final MyGdxGame game) {
         this.game = game;
         camera = new OrthographicCamera();
+        background = new Texture(Gdx.files.internal("ForestBackground.png"));
         configSocketEvents();
         font = new BitmapFont();
         font.setColor(Color.WHITE);
@@ -143,22 +145,23 @@ public class LogIn implements Screen {
     }
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0, 0, 0.2f, 1);
+        ScreenUtils.clear(0, 0, 0, 0);
 
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        font.draw(game.batch, "Username: ", 400, 515);
-        font.draw(game.batch, "Password: ", 400, 435);
+        game.batch.draw(background, 0, 0);
+        game.fontLarge.draw(game.batch, "Username: ", 400, 515);
+        game.fontLarge.draw(game.batch, "Password: ", 400, 435);
         switch(loggedin){
             case 0:
                 break;
             case 1:
-                font.draw(game.batch, "Successfully Logged In", 550, 80);
+                game.fontLarge.draw(game.batch, "Successfully Logged In", 550, 80);
                 break;
             case 2:
-                font.draw(game.batch, "Failed to Log In", 550, 80);
+                game.fontLarge.draw(game.batch, "Failed to Log In", 550, 80);
                 break;
             default:
 
