@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 import java.util.Random;
 
@@ -34,6 +36,9 @@ public class Rewards implements Screen {
     public Rewards (final MyGdxGame game, final RunData data){
         this.game = game;
         runData = data;
+//        if(game.userID != 0) {
+//            configSocketEvents();
+//        }
         runData.setCombatClear(true);
 
         camera = new OrthographicCamera();
@@ -89,6 +94,9 @@ public class Rewards implements Screen {
 
         // Render Background
         game.batch.draw(background, 0, 0);
+//        if(game.gameSaved){
+//            game.fontLarge.draw(game.batch, "Successfully Saved", 1090, 30);
+//        }
 
         if(cardRemovalFlag == 0){
             // Render Rewards
@@ -194,7 +202,28 @@ public class Rewards implements Screen {
             }
        }
     }
-
+//    public void configSocketEvents() {
+//        game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+//            @Override
+//            public void call(Object... args) {
+//                System.out.println("Connected to server");
+//            }
+//        }).on("save_success", new Emitter.Listener() {
+//            @Override
+//            public void call(Object... args) {
+//                System.out.println("Received save success");
+//                setSaveSuccess(true);
+//                turnOffListener();
+//
+//            }
+//        });
+//    }
+//    public void setSaveSuccess(boolean saved){
+//        game.gameSaved = saved;
+//    }
+//    public void turnOffListener(){
+//        game.socket.off("save_success");
+//    }
     // Default Screen Methods
     @Override
     public void show() {
@@ -223,6 +252,6 @@ public class Rewards implements Screen {
 
     @Override
     public void dispose() {
-
+        //turnOffListener();
     }
 }

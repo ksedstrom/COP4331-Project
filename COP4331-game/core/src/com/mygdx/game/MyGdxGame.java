@@ -19,6 +19,7 @@ public class MyGdxGame extends Game {
 	public int userID = 0;
 	public int runscompleted;
 	public boolean serverConnected = false;
+	//public boolean gameSaved = false;
 	public void create() {
 		batch = new SpriteBatch();
 		connectSocket();
@@ -78,6 +79,7 @@ public class MyGdxGame extends Game {
 			}
 		});
 	}
+
 	public void setServerConnected(boolean connected){
 		this.serverConnected = connected;
 	}

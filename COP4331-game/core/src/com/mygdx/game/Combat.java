@@ -8,6 +8,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Combat implements Screen {
 	final MyGdxGame game;
@@ -37,6 +41,9 @@ public class Combat implements Screen {
 
 	public Combat(final MyGdxGame game, final RunData data) {
 		this.game = game;
+//		if(game.userID != 0){
+//			configSocketEvents();
+//		}
 		runData = data;
 		runData.incrementLevel();
 		runData.setCombatClear(false);
@@ -175,7 +182,9 @@ public class Combat implements Screen {
 						game.setScreen(new Winning(game));
 					}
 					else {
-						saveGame();
+						if(game.userID != 0) {
+							saveGame();
+						}
 						game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
 						dispose();
 					}
@@ -265,6 +274,7 @@ public class Combat implements Screen {
 		}
 	}
 	public void saveGame(){
+		game.gameSaved = false;
 		int x;
 		if(runData.getCombatClear()){
 			x = 1;
@@ -402,7 +412,28 @@ public class Combat implements Screen {
 		}
 		drawPile.shuffle();
 	}
-
+//	public void configSocketEvents() {
+//		game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+//			@Override
+//			public void call(Object... args) {
+//				System.out.println("Connected to server");
+//			}
+//		}).on("save_success", new Emitter.Listener() {
+//			@Override
+//			public void call(Object... args) {
+//				System.out.println("Received save success");
+//				setSaveSuccess(true);
+//				turnOffListener();
+//
+//			}
+//		});
+//	}
+//	public void turnOffListener(){
+//		game.socket.off("save_success");
+//	}
+//	public void setSaveSuccess(boolean saved){
+//		game.gameSaved = saved;
+//	}
 	@Override
 	public void show() {
 
@@ -432,6 +463,7 @@ public class Combat implements Screen {
 	public void dispose() {
 		// TODO: dispose of textures associated with enemy and player
 		// Do NOT dispose of any card textures since those are stored in RunData and will be used in future combats
+		//turnOffListener();
 		combatCursor.dispose();
 		background.dispose();
 	}
