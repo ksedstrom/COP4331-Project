@@ -39,6 +39,9 @@ public class MainMenu implements Screen {
 
 	public MainMenu(final MyGdxGame game) {
 		this.game = game;
+		if(game.serverConnected) {
+			testConnection();
+		}
 		configSocketEvents();
 		if(game.userID != 0){
 			game.socket.emit("load_runs", game.userID);
@@ -55,6 +58,11 @@ public class MainMenu implements Screen {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
 		configSocketEvents();
+	}
+	public void testConnection(){
+		System.out.println("testing connection");
+		game.serverConnected = false;
+		game.socket.emit("test_connection");
 	}
 	public void configSocketEvents(){
 		game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
@@ -104,12 +112,26 @@ public class MainMenu implements Screen {
 					System.out.println("Json exception at runscomplete on main menu");
 				}
 			}
+		}).on("server_connected", new Emitter.Listener() {
+			@Override
+			public void call(Object... args){
+				System.out.println("received connection message");
+				setServerConnected(true);
+				turnOffServerConnected();
+			}
 		});
+	}
+	public void turnOffServerConnected(){
+		game.socket.off("server_connected");
+	}
+	public void setServerConnected(boolean connected){
+		game.serverConnected = connected;
 	}
 	public void turnOffListeners(){
 		game.socket.off("game_loaded");
 		game.socket.off("no_save_found");
 		game.socket.off("loaded_runscomplete");
+		game.socket.off("server_connected");
 	}
 	public void setRunCompleted(int runscomplete){
 		game.runscompleted = runscomplete;

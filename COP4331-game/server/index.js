@@ -136,6 +136,9 @@ io.on('connection', function(socket){
             socket.emit("leaderboard", data)
         })
     }),
+    socket.on('test_connection', () => {
+        socket.emit('server_connected')
+    }),
     socket.on('disconnect',function(){
         console.log("Player Disconnected");
     })
