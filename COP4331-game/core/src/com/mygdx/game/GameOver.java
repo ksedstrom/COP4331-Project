@@ -25,7 +25,10 @@ public class GameOver implements Screen {
     }
 
     public void deleteSaveData(){
+
         game.socket.emit("delete_save", game.userID);
+        game.prefs.clear();
+        game.prefs.flush();
     }
     @Override
     public void show() {
