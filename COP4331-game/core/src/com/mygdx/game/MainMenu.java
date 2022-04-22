@@ -25,6 +25,7 @@ public class MainMenu implements Screen {
 	Texture menuCursor;
 	Texture logOutButton;
 	Texture leaderboardbutton;
+	Texture background;
 	int cursorPosition = 0;
 	int cursorPositionX = 0;
 	RunData loadedData;
@@ -46,7 +47,7 @@ public class MainMenu implements Screen {
 		if(game.userID != 0){
 			game.socket.emit("load_runs", game.userID);
 		}
-
+		background = new Texture(Gdx.files.internal("DesertBackground.png"));
 		newGameButton = new Texture(Gdx.files.internal("newGameButton.png"));
 		loadGameButton = new Texture(Gdx.files.internal("loadGameButton.png"));
 		logInButton = new Texture(Gdx.files.internal("logInButton.png"));
@@ -161,6 +162,7 @@ public class MainMenu implements Screen {
 		game.batch.setProjectionMatrix(camera.combined);
 
 		game.batch.begin();
+		game.batch.draw(background, 0, 0);
 		game.batch.draw(newGameButton, 100, 550, newGameButton.getWidth(), newGameButton.getHeight());
 		game.batch.draw(leaderboardbutton, 100, 100, leaderboardbutton.getWidth(), leaderboardbutton.getHeight());
 		if(nosave){

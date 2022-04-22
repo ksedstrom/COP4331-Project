@@ -131,7 +131,7 @@ public class Rewards implements Screen {
         // If TAB is being held, overwrite with background then render draw pile
         if (Gdx.input.isKeyPressed(Input.Keys.TAB)){
             game.batch.draw(background, 0, 0);
-            runData.getDeck().render(0,0,game,offset,true);
+            runData.getDeck().render(0,0,game,offset,false);
         }
 
        game.batch.end();
