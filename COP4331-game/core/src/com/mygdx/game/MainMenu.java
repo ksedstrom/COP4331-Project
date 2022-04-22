@@ -196,6 +196,7 @@ public class MainMenu implements Screen {
 			}
 			else if(cursorPosition == 0){
 				// Start a new game
+				turnOffListeners();
 				game.setScreen(new Combat(game, new RunData(defaultDeckList)));
 				dispose();
 			}

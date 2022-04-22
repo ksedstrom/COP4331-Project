@@ -103,10 +103,12 @@ public class CreateAccount implements Screen {
         registered = 1;
     }
     public void dupUser(){
+
         registered = 2;
+        setListener();
     }
     public void backToMenuClicked(){
-
+        turnOffListener();
         game.setScreen(new MainMenu(game));
         dispose();
     }
@@ -186,7 +188,9 @@ public class CreateAccount implements Screen {
         s.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            turnOffListener();
             game.setScreen(new MainMenu(game));
+            dispose();
         }
     }
 

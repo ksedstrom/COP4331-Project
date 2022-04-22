@@ -99,7 +99,7 @@ public class LogIn implements Screen {
         setupListener();
     }
     public void backToMenuClicked(){
-
+        turnOffListeners();
         game.setScreen(new MainMenu(game));
         dispose();
     }
@@ -167,7 +167,9 @@ public class LogIn implements Screen {
         s.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+            turnOffListeners();
             game.setScreen(new MainMenu(game));
+            dispose();
         }
     }
 
