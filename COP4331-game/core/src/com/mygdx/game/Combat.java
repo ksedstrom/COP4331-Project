@@ -27,24 +27,27 @@ public class Combat implements Screen {
 	private Card selectedCard = null;
 	private int playCardDelay = 0;
 	private boolean cardReady = false;
+	private int deckDisplayScroll = 0;
 
 	private Texture combatCursor;
 	private Texture background;
+	private Texture animatedCard;
+	private Texture drawIcon;
+	private Texture discardIcon;
 
 	public Combat(final MyGdxGame game, final RunData data) {
 		this.game = game;
 		runData = data;
 		runData.incrementLevel();
 		runData.setCombatClear(false);
-		if(runData.getLevel() == 5){
-			game.runscompleted++;
-			game.socket.emit("update_runs", game.userID, game.runscompleted);
-		}
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
 
 		// initialize textures
 		combatCursor = new Texture(Gdx.files.internal("combatCursor.png"));
+		animatedCard = new Texture(Gdx.files.internal("Base_Card_Template.png"));
+		drawIcon = new Texture(Gdx.files.internal("DeckIcon.png"));
+		discardIcon = new Texture(Gdx.files.internal("DiscardIcon.png"));
 		if(runData.getLevel() <= 5){
 			background = new Texture(Gdx.files.internal("DesertBackground.png"));
 		}
@@ -111,12 +114,10 @@ public class Combat implements Screen {
 		}
 
 		// Render discard and draw pile hud elements
-		// TODO: need a simple deck icon to make it so this isn't just floating text
-		String drawPileDisplay = "Draw Pile Size: " + drawPile.getSize();
-		game.fontLarge.draw(game.batch, drawPileDisplay, 0, 250);
-		String discardPileDisplay = "Discard Pile Size: " + discardPile.getSize();
-		game.fontLarge.draw(game.batch, discardPileDisplay, 0, 200);
-		//game.fontLarge.draw(game.batch, String.valueOf(discardPile.getSize()), 0, 300);
+		game.batch.draw(drawIcon, 30, 0);
+		game.fontHuge.draw(game.batch, String.valueOf(drawPile.getSize()), 70, 25, 40, 1, false);
+		game.batch.draw(discardIcon, 1170, 0);
+		game.fontHuge.draw(game.batch, String.valueOf(discardPile.getSize()), 1210, 25, 40, 1, false);
 
 		// pressing ENTER key will end the turn, but an End Turn button could maybe be added in the future
 
@@ -129,20 +130,22 @@ public class Combat implements Screen {
 		}
 
 		// Render player and enemy
-		player.render(0, 0, game, this);
+		player.render(140, 0, game, this);
 		enemy.render(270, 680, game, this);
 
 		// If TAB is being held, overwrite with background then render draw pile
 		if (Gdx.input.isKeyPressed(Input.Keys.TAB)){
 			canAct = false;
 			game.batch.draw(background, 0, 0);
-			drawPile.render(0,0,game,0,true);
+			drawPile.render(0,0,game,deckDisplayScroll,true);
 		}
 		game.batch.end();
 
 		// Process User Input
 
 		if (!Gdx.input.isKeyPressed(Input.Keys.TAB)){canAct=true;}
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){deckDisplayScroll+=210;}
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){deckDisplayScroll-=210;}
 
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && canAct) endTurn();
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && canAct && cursorPos > 0) cursorPos--;
@@ -168,9 +171,14 @@ public class Combat implements Screen {
 						runData.setMaxHealth(100);
 						runData.heal(50);
 					}
-					saveGame();
-					game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
-					dispose();
+					if(runData.getLevel() == 15){
+						game.setScreen(new Winning(game));
+					}
+					else {
+						saveGame();
+						game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
+						dispose();
+					}
 				}
 				
 				// move card to a pile
@@ -281,6 +289,7 @@ public class Combat implements Screen {
 			card = drawPile.remove(0); // draw card
 			if(hand.getSize() == maxHandSize) {
 				// hand is full; put drawn card into discard pile
+
 				discardPile.insert(card);
 			}
 			else {

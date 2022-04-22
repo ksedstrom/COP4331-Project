@@ -35,7 +35,7 @@ public class CreateAccount implements Screen {
     private TextField confpwordText;
     private BitmapFont font;
     private boolean passmismatch;
-    private int createdID;
+    private boolean emptyfield;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     private int registered = 0; //0 for no create attempt //1 for successful creation //2 for duplicate username
     public CreateAccount(final MyGdxGame game) {
@@ -63,13 +63,7 @@ public class CreateAccount implements Screen {
                 backToMenuClicked();
             }
         });
-//        game.socket.on("create_success", new Emitter.Listener(){
-//            @Override
-//            public void call(Object... args){
-//                Gdx.app.log("CreateAccount", "account is created");
-//            }
-//
-//        });
+
         usernameText = new TextField("", skin);
         usernameText.setPosition(500, 480);
         usernameText.setSize(300,60);
@@ -104,9 +98,7 @@ public class CreateAccount implements Screen {
             }
         });
     }
-    // TextField usernameTextField = new TextField("",));
-   // s.addActor(usernameTextField)
-    //game.socket.on("create_success")
+
     public void registeredUser(){
         registered = 1;
     }
@@ -114,27 +106,31 @@ public class CreateAccount implements Screen {
         registered = 2;
     }
     public void backToMenuClicked(){
+
         game.setScreen(new MainMenu(game));
+        dispose();
     }
     public void btnLoginClicked(){
-        if(passwordText.getText().equals(confpwordText.getText())) {
+        if(passwordText.getText().equals(confpwordText.getText()) && passwordText.getText().isEmpty() == false && usernameText.getText().isEmpty() == false) {
             passmismatch = false;
+            emptyfield = false;
             game.socket.emit("create_account", usernameText.getText(), passwordText.getText());
+
+        }
+        else if(passwordText.getText().isEmpty() == true || usernameText.getText().isEmpty() == true || confpwordText.getText().isEmpty() == true){
+            emptyfield = true;
+            passmismatch = false;
+            setListener();
         }
         else{
+            emptyfield = false;
             passmismatch = true;
             setListener();
-
         }
     }
-
-    public void setCreatedID(int id){
-        createdID = id;
-        initializeLeaderboard();
-    }
-
-    public void initializeLeaderboard(){
-        game.socket.emit("initialize_leaderboard", createdID, usernameText.getText());
+    public void turnOffListener(){
+        game.socket.off("create_success");
+        game.socket.off("duplicate_user");
     }
     public void configSocketEvents(){
         game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
@@ -145,14 +141,14 @@ public class CreateAccount implements Screen {
         }).on("create_success", new Emitter.Listener(){
             @Override
             public void call(Object... args){
+                turnOffListener();
                 JSONObject data = (JSONObject) args[0];
                 try{
                     registeredUser();
                     int id = data.getInt("insertId");
-                    setCreatedID(id);
                     System.out.println(id);
                 }catch(JSONException e){
-                    System.out.println("Didn't create");
+                    System.out.println("problem at json exception at creating account response");
                 }
             }
         }).on("duplicate_user", new Emitter.Listener(){
@@ -176,6 +172,9 @@ public class CreateAccount implements Screen {
         font.draw(game.batch, "Confirm Password: ", 340, 355);
         if(passmismatch){
             font.draw(game.batch, "Passwords Do Not Match", 550, 80);
+        }
+        if(emptyfield){
+            font.draw(game.batch, "One of your fields is empty", 550, 80);
         }
         if(registered == 1){
             font.draw(game.batch, "Successfully Registered a User", 550, 80);
@@ -201,7 +200,6 @@ public class CreateAccount implements Screen {
 
     @Override
     public void dispose() {
-        game.batch.dispose();
         s.dispose();
         font.dispose();
     }

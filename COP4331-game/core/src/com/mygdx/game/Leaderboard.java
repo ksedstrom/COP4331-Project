@@ -7,8 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -28,6 +27,9 @@ public class Leaderboard implements Screen {
     private BitmapFont font;
     private boolean tableFinished;
     Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+    Table leaderboard;
+    ScrollPane scroll;
+    Table container;
 
     public Leaderboard(final MyGdxGame game) {
         this.game = game;
@@ -45,8 +47,6 @@ public class Leaderboard implements Screen {
         backToMenu.setPosition(50, 650);
         backToMenu.setSize(200, 50);
 
-
-
         backToMenu.addListener(new ClickListener(){
             @Override
             public void touchUp(InputEvent e, float x, float y, int point, int button){
@@ -57,7 +57,45 @@ public class Leaderboard implements Screen {
 
 
     }
+    public void setUpTable(){
+        leaderboard = new Table();
+        Label rank = new Label("Rank", skin);
+        Label userheader = new Label("Username", skin);
+        Label scoreheader = new Label("Runs Completed", skin);
+        leaderboard.top().left();
+        Label esc = new Label("Press [Esc] to Return", skin);
+        leaderboard.add(esc).left().top().padLeft(10);
+        leaderboard.row();
+        leaderboard.add(rank).padLeft(350).left().width(150);
+        leaderboard.add(userheader).padLeft(10).left().width(300);
+        leaderboard.add(scoreheader).padLeft(10).left().width(200);
+        for(int x = 0; x < tables.length; x++){
+            leaderboard.row();
+            Label position = new Label(""+ (x+1), skin);
+            Label username = new Label(tables[x][0], skin);
+            Label score = new Label(tables[x][1], skin);
+            if(x == tables.length - 1){
+                leaderboard.add(position).padLeft(350).left().padBottom(40);
+                leaderboard.add(username).padLeft(10).left().padBottom(40);
+                leaderboard.add(score).padLeft(10).left().padBottom(40);
+            }
+            else{
+                leaderboard.add(position).padLeft(350).left();
+                leaderboard.add(username).padLeft(10).left();
+                leaderboard.add(score).padLeft(10).left();
+            }
 
+
+        }
+        scroll = new ScrollPane(leaderboard, skin);
+        scroll.setHeight(720);
+        scroll.setWidth(1280);
+        scroll.setScrollbarsVisible(true);
+        container = new Table();
+        container.setPosition(640,360);
+        container.add(scroll).width(1280).height(720);
+        s.addActor(container);
+    }
     public void initializeTables(int length){
         tables = new String[length][2];
     }
@@ -70,12 +108,16 @@ public class Leaderboard implements Screen {
     }
     public void backToMenuClicked(){
         game.setScreen(new MainMenu(game));
+        dispose();
     }
     public void printTable(){
         for (int x = 0; x < tables.length; x++){
             System.out.println(tables[x][0]);
             System.out.println(tables[x][1]);
         }
+    }
+    public void turnOffListener(){
+        game.socket.off("leaderboard");
     }
     public void configSocketEvents(){
         game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
@@ -86,6 +128,7 @@ public class Leaderboard implements Screen {
         }).on("leaderboard", new Emitter.Listener(){
             @Override
             public void call(Object... args){
+                turnOffListener();
                 JSONArray data = (JSONArray) args[0];
                 initializeTables(data.length());
                 try{
@@ -96,7 +139,9 @@ public class Leaderboard implements Screen {
                         addToTable(data.length()-1-i, username, runscompleted);
                     }
                     setFinishedTable(true);
+                    setUpTable();
                     printTable();
+
 
                 }catch(JSONException e){
                     System.out.println("Json Exception at loading leaderboard");
@@ -106,38 +151,14 @@ public class Leaderboard implements Screen {
     }
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(1, 1, 1, 1);
+        ScreenUtils.clear(0, 0, 0.2f, 1);
 
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        game.fontLarge.draw(game.batch, "UserName", 300, 690);
-        game.fontLarge.draw(game.batch, "Runs Completed", 500, 690);
-        if(tableFinished) {
-            for (int x = 0; x < tables.length; x++){
-                game.fontLarge.draw(game.batch, tables[x][0], 300, 650 - (x * 30));
-                game.fontLarge.draw(game.batch, tables[x][1], 500, 650 - (x * 30));
-                String temp = "" + (x+1);
-                game.fontLarge.draw(game.batch, temp, 270, 650 - (x*30));
-
-            }
-        }
-//        font.draw(game.batch, "Username: ", 400, 515);
-//        font.draw(game.batch, "Password: ", 400, 435);
-//        switch(loggedin){
-//            case 0:
-//                break;
-//            case 1:
-//                font.draw(game.batch, "Successfully Logged In", 550, 80);
-//                break;
-//            case 2:
-//                font.draw(game.batch, "Failed to Log In", 550, 80);
-//                break;
-//            default:
-//
-//        }
         game.batch.end();
+        s.act(Math.min(Gdx.graphics.getDeltaTime(), 1/30f));
         s.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
@@ -155,7 +176,6 @@ public class Leaderboard implements Screen {
 
     @Override
     public void dispose() {
-        game.batch.dispose();
         s.dispose();
         font.dispose();
     }

@@ -15,6 +15,8 @@ abstract class Combatant {
 	
 	// GUI stuff
 	protected Texture healthBarOutline;
+	protected Texture healthBarAnimation;
+	protected int animationLength;
 	protected Texture healthBar;
 	protected Texture blkIcon;
 	protected Texture dmgIcon;
@@ -30,6 +32,9 @@ abstract class Combatant {
 			effectTextures[i] = new Texture((Gdx.files.internal(temp)));
 		}
 		healthBarOutline = new Texture(Gdx.files.internal("HealthBarOutline.png"));
+		healthBarAnimation = new Texture(Gdx.files.internal("HealthBarAnimation.png"));
+		animationLength = 1000;
+
 		blkIcon = new Texture(Gdx.files.internal("BlockIcon.png"));
 		dmgIcon = new Texture(Gdx.files.internal("DamageIcon.png"));
 		specialEffectTexture = new Texture(Gdx.files.internal("specialEffect.png"));
@@ -115,8 +120,9 @@ abstract class Combatant {
 	public void render(int x, int y, final MyGdxGame game, Combat combat) {
 		// health bar
 		game.batch.draw(healthBarOutline, x, y, 1010, 40);
+		if(animationLength > 1000 * health / maxHealth){animationLength-=3;}
+		game.batch.draw(healthBarAnimation, x + 5, y + 5, animationLength, 30);
 		game.batch.draw(healthBar, x + 5, y + 5, 1000 * health / maxHealth, 30);
 		game.fontLarge.draw(game.batch, hpDisplay, x + 10, y + 25);
-		
-	};
+	}
 }

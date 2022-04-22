@@ -99,12 +99,18 @@ public class LogIn implements Screen {
         setupListener();
     }
     public void backToMenuClicked(){
+
         game.setScreen(new MainMenu(game));
+        dispose();
     }
     public void btnLoginClicked(){
         game.socket.emit("log_in", usernameText.getText(), passwordText.getText());
         System.out.println(usernameText.getText());
         System.out.println(passwordText.getText());
+    }
+    public void turnOffListeners(){
+        game.socket.off("login_success");
+        game.socket.off("login_failed");
     }
     public void configSocketEvents(){
         game.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
@@ -117,6 +123,7 @@ public class LogIn implements Screen {
             public void call(Object... args){
                 JSONObject data = (JSONObject) args[0];
                 try{
+                    turnOffListeners();
                     loggedIn();
                     String userID = data.getString("userID");
                     game.userID = Integer.parseInt(userID);
@@ -174,7 +181,6 @@ public class LogIn implements Screen {
 
     @Override
     public void dispose() {
-        game.batch.dispose();
         s.dispose();
         font.dispose();
     }
