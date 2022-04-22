@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -19,11 +20,13 @@ public class MyGdxGame extends Game {
 	public int userID = 0;
 	public int runscompleted;
 	public boolean serverConnected = false;
+	public Preferences prefs;
 	//public boolean gameSaved = false;
 	public void create() {
 		batch = new SpriteBatch();
 		connectSocket();
 		configSocketEvents();
+		prefs = Gdx.app.getPreferences("cop4331savedata");
 		fontSmall = new BitmapFont(Gdx.files.internal("Arial8px.fnt"));
 		fontMedium = new BitmapFont(Gdx.files.internal("Arial12px.fnt"));
 		fontLarge = new BitmapFont(Gdx.files.internal("Arial18px.fnt"));

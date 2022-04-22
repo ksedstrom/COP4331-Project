@@ -85,6 +85,23 @@ public class Rewards implements Screen {
         game.socket.emit("save_game", game.userID, runData.getSeed(), runData.getHealth(), runData.getMaxHealth(),
                 runData.getLevel(), runData.getDeckList(), x);
     }
+    public void saveLocal(){
+        int x;
+        if(runData.getCombatClear()){
+            x=1;
+        }
+        else{
+            x = 0;
+        }
+        game.prefs.putInteger("userID", game.userID);
+        game.prefs.putLong("seed", runData.getSeed());
+        game.prefs.putInteger("health", runData.getHealth());
+        game.prefs.putInteger("maxHealth", runData.getMaxHealth());
+        game.prefs.putInteger("level", runData.getLevel());
+        game.prefs.putString("deck", runData.getDeckList());
+        game.prefs.putInteger("combatclear", x);
+        game.prefs.flush();
+    }
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0.2f, 1);
@@ -173,7 +190,9 @@ public class Rewards implements Screen {
                        // proceed to next fight
                        if(game.userID != 0){
                            saveGame();
+
                        }
+                       saveLocal();
                        game.setScreen(new Combat(game, runData));
                        dispose();
                    }

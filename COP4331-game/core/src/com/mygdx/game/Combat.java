@@ -185,9 +185,12 @@ public class Combat implements Screen {
 						game.setScreen(new Winning(game));
 					}
 					else {
+						saveLocal();
 						if(game.userID != 0) {
+
 							saveGame();
 						}
+
 						game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
 						dispose();
 					}
@@ -287,6 +290,23 @@ public class Combat implements Screen {
 		}
 		game.socket.emit("save_game", game.userID, runData.getSeed(), runData.getHealth(), runData.getMaxHealth(),
 				runData.getLevel(), runData.getDeckList(), x);
+	}
+	public void saveLocal(){
+		int x;
+		if(runData.getCombatClear()){
+			x=1;
+		}
+		else{
+			x = 0;
+		}
+		game.prefs.putInteger("userID", game.userID);
+		game.prefs.putLong("seed", runData.getSeed());
+		game.prefs.putInteger("health", runData.getHealth());
+		game.prefs.putInteger("maxHealth", runData.getMaxHealth());
+		game.prefs.putInteger("level", runData.getLevel());
+		game.prefs.putString("deck", runData.getDeckList());
+		game.prefs.putInteger("combatclear", x);
+		game.prefs.flush();
 	}
 	public void draw(int x) {
 		Card card;

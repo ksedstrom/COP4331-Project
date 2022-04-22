@@ -25,6 +25,7 @@ public class MainMenu implements Screen {
 	Texture menuCursor;
 	Texture logOutButton;
 	Texture leaderboardbutton;
+	Texture loadlocalbutton;
 	Texture background;
 	int cursorPosition = 0;
 	int cursorPositionX = 0;
@@ -37,6 +38,7 @@ public class MainMenu implements Screen {
 	boolean loadedcombatcleared;
 	boolean gameloaded = false;
 	boolean nosave;
+	boolean noLocalSaveFound;
 
 	public MainMenu(final MyGdxGame game) {
 		this.game = game;
@@ -55,6 +57,7 @@ public class MainMenu implements Screen {
 		logOutButton = new Texture(Gdx.files.internal("logOutButton.png"));
 		menuCursor = new Texture(Gdx.files.internal("menuCursor.png"));
 		leaderboardbutton = new Texture(Gdx.files.internal("leaderboardbutton.png"));
+		loadlocalbutton = new Texture(Gdx.files.internal("loadLocalButton.png"));
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1280, 720);
@@ -163,10 +166,14 @@ public class MainMenu implements Screen {
 
 		game.batch.begin();
 		game.batch.draw(background, 0, 0);
-		game.batch.draw(newGameButton, 100, 550, newGameButton.getWidth(), newGameButton.getHeight());
-		game.batch.draw(leaderboardbutton, 100, 100, leaderboardbutton.getWidth(), leaderboardbutton.getHeight());
-		if(nosave){
-			game.fontLarge.draw(game.batch, "No Save \n Found", 35, 455);
+		game.batch.draw(newGameButton, 100, 600, newGameButton.getWidth(), newGameButton.getHeight());
+		game.batch.draw(loadlocalbutton, 100, 470, loadlocalbutton.getWidth(), loadlocalbutton.getHeight());
+		game.batch.draw(leaderboardbutton, 100, 80, leaderboardbutton.getWidth(), leaderboardbutton.getHeight());
+		if(noLocalSaveFound){
+			game.fontLarge.draw(game.batch, "  No Local \nSave Found", 10, 525);
+		}
+		if(nosave && game.userID != 0){
+			game.fontLarge.draw(game.batch, "No Save \n Found", 15, 400);
 		}
 		if(!game.serverConnected){
 			game.fontLarge.draw(game.batch, "Not Connected to the Server", 30, 50);
@@ -178,14 +185,14 @@ public class MainMenu implements Screen {
 			game.fontLarge.draw(game.batch, "Runs Completed: " + game.runscompleted, 1050, 50);
 		}
 		if(game.userID == 0) {
-			game.batch.draw(logInButton, 100, 400, logInButton.getWidth(), logInButton.getHeight());
-			game.batch.draw(createAccountButton, 100, 250, createAccountButton.getWidth(), createAccountButton.getHeight());
+			game.batch.draw(logInButton, 100, 340, logInButton.getWidth(), logInButton.getHeight());
+			game.batch.draw(createAccountButton, 100, 210, createAccountButton.getWidth(), createAccountButton.getHeight());
 		}
 		else{
-			game.batch.draw(loadGameButton, 100, 400, loadGameButton.getWidth(), loadGameButton.getHeight());
-			game.batch.draw(logOutButton, 100, 250, logOutButton.getWidth(), logOutButton.getHeight());
+			game.batch.draw(loadGameButton, 100, 340, loadGameButton.getWidth(), loadGameButton.getHeight());
+			game.batch.draw(logOutButton, 100, 210, logOutButton.getWidth(), logOutButton.getHeight());
 		}
-		game.batch.draw(menuCursor, 500 + (cursorPositionX*420), 550-(cursorPosition * 150), menuCursor.getWidth(), menuCursor.getHeight());
+		game.batch.draw(menuCursor, 490 + (cursorPositionX*430), 600-(cursorPosition * 130), menuCursor.getWidth(), menuCursor.getHeight());
 		game.fontHuge.draw(game.batch, "Change Font Size", 700, 610);
 		game.batch.end();
 		if(gameloaded){
@@ -206,7 +213,7 @@ public class MainMenu implements Screen {
 			}
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-			if(cursorPosition != 3){
+			if(cursorPosition != 4){
 				cursorPosition++;
 			}
 		}
@@ -230,32 +237,55 @@ public class MainMenu implements Screen {
 				game.setScreen(new Combat(game, new RunData(defaultDeckList)));
 				dispose();
 			}
-			else if(cursorPosition == 1 && game.userID != 0){
+			else if(cursorPosition == 1){
+				loadLocalGame();
+
+			}
+			else if(cursorPosition == 2 && game.userID != 0){
 				game.socket.emit("load_game", game.userID);
 				// Load a game from a save, either online or offline
 				// Should also tell user if no save is available
 			}
-			else if(cursorPosition == 1 && game.userID == 0){
+			else if(cursorPosition == 2 && game.userID == 0){
 				game.setScreen(new LogIn(game));
 				dispose();
 				// Prompt user to log in
 			}
-			else if(cursorPosition == 2 && game.userID == 0){
+			else if(cursorPosition == 3 && game.userID == 0){
 				// Create an account
 				game.setScreen(new CreateAccount(game));
 				dispose();
 			}
-			else if(cursorPosition == 2 && game.userID !=0){
+			else if(cursorPosition == 3 && game.userID !=0){
 				game.userID = 0;
 				game.runscompleted = 0;
 			}
-			else if(cursorPosition == 3){
+			else if(cursorPosition == 4){
 				game.setScreen(new Leaderboard(game));
 				dispose();
 			}
 		}
 	}
-	
+	public void loadLocalGame(){
+		loadedseed = game.prefs.getLong("seed", 0);
+		loadedhealth = game.prefs.getInteger("health", 0);
+		loadedmaxHealth = game.prefs.getInteger("maxHealth", 0);
+		loadedlevel = game.prefs.getInteger("level", 0);
+		loadeddeck = game.prefs.getString("deck", "");
+		if(game.prefs.getInteger("combatclear") == 1){
+			loadedcombatcleared = true;
+		}
+		else{
+			loadedcombatcleared = false;
+		}
+		if(loadedseed != 0 && loadedhealth != 0 && loadedmaxHealth != 0) {
+			gameloaded = true;
+		}
+		else{
+			noLocalSaveFound = true;
+		}
+
+	}
 	@Override
 	public void resize(int width, int height) {
 	}
@@ -272,6 +302,7 @@ public class MainMenu implements Screen {
 		createAccountButton.dispose();
 		menuCursor.dispose();
 		leaderboardbutton.dispose();
+		loadlocalbutton.dispose();
 	}
 	
 	@Override
