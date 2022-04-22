@@ -18,10 +18,11 @@ public class MyGdxGame extends Game {
 	public Socket socket;
 	public int userID = 0;
 	public int runscompleted;
+	public boolean serverConnected = false;
 	public void create() {
 		batch = new SpriteBatch();
 		connectSocket();
-		//configSocketEvents();
+		configSocketEvents();
 		fontSmall = new BitmapFont(Gdx.files.internal("Arial8px.fnt"));
 		fontMedium = new BitmapFont(Gdx.files.internal("Arial12px.fnt"));
 		fontLarge = new BitmapFont(Gdx.files.internal("Arial18px.fnt"));
@@ -67,8 +68,19 @@ public class MyGdxGame extends Game {
 			System.out.println(e);
 		}
 	}
+	public void configSocketEvents(){
+		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener(){
+			@Override
+			public void call(Object... args){
+				setServerConnected(true);
+				System.out.println("Connected to server");
 
-
+			}
+		});
+	}
+	public void setServerConnected(boolean connected){
+		this.serverConnected = connected;
+	}
 
 
 }

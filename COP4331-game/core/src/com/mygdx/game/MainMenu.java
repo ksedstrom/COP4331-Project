@@ -144,6 +144,12 @@ public class MainMenu implements Screen {
 		if(nosave){
 			game.fontLarge.draw(game.batch, "No Save \n Found", 35, 455);
 		}
+		if(!game.serverConnected){
+			game.fontLarge.draw(game.batch, "Not Connected to the Server", 1075, 50);
+		}
+		if(game.serverConnected){
+			game.fontLarge.draw(game.batch, "Connected to the Server", 1100, 50);
+		}
 		if(game.userID != 0){
 			game.fontLarge.draw(game.batch, "Runs Completed: " + game.runscompleted, 1050, 50);
 		}
