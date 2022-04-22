@@ -51,6 +51,7 @@ public class Card {
 		baseFragile = cardData.getBoolean("fragile");
 		status[0] = cardData.getInt("statusId");
 		status[1] = cardData.getInt("statusValue");
+		updateDescription(null);
 	}
 
 	public int getId(){
