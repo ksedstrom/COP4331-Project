@@ -96,6 +96,7 @@ io.on('connection', function(socket){
             deckList,
             combatclear
         ]
+	console.logvalues
         con.query(sql, [values], function(err, result){
             if(err) throw err;
             console.log(result);
