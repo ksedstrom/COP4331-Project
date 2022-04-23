@@ -273,10 +273,31 @@ public class Combat implements Screen {
 
 		// Debug Input
 		if (Gdx.input.isKeyJustPressed(Input.Keys.K)){
-			enemy.damage(100);
+			enemy.damage(600);
 		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.D)){
-			draw(1);
+		if (Gdx.input.isKeyJustPressed(Input.Keys.W)){
+			runData.setHealth(player.getHealth());
+			if(runData.getLevel()==5){
+				runData.setMaxHealth(85);
+				runData.heal(40);
+			}
+			if(runData.getLevel()==10){
+				runData.setMaxHealth(100);
+				runData.heal(50);
+			}
+			if(runData.getLevel() == 15){
+				game.setScreen(new Winning(game));
+			}
+			else {
+				saveLocal();
+				if(game.userID != 0) {
+
+					saveGame();
+				}
+
+				game.setScreen(new Rewards(game, runData)); // proceed to combat rewards
+				dispose();
+			}
 		}
 	}
 	public void saveGame(){
