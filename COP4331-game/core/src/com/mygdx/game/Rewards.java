@@ -155,7 +155,10 @@ public class Rewards implements Screen {
         }
 
        game.batch.end();
-
+        if(Gdx.input.isKeyPressed(Input.Keys.HOME)){
+            game.setScreen(new MainMenu(game));
+            dispose();
+        }
        // Process User Input
        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
            if (cursorPos > 0){

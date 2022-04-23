@@ -150,6 +150,10 @@ public class Combat implements Screen {
 			drawPile.render(0,0,game,deckDisplayScroll,true);
 		}
 		game.batch.end();
+		if(Gdx.input.isKeyPressed(Input.Keys.HOME)){
+			game.setScreen(new MainMenu(game));
+			dispose();
+		}
 
 		// Process User Input
 
